@@ -8,6 +8,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+//middleware 
+app.use(express.json()); // to parse req.body
+app.use(express.urlencoded({extended: true})); //to parse form data (urlencoded)
+
 app.use("/api/auth", authRoutes);
 
 
