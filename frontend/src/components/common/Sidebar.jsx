@@ -5,12 +5,42 @@ import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const Sidebar = () => {
-	const data = {
-		username: "test3",
-		profileImg: "/avatars/boy1.png",
-	};
+
+	const queryClient = useQueryClient();
+	
+	const {mutate: logoutMutate} = useMutation({
+		mutationFn: async() => {
+			// eslint-disable-next-line no-useless-catch
+			try {
+				const res = await fetch("/api/auth/logout", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+				})
+				const data = await res.json();
+
+				if (!res.ok) throw new Error(data.message || "Algo fue mal");
+				return data;
+
+			} catch (error) {
+				throw new Error(error);	
+			}
+		},
+		onSuccess: () => {
+			toast.success("Has salido correctamente");
+			queryClient.invalidateQueries({queryKey: ["authUser"]});
+		},
+		onError: () => {
+			toast.success("Hubo un error");
+		}
+	})
+
+	const {data:authUserData} = useQuery({queryKey: ["authUser"]})
 
 	return (
 		<div className='md:flex-[2_2_0] w-18 max-w-52'>
@@ -40,7 +70,7 @@ const Sidebar = () => {
 
 					<li className='flex justify-center md:justify-start'>
 						<Link
-							to={`/profile/${data?.username}`}
+							to={`/profile/${authUserData?.username}`}
 							className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-full duration-300 py-2 pl-2 pr-4 max-w-fit cursor-pointer'
 						>
 							<FaUser className='w-6 h-6' />
@@ -48,22 +78,25 @@ const Sidebar = () => {
 						</Link>
 					</li>
 				</ul>
-				{data && (
+				{authUserData && (
 					<Link
-						to={`/profile/${data.username}`}
+						to={`/profile/${authUserData.username}`}
 						className='mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full'
 					>
 						<div className='avatar hidden md:inline-flex'>
 							<div className='w-8 rounded-full'>
-								<img src={data?.profileImg || "/avatar-placeholder.png"} />
+								<img src={authUserData?.profileImg || "/avatar-placeholder.png"} />
 							</div>
 						</div>
 						<div className='flex justify-between flex-1'>
 							<div className='hidden md:block'>
 									{/* <p className='text-white font-bold text-sm w-20 truncate'>{data?.fullName}</p>*/}
-								<p className='text-slate-500 text-sm'>@{data?.username}</p>
+								<p className='text-slate-500 text-sm'>@{authUserData?.username}</p>
 							</div>
-							<BiLogOut className='w-5 h-5 cursor-pointer' />
+							<BiLogOut className='w-5 h-5 cursor-pointer' onClick={(e) => {
+								e.preventDefault();
+								logoutMutate();
+							}} />
 						</div>
 					</Link>
 				)}
