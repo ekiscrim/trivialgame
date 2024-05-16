@@ -27,11 +27,11 @@ export const register = async (req, res) => {
         });
 
         if (newUser) {
-            generateTokenAndSetCookie(newUser.__id, res);
+            generateTokenAndSetCookie(newUser._id, res);
             await newUser.save();
 
             res.status(201).json({
-                _id: newUser.__id,
+                _id: newUser.id,
                 username: newUser.username
             });
         } else {
@@ -45,13 +45,45 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-    res.json({
-        data: "You hit the login endpoint"
-      });
+    try {
+
+        const {username, password} = req.body;
+        const user = await User.findOne({username});
+        const isPasswordCorrect = await bcrypt.compare(password, user.password || "");
+        
+        if (!user || !isPasswordCorrect) {
+            return res.status(400).json({error: "Username o password Incorrectas"});
+        }
+
+        generateTokenAndSetCookie(user._id, res);
+
+        res.status(200).json({
+            _id: user._id,
+            username: user.username
+        })
+        
+    } catch (error) {
+        console.log("Error en el controlador de login ", error.message);
+        res.status(500).json({error: 'Error interno desde el controller'});
+    }
 };
 
 export const logout = async (req, res) => {
-    res.json({
-        data: "You hit the logout endpoint"
-      });
+    try {
+        res.cookie("jwt","",{maxAge:0})
+        res.status(200).json({message: "Has salido de la cuenta correctamente"})
+    } catch (error) {
+        console.log("Error en el controlador de logout ", error.message);
+        res.status(500).json({error: 'Error interno desde el controller'});
+    }
 };
+
+export const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select("-password");
+    res.status(200).json(user)
+  } catch (error) {
+    console.log("Error en el controlador de getMe ", error.message);
+    res.status(500).json({error: 'Error interno desde el controller'});
+  }
+}
