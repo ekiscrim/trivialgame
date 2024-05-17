@@ -4,7 +4,7 @@ import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
 
 export const register = async (req, res) => {
     try {
-        const {username, password} = req.body;
+        const {username, password, role} = req.body;
 
         const existingUser = await User.findOne({ username });
 
@@ -23,7 +23,8 @@ export const register = async (req, res) => {
         //new user with the data with pass hashed
         const newUser = new User({
             username: username,
-            password: hashedPassword
+            password: hashedPassword,
+            role
         });
 
         if (newUser) {
