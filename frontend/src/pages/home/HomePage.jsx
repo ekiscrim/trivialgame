@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import AvailableRooms from "../../components/room/AvailableRooms";
 //import Posts from "../../components/common/Posts";
 //import CreatePost from "./CreatePost";
 
@@ -32,7 +33,7 @@ const HomePage = () => {
 						)}
 					</div>
 				</div>
-
+				<AvailableRooms />
 				{/*  CREATE POST INPUT */}
 				{/*<CreatePost />*/}
 

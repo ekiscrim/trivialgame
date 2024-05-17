@@ -38,7 +38,7 @@ const Sidebar = () => {
 		onError: () => {
 			toast.success("Hubo un error");
 		}
-	})
+	});
 
 	const {data:authUserData} = useQuery({queryKey: ["authUser"]})
 
