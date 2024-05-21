@@ -6,7 +6,7 @@ import { BiLogOut } from "react-icons/bi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-const Navbar = () => {
+const Navbar = ({authUser}) => {
   const queryClient = useQueryClient();
 
   const { mutate: logoutMutate } = useMutation({
@@ -72,6 +72,13 @@ const Navbar = () => {
                 <FaUser className='w-6 h-6' />
                 <span className='hidden md:block'>Profile</span>
               </Link>
+            </li>
+            <li>
+            {authUserData.role === 'admin' && (
+            <Link to="/admin">
+              <button className="admin-button flex items-center gap-2 text-white hover:text-gray-400 transition-all">Admin</button>
+            </Link>
+          )}
             </li>
           </ul>
         </div>

@@ -29,4 +29,12 @@ export const protectRoute = async(req, res, next) => {
         console.log("Error en protectRoute middleware ",error.message);
         return res.status(500).json({error: "Internal server error"});
     }
-}
+};
+
+export const adminRoute = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    return res.status(403).json({error: 'Acceso denegado: Requiere ser administrador'});
+  }
+};

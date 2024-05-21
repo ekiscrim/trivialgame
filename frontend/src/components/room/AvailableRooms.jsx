@@ -46,6 +46,7 @@ const AvailableRooms = () => {
   return (
     <>
       <CreateRoom />
+
       {loading || isRoomsLoading ? (
         <div className="h-screen flex justify-center items-center">
           <LoadingSpinner />

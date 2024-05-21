@@ -17,6 +17,8 @@ export const getCategory = async (req, res) => {
   }
 };
 
+
+
 export const createCategory = async (req, res) => {
     try {
         const {title} = req.body;
@@ -47,6 +49,16 @@ export const createCategory = async (req, res) => {
         console.log("Error en el controlador de Categoría ", error.message);
         res.status(500).json({error: 'Error interno desde el controller'});
     }
+};
+
+export const deleteCategory = async (req, res) => {
+    try {
+        const deletedCategory = await Category.findByIdAndDelete(req.params.id);
+        console.log("Category deleted successfully:", deletedCategory);
+        res.send({ message: 'Category and related questions deleted successfully' });
+      } catch (err) {
+        res.status(500).send({ error: err.message });
+      }
 };
 
 export const listCategories = async (req, res) => {

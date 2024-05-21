@@ -9,6 +9,11 @@ import { Toaster } from "react-hot-toast"
 import { useQuery } from "@tanstack/react-query"
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import QuestionPage from "./pages/question/QuestionPage"
+
+import AdminPage from "./pages/admin/AdminPage"
+import ProtectedRoute from "./components/admin/ProtectedRoutes"
+//import ProtectedRoute from 
+
 function App() {
 	//el hecho de usar una queryKey me permite tener un nombre unico con el que hacer referencia en cualquier sitioç
 	//por ejemplo en otro fichero podria acceder a los datos del user simplemente haciendo
@@ -50,6 +55,7 @@ function App() {
 				<Route path='/rooms/join/:id' element={authUserQuery ? <RoomPage /> : <Navigate to="/" />} />
 				<Route path='/rooms/:id' element={authUserQuery ? <RoomPage /> : <Navigate to="/login" />} />
 				<Route path='/room/:roomId/questions/:categoryId' element={authUserQuery ? <QuestionPage  /> : <Navigate to="/login" />} />
+				<Route path='/admin' element={<ProtectedRoute element={AdminPage} authUser={authUserQuery} adminOnly />} />
 			</Routes>
 			<Toaster />
 		</div>
