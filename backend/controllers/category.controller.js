@@ -17,7 +17,7 @@ export const getCategory = async (req, res) => {
   }
 };
 
-export const setCategory = async (req, res) => {
+export const createCategory = async (req, res) => {
     try {
         const {title} = req.body;
 
@@ -52,6 +52,7 @@ export const setCategory = async (req, res) => {
 export const listCategories = async (req, res) => {
   
     try {
+        
         const categories = await Category.find({});
 
         if (!categories || categories.length === 0) return res.status(404).json({error: "No hay Categorías que listar"});
@@ -59,7 +60,7 @@ export const listCategories = async (req, res) => {
         res.status(200).json(categories);
     
   } catch (error) {
-        console.log("Error en listCategories ",error.message);
+
         res.status(500).json({error: error.message});
   }
 };

@@ -19,6 +19,23 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
+export const getUserNameById = async (req, res) => {
+    console.log("PARAMETROS ", req.params);
+    const { id } = req.params;
+
+    try {
+        const user = await User.findOne({"_id": id}).select("-password");
+
+        if (!user) return res.status(404).json({error: "Usuario no encontrado"});
+
+        res.status(200).json(user);
+    
+  } catch (error) {
+        console.log("Error en getUserNameById ",error.message);
+        res.status(500).json({error: error.message});
+  }
+};
+
 export const updateUser = async (req, res) => {
   
     const {username, currentPassword, newPassword} = req.body;

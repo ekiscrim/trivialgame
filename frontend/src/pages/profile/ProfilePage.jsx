@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 //import Posts from "../../components/common/Posts";
 //import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
-import EditProfileModal from "./EditProfileModal";
+//import EditProfileModal from "./EditProfileModal";
 
-import { POSTS } from "../../utils/db/dummy";
+//import { POSTS } from "../../utils/db/dummy";
 
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -51,8 +51,8 @@ const ProfilePage = () => {
 		<>
 			<div className='flex-[4_4_0]  border-r border-gray-700 min-h-screen '>
 				{/* HEADER */}
-				{isLoading}
-				{!isLoading && !user && <p className='text-center text-lg mt-4'>User not found</p>}
+				
+				{<p className='text-center text-lg mt-4'>User not found</p>}
 				<div className='flex flex-col'>
 					{!isLoading && user && (
 						<>
@@ -62,7 +62,7 @@ const ProfilePage = () => {
 								</Link>
 								<div className='flex flex-col'>
 									<p className='font-bold text-lg'>{user?.fullName}</p>
-									<span className='text-sm text-slate-500'>{POSTS?.length} posts</span>
+									<span className='text-sm text-slate-500'> posts</span>
 								</div>
 							</div>
 							{/* COVER IMG */}
@@ -109,7 +109,6 @@ const ProfilePage = () => {
 								</div>
 							</div>
 							<div className='flex justify-end px-4 mt-5'>
-								{isMyProfile && <EditProfileModal />}
 								{!isMyProfile && (
 									<button
 										className='btn btn-outline rounded-full btn-sm'
