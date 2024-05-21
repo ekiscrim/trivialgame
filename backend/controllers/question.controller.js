@@ -39,6 +39,32 @@ export const createQuestion = async (req, res) => {
   }
 };
 
+export const editQuestion = async (req, res) => {
+  try {
+    const { _id, question, options, correctAnswer, category } = req.body;
+    await Question.findByIdAndUpdate(_id, {
+      _id,
+      question,
+      options,
+      correctAnswer,
+      category
+    }, {new: true});
+    res.status(201).json('Question edited:');
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const deleteQuestion = async (req, res) => {
+  try {
+      const deletedQuestion = await Question.findByIdAndDelete(req.params.id);
+      console.log("Question deleted successfully:", deletedQuestion);
+      res.send({ message: 'Question deleted successfully' });
+    } catch (err) {
+      res.status(500).send({ error: err.message });
+    }
+};
+
 
 // Validar la respuesta del usuario
 export const validateAnswer = async (req, res) => {
@@ -51,4 +77,21 @@ export const validateAnswer = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+
+export const listQuestions = async (req, res) => {
+  
+  try {
+      
+      const questions = await Question.find({});
+
+      if (!questions || questions.length === 0) return res.status(404).json({error: "No hay Preguntas que listar"});
+
+      res.status(200).json(questions);
+  
+} catch (error) {
+
+      res.status(500).json({error: error.message});
+}
 };

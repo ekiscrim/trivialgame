@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import CategoriesTab from '../../components/admin/CategoriesTab';
-// import QuestionsTab from '../../components/admin/QuestionsTab';
+import QuestionsTab from '../../components/admin/QuestionsTab';
 // import UsersTab from '../../components/admin/UsersTab';
 // import RoomsTab from '../../components/admin/RoomsTab';
 
@@ -12,8 +12,7 @@ const AdminPage = () => {
       case 'categories':
         return <CategoriesTab />;
       case 'questions':
-        // return <QuestionsTab />;
-        return;
+        return <QuestionsTab />;
       case 'users':
         // return <UsersTab />;
         return;

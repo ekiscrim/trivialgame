@@ -64,22 +64,22 @@ const CategoriesTab = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen mt-0">
+    <div className="min-h-screen w-full mt-0">
       <h2 className="text-xl font-semibold mb-4">Categories</h2>
-      <form onSubmit={onSubmit} className="mb-4">
-        <div className="form-control">
+      <form onSubmit={onSubmit} className="mb-4 w-full">
+        <div className="form-control w-full">
           <label className="label">
             <span className="label-text">Category Name</span>
           </label>
-          <input type="text" name="title" value={formData.title} onChange={onChange} className="input input-bordered w-72" />
+          <input type="text" name="title" value={formData.title} onChange={onChange} className="input input-bordered w-full" />
         </div>
-        <button type="submit" className="btn btn-primary mt-2 w-72">Add Category</button>
+        <button type="submit" className="btn btn-primary mt-2 w-full">Add Category</button>
       </form>
-      <ul className="list-disc pl-5">
-        {categories.map((category, index) => (
-          <li key={category._id} className={`flex pb-6 items-center justify-normal ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
+      <ul className="list-disc pl-5 w-full">
+        {categories.map((category,index) => (
+          <li key={category._id} className={`flex pb-6 items-center justify-between ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
             <span className='text-lg'>{category.title}</span>
-            <button onClick={() => handleDeleteCategory(category._id)} className="btn btn-sm btn-error ml-96 absolute">
+            <button onClick={() => handleDeleteCategory(category._id)} className="btn btn-sm btn-error">
               <TrashIcon className="h-5 w-5 text-white" />
             </button>
           </li>
