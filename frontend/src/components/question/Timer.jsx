@@ -1,23 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
-const Timer = ({ onTimeUp }) => {
-  const [timeLeft, setTimeLeft] = useState(10); // Cambié el tiempo inicial a 10 segundos para que coincida con el ejemplo de Tailwind
+const Timer = ({ initialTime, onTimeUp, setTimeLeft }) => {
+  //const [timeLeft, setTimeLeft] = useState(initialTime); // Cambié el tiempo inicial a 10 segundos para que coincida con el ejemplo de Tailwind
 
   useEffect(() => {
-    if (timeLeft === 0) {
+    if (initialTime <= 0) {
       onTimeUp();
       return;
     }
 
     const timerId = setInterval(() => {
-      setTimeLeft(prevTimeLeft => prevTimeLeft - 1);
+      setTimeLeft((prevTimeLeft) => {
+        if (prevTimeLeft === 0) {
+          clearInterval(timerId);
+          onTimeUp();
+        }
+        return prevTimeLeft - 1;
+      });
     }, 1000);
 
     return () => clearInterval(timerId);
-  }, [timeLeft, onTimeUp]);
-
+  }, [initialTime, onTimeUp, setTimeLeft]);
+  
   const progressBarStyle = {
-    width: `${(timeLeft / 10) * 100}%`, // Ajusté el valor base a 10 segundos
+    width: `${(initialTime / 10) * 100}%`, // Ajusté el valor base a 10 segundos
     height: '20px',
     backgroundColor: 'bg-primary',
   };
@@ -25,7 +31,7 @@ const Timer = ({ onTimeUp }) => {
   return (
     <div>
       <p className="text-center">
-        <span>{timeLeft}</span>
+        <span>{initialTime}</span>
       </p>
       <div className="bg-gray-200 h-5 mt-2 rounded-md">
         <div className="h-full bg-blue-500" style={progressBarStyle}></div>

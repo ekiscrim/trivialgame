@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import Question from '../../components/question/Question';
 
 const QuestionPage = () => {
+  const {data:userId} = useQuery({queryKey: ["authUser"]})
   const { roomId, categoryId } = useParams();
   const { data: roomData, isLoading, error } = useQuery({
     queryKey: ["roomData", roomId],
@@ -37,7 +38,7 @@ const QuestionPage = () => {
   return (
     <div>
       <h1>Question Page for Room {roomId}</h1>
-      <Question categoryIds={categoryIds} questionCount={questionCount} />
+      <Question userId={userId._id} roomId={roomId} categoryIds={categoryIds} questionCount={questionCount} />
     </div>
   );
 };

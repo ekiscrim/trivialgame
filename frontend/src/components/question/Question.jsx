@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Timer from './Timer';
 import LoadingSpinner from '../common/LoadingSpinner'; // Asegúrate de importar el componente de spinner de carga
 
-const Question = ({ categoryIds, questionCount }) => {
+const Question = ({ categoryIds, questionCount, roomId, userId }) => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -10,6 +10,8 @@ const Question = ({ categoryIds, questionCount }) => {
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(10);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,7 +66,7 @@ const Question = ({ categoryIds, questionCount }) => {
 
   const handleAnswer = async (questionId, option) => {
     if (selectedOption || isTimeUp) return; // Prevent multiple answers or answering after time is up
-  
+
     const res = await fetch('/api/validate/answer', {
       method: 'POST',
       headers: {
@@ -72,36 +74,77 @@ const Question = ({ categoryIds, questionCount }) => {
       },
       body: JSON.stringify({ questionId, selectedOption: option }),
     });
-  
+
     if (!res.ok) {
       throw new Error('Failed to validate answer');
     }
-  
+
     const data = await res.json();
     setSelectedOption(option);
     setAnswerStatus(data.isCorrect ? 'correct' : 'incorrect');
+
+    if (data.isCorrect) {
+      const basePoints = 10;
+      const timeBonus = Math.max(0, timeLeft); // Time bonus based on remaining time
+      setScore(score + basePoints + timeBonus);
+    }
+
     setTimeout(() => {
       setSelectedOption(null);
       setAnswerStatus(null);
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1); // Always increment currentQuestionIndex
       setIsTimeUp(false); // Reset time up state
     }, 1000); // Wait 1 second before showing the next question
+
+   
+    if (!isTimeUp) {
+      setTimeLeft(10);
+    }
   };
 
   const handleTimeUp = () => {
     if (selectedOption) return; // Prevent marking as incorrect if already answered
-  
+
     setAnswerStatus('incorrect');
     setIsTimeUp(true);
     setTimeout(() => {
       setSelectedOption(null);
       setAnswerStatus(null);
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1); // Always increment currentQuestionIndex
-      setIsTimeUp(false); // Reset time up state
+      setIsTimeUp(false);
+      setTimeLeft(10); // Reset time up state
     }, 1000); // Wait 1 second before showing the next question
   };
 
+  useEffect(() => {
+    if (currentQuestionIndex >= questions.length && questions.length > 0) {
+      submitScore();
+    }
+  }, [currentQuestionIndex, questions.length]);
+
+  const submitScore = async () => {
+    try {
+      await fetch(`/api/room/${roomId}/score`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, score, roomId }),
+      });
+
+      // Redirect to results page
+      window.location.href = `/room/${roomId}/results`;
+    } catch (error) {
+      console.error('Error submitting score:', error);
+    }
+  };
+
   if (isLoadingQuestion) return <LoadingSpinner />; // Mostrar el spinner de carga mientras se cargan las preguntas
+
+  if (currentQuestionIndex >= questions.length && questions.length > 0) {
+    return null; // No renderizar nada si se han respondido todas las preguntas
+  }
+
   if (!questions || questions.length === 0) return <p>No questions available</p>;
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -132,7 +175,7 @@ const Question = ({ categoryIds, questionCount }) => {
             </button>
           ))}
         </div>
-        {!selectedOption && !isTimeUp && <Timer key={currentQuestion._id} onTimeUp={handleTimeUp} />}
+        {!selectedOption && !isTimeUp && <Timer initialTime={timeLeft} onTimeUp={handleTimeUp} setTimeLeft={setTimeLeft} />}
         {selectedOption && answerStatus !== null && (
           <p className="mt-4">{answerStatus === 'correct' ? "¡Correcto!" : "Incorrecto"}</p>
         )}

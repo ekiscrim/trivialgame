@@ -12,6 +12,7 @@ import QuestionPage from "./pages/question/QuestionPage";
 import AdminPage from "./pages/admin/AdminPage";
 import ProtectedRoute from "./components/admin/ProtectedRoutes";
 import Modal from 'react-modal';
+import ResultsPage from "./pages/results/ResultsPage";
 
 // Establecer el elemento raíz para Modal
 Modal.setAppElement('#root');
@@ -52,6 +53,7 @@ function App() {
         <Route path='/rooms/join/:id' element={authUserQuery ? <RoomPage /> : <Navigate to="/" />} />
         <Route path='/rooms/:id' element={authUserQuery ? <RoomPage /> : <Navigate to="/login" />} />
         <Route path='/room/:roomId/questions/:categoryId' element={authUserQuery ? <QuestionPage /> : <Navigate to="/login" />} />
+        <Route path="/room/:roomId/results" element={authUserQuery ? <ResultsPage /> : <Navigate to="/login" />} />
         <Route path='/admin' element={<ProtectedRoute element={AdminPage} authUser={authUserQuery} adminOnly />} />
       </Routes>
       <Toaster />

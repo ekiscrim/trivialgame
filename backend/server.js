@@ -5,8 +5,9 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import roomRoutes from "./routes/room.routes.js";
-import categoryRoutes from "./routes/category.routes.js"
-import questionRoutes from "./routes/question.routes.js"
+import categoryRoutes from "./routes/category.routes.js";
+import questionRoutes from "./routes/question.routes.js";
+import resultsRoutes from "./routes/score.routes.js";
 
 import adminRoutes from "./routes/admin/admin.routes.js"
 
@@ -31,7 +32,8 @@ app.use("/api/rooms/:id", questionRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/validate", questionRoutes);
-
+app.use("/api/room/:roomId", resultsRoutes);
+app.use("/api/room", resultsRoutes);
 
 
 //admin
