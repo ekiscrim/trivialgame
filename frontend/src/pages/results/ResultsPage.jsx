@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query'; // Importa useQuery
 
 const ResultsPage = () => {
   const { roomId } = useParams();
- console.log("ESTE ES EL ROOMID ", roomId)
   // Utiliza useQuery para manejar la solicitud de resultados
   const { data: scores, isLoading, isError } = useQuery({
     queryKey: ['results', roomId],

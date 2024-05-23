@@ -1,4 +1,34 @@
-const ScoresTable = ({ scores }) => {
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import LoadingSpinner from "../common/LoadingSpinner"; // Asegúrate de tener un componente de carga
+
+
+const fetchScores = async (roomId) => {
+  const response = await fetch(`/api/room/${roomId.id}/results`);
+  if (!response.ok) {
+    throw new Error('Error fetching results');
+  }
+  return response.json();
+};
+
+
+
+const ScoresTable = () => {
+
+  const id = useParams();
+  const { data: scores, isLoading, isError } = useQuery({
+    queryKey: ["results", id],
+    queryFn: () => fetchScores(id),
+  });
+
+  if (isLoading) {
+    return <LoadingSpinner />; // Componente de carga mientras se obtienen los datos
+  }
+
+  if (isError) {
+    return <p>Error al cargar los resultados.</p>; // Mensaje de error si la solicitud falla
+  }
+
   if (!scores || scores.length === 0) {
     return <p>No scores available.</p>;
   }

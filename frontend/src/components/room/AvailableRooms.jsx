@@ -1,16 +1,30 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner";
 import CreateRoom from "./CreateRoom";
+import RoomCard from "./RoomCard";
 
 const AvailableRooms = () => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12);
+  const [pageSize] = useState(12);
   const [rooms, setRooms] = useState([]);
   const [hasMore, setHasMore] = useState(true);
 
+
+  const { data: user, isLoading: isUserLoading, error: userError } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: async () => {
+      const res = await fetch(`/api/auth/user`);
+      if (!res.ok) throw new Error("Failed to fetch user data");
+      return res.json();
+    },
+  });
+
+  const userId = user?._id;
+
+  
   const { isLoading: isRoomsLoading, error: roomsError, data: listRoomsQuery } = useQuery({
     queryKey: ["listRooms", page, pageSize],
     queryFn: async () => {
@@ -65,15 +79,10 @@ const AvailableRooms = () => {
       ) : (
         <div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 ml-5">
+
+            
             {rooms.map((room, index) => (
-              <div key={index} className="bg-white shadow-md rounded-md p-6">
-                <h2 className="text-xl font-semibold mb-2">{room.roomName}</h2>
-                <p className="text-gray-600 mb-2">{`Máximo de Usuarios: ${room.maxUsers}`}</p>
-                <p className="text-gray-600 mb-4">{`Descripción: ${room.description}`}</p>
-                <Link to={`rooms/${room._id}`}>
-                  <button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">Unirse</button>
-                </Link>
-              </div>
+              <RoomCard key={index} room={room} userId={userId} />
             ))}
           </div>
           {hasMore && (
@@ -93,5 +102,8 @@ const AvailableRooms = () => {
     </>
   );
 };
+
+
+
 
 export default AvailableRooms;

@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useParams, useNavigate } from 'react-router-dom';
+import ScoreTable from '../../components/score/ScoresTable';
 
 const RoomPage = () => {
   const { id } = useParams();
@@ -102,10 +103,6 @@ const RoomPage = () => {
     }
   };
 
-  const userHasRegisteredScore = (userId) => {
-    return userScoreData.some(score => score.user._id === userId && score.score !== null && score.score !== undefined);
-  };
-
   const shuffleArray = (array) => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -120,6 +117,8 @@ const RoomPage = () => {
       <h1 className="text-3xl font-bold my-8">Room {id}</h1>
       {isLoading && <p className="text-lg">Loading...</p>}
       {error && <p className="text-lg text-red-500">Error: {error.message}</p>}
+      <ScoreTable />
+      
       {roomData && (
         <div className="card w-full md:w-1/2 bg-base-100 shadow-xl">
           <div className="card-body">
