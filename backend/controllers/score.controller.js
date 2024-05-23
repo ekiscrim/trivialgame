@@ -29,4 +29,18 @@ export const sendResults = async (req, res) => {
     } catch (error) {
       res.status(500).json({ error: 'Error submitting score' });
     }
-} 
+}
+
+export const getUserScoreInRoom = async (req, res) => {
+  const { roomId, userId } = req.params;
+
+  try {
+    const score = await Score.findOne({ roomId, user: userId });
+    if (!score) {
+      return res.status(200).json({ hasScore: false });
+    }
+    res.status(200).json({ hasScore: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Error checking user score', });
+  }
+};

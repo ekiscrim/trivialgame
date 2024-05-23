@@ -7,6 +7,7 @@ const router = express.Router();
 router.get("/list", protectRoute, listRooms);
 router.post("/create", protectRoute, createRoom)
 router.get("/:id", protectRoute, seeRoom) //esta es la que carga la room
+router.post("/:roomId/joinRoom", protectRoute, joinRoom)
 //router.post("/:id/start", protectRoute, startRoom)
 
 export default router;

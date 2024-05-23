@@ -84,13 +84,11 @@ export const seeRoom = async (req, res) => {
 
 
 export const joinRoom = async (req, res) => {
-    const idRoom  = req.params.id;
+    const idRoom  = req.params.roomId;
     const { userId } = req.body || req.userId; // Suponiendo que tienes el ID del usuario en el cuerpo de la solicitud
 
     try {
-        console.log(userId);
         const room = await Room.findOne({_id: idRoom});
-
         if (!room) return res.status(404).json({error: "Sala no encontrada"});
 
         // TODO Aquí podrías agregar lógica adicional para verificar si el usuario está autorizado
@@ -99,6 +97,7 @@ export const joinRoom = async (req, res) => {
         if (!room.users.includes(userId)) {
             // Si el usuario no está en la lista, añádelo
             room.users.push(userId);
+            await room.save();
         }
 
         res.status(200).json(room);

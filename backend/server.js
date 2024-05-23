@@ -34,6 +34,7 @@ app.use("/api/questions", questionRoutes);
 app.use("/api/validate", questionRoutes);
 app.use("/api/room/:roomId", resultsRoutes);
 app.use("/api/room", resultsRoutes);
+app.use("/api/scores", resultsRoutes);
 
 
 //admin

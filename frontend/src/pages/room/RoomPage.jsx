@@ -1,9 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { useParams, useNavigate } from 'react-router-dom';
 
 const RoomPage = () => {
   const { id } = useParams();
+  const { data: userId } = useQuery({ queryKey: ["authUser"] });
   const navigate = useNavigate();
+
   const { data: roomData, isLoading, error } = useQuery({
     queryKey: ["roomData", id],
     queryFn: async () => {
@@ -11,14 +14,14 @@ const RoomPage = () => {
         if (!id) {
           throw new Error('Room ID is undefined');
         }
-        
+
         const res = await fetch(`/api/rooms/${id}`);
         const data = await res.json();
-        
+
         if (data.error) {
           throw new Error(data.error);
         }
-        
+
         return data;
       } catch (error) {
         throw new Error(error.message);
@@ -26,11 +29,81 @@ const RoomPage = () => {
     },
   });
 
+  // Nueva consulta para obtener el score del usuario para la sala específica
+  const { data: userScoreData, isLoading: isLoadingScore } = useQuery({
+    queryKey: ["userScoreData", id, userId],
+    queryFn: async () => {
+      try {
+        if (!id || !userId._id) {
+          throw new Error('Room ID or User ID is undefined');
+        }
+
+        const res = await fetch(`/api/scores/${id}/${userId._id}`);
+        const data = await res.json();
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        return data;
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    },
+    enabled: !!userId, // Ejecutar la consulta sólo si userId está definido
+  });
+
+  // Función para determinar si se puede iniciar el juego
+  const canStartGame = () => {
+    if (!userScoreData.hasScore) return true;
+
+    const userInRoom = roomData.users.find(user => user._id === userId._id);
+    const maxUsersReached = roomData.users.length >= roomData.room.maxUsers;
+
+    return userInRoom !== 'undefined' && !userScoreData.hasScore  && !maxUsersReached;
+  };
+
+  const { mutate, isError, isPending, someError } = useMutation({
+    mutationFn: async ({ userId, roomId }) => {
+      try {
+        const res = await fetch(`/api/rooms/${roomId}/joinRoom`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ userId })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Algo fue mal");
+        return data;
+
+      } catch (someError) {
+        console.log(someError);
+        throw someError;
+      }
+
+    },
+    onSuccess: () => {
+      toast.success("Te has unido a la sala");
+    }
+  });
+
   const handleStart = () => {
     if (roomData && roomData.room && roomData.room.categories) {
-      const shuffledCategories = shuffleArray(roomData.room.categories); // Mezclar las categorías seleccionadas
-      navigate(`/room/${id}/questions/${shuffledCategories.join(',')}`); // Navegar a la primera pregunta con las categorías mezcladas
+      if (userScoreData && userScoreData.length > 0) {
+        alert("You have already completed this room.");
+        return;
+      }
+
+      mutate({ userId: userId._id, roomId: roomData.room._id });
+
+      const shuffledCategories = shuffleArray(roomData.room.categories);
+      navigate(`/room/${id}/questions/${shuffledCategories.join(',')}`);
     }
+  };
+
+  const userHasRegisteredScore = (userId) => {
+    return userScoreData.some(score => score.user._id === userId && score.score !== null && score.score !== undefined);
   };
 
   const shuffleArray = (array) => {
@@ -58,9 +131,19 @@ const RoomPage = () => {
                 </li>
               ))}
             </ul>
-            <button onClick={handleStart} className="btn btn-primary mt-4">
-              Start
-            </button>
+            {canStartGame() ? (
+              <button
+                onClick={handleStart}
+                className="btn btn-primary mt-4"
+              >
+                {isPending ? "Loading..." : "Start"}
+              </button>
+            ) : (
+              <p className="text-red-500 mt-4">Cannot start the game at the moment.</p>
+            )}
+            {roomData.users.length >= roomData.room.maxUsers && (
+              <p className="text-red-500 mt-4">Maximum number of users reached.</p>
+            )}
           </div>
         </div>
       )}
