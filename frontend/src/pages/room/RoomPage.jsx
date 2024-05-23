@@ -56,7 +56,7 @@ const RoomPage = () => {
 
   // Función para determinar si se puede iniciar el juego
   const canStartGame = () => {
-    if (!userScoreData.hasScore) return true;
+    if (!userScoreData.hasScore && userScoreData === 'undefined') return true;
 
     const userInRoom = roomData.users.find(user => user._id === userId._id);
     const maxUsersReached = roomData.users.length >= roomData.room.maxUsers;

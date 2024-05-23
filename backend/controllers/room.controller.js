@@ -1,3 +1,4 @@
+import Question from "../models/question.model.js";
 import Room from "../models/room.model.js";
 import User from "../models/user.model.js";
 
@@ -39,32 +40,66 @@ export const listRooms = async (req, res) => {
 };
 
 
+// Función para mezclar aleatoriamente un array utilizando el algoritmo de mezcla de Fisher-Yates.
+const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
 export const createRoom = async (req, res) => {
     try {
             const { roomName, questionCount, maxUsers, categories, creatorId } = req.body;
             
-            const newRoom = new Room({ roomName, questionCount, maxUsers, categories, users: [creatorId] });
+            // Realizar consulta para obtener preguntas basadas en las categorías seleccionadas
+            const questions = await Question.find({ category: { $in: categories } });
+            // Seleccionar un número aleatorio de preguntas según questionCount
+            const selectedQuestions = shuffleArray(questions).slice(0, questionCount);
+
+            const newRoom = new Room({ 
+                roomName, 
+                questionCount, 
+                maxUsers, 
+                categories, 
+                questions: selectedQuestions.map(question => question._id), // Asociar IDs de preguntas
+                users: [creatorId] });
             
-
-            if (newRoom) {
-                await newRoom.save();
-                res.status(201).json({
-                    _id: newRoom.id,
-                    roomName: newRoom.roomName,
-                    questionCount: newRoom.questionCount,
-                    maxUsers: newRoom.maxUsers,
-                    categories: newRoom.categories,
-                    users: newRoom.users
-
-                });
-            } else {
-                res.status(400).json({error: 'Datos de sala no válidos'});
-            }
+            await newRoom.save();
+            res.status(201).json({
+                _id: newRoom.id,
+                roomName: newRoom.roomName,
+                questionCount: newRoom.questionCount,
+                maxUsers: newRoom.maxUsers,
+                categories: newRoom.categories,
+                users: newRoom.users,
+                questions: selectedQuestions // Opcional: enviar las preguntas seleccionadas en la respuesta, es para testear
+            });
     } catch (error) {
         console.log("Error en createRoom ",error.message);
         res.status(500).json({error: error.message});
     }
 };
+
+export const getRoomQuestions = async (req, res) => {
+    try {
+      const { roomId } = req.params;
+  
+      // Encontrar la sala por ID
+      const room = await Room.findById(roomId).populate('questions');
+      if (!room) {
+        return res.status(404).json({ message: 'Room not found' });
+      }
+  
+      res.status(200).json({ questions: room.questions });
+    } catch (error) {
+      console.error('Error fetching room questions:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+
 
 export const seeRoom = async (req, res) => {
     const roomId = req.params.id;

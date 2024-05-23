@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Timer from './Timer';
-import LoadingSpinner from '../common/LoadingSpinner'; // Asegúrate de importar el componente de spinner de carga
+import LoadingSpinner from '../common/LoadingSpinner';
 
-const Question = ({ categoryIds, questionCount, roomId, userId }) => {
+const Question = ({ roomId, userId }) => {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -17,21 +17,12 @@ const Question = ({ categoryIds, questionCount, roomId, userId }) => {
     const fetchData = async () => {
       try {
         setIsLoadingQuestion(true);
-        const promises = categoryIds.map(async (categoryId) => {
-          const res = await fetch(`/api/questions/category/${categoryId}`);
-          if (!res.ok) {
-            throw new Error('Failed to fetch questions');
-          }
-          return res.json();
-        });
-        const results = await Promise.all(promises);
-        const combinedQuestions = results.reduce((acc, curr) => acc.concat(curr), []);
-
-        // Shuffle combinedQuestions array
-        const shuffledQuestions = combinedQuestions.sort(() => Math.random() - 0.5);
-
-        // Limit the number of questions to questionCount
-        setQuestions(shuffledQuestions.slice(0, questionCount));
+        const res = await fetch(`/api/rooms/${roomId}/questions`);
+        if (!res.ok) {
+          throw new Error('Failed to fetch questions');
+        }
+        const data = await res.json();
+        setQuestions(data.questions);
         setIsLoadingQuestion(false);
       } catch (error) {
         console.error(error);
@@ -40,7 +31,7 @@ const Question = ({ categoryIds, questionCount, roomId, userId }) => {
     };
 
     fetchData();
-  }, [categoryIds, questionCount]);
+  }, [roomId]);
 
   useEffect(() => {
     // Ensure currentQuestionIndex is within bounds

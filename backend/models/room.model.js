@@ -6,6 +6,7 @@ const RoomSchema = new Schema({
     questionCount: { type: Number, required: true },
     maxUsers: { type: Number, required: true },
     categories: { type: [String], required: true },
+    questions: [{type: Schema.Types.ObjectId, ref: 'Question'}],
     status: { type: String, enum: ['waiting', 'in-progress', 'finished'], default: 'waiting' },
     users: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 }, {timestamps: true});
