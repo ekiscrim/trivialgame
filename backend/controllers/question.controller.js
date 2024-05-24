@@ -1,4 +1,6 @@
 import Question from '../models/question.model.js';
+import {v2 as cloudinary} from 'cloudinary';
+import streamifier from 'streamifier';
 
 // Obtener preguntas de trivial por categoría
 export const getQuestionsByCategory = async (req, res) => {
@@ -21,35 +23,111 @@ export const getQuestionsByCategory = async (req, res) => {
 export const createQuestion = async (req, res) => {
   try {
     const { question, options, correctAnswer, category } = req.body;
-    console.log(req.body)
-    // Crear una nueva pregunta
-    const newQuestion = new Question({
-      question,
-      options,
-      correctAnswer,
-      category,
-    });
+    const file = req.file;
 
-    // Guardar la pregunta en la base de datos
-    await newQuestion.save();
+    let imageUrl = null;
 
-    res.status(201).json(newQuestion);
+    if (file) {
+      const stream = streamifier.createReadStream(file.buffer);
+      
+      const cloudinaryStream = cloudinary.uploader.upload_stream({ folder: 'questionImages' }, (error, result) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Error uploading image to Cloudinary' });
+          return;
+        }
+        
+        imageUrl = result.secure_url;
+        
+        // Create a new question
+        const newQuestion = new Question({
+          question,
+          options,
+          correctAnswer,
+          category,
+          image: imageUrl, // Store the Cloudinary image URL
+        });
+
+        // Save the question in the database
+        newQuestion.save()
+          .then(() => {
+            res.status(201).json(newQuestion);
+          })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).json({ error: 'Error saving question to database' });
+          });
+      });
+
+      stream.pipe(cloudinaryStream);
+    } else {
+      // Create a new question without an image
+      const newQuestion = new Question({
+        question,
+        options,
+        correctAnswer,
+        category,
+      });
+
+      // Save the question in the database
+      newQuestion.save()
+        .then(() => {
+          res.status(201).json(newQuestion);
+        })
+        .catch((err) => {
+          console.error(err);
+          res.status(500).json({ error: 'Error saving question to database' });
+        });
+    }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
 export const editQuestion = async (req, res) => {
   try {
     const { _id, question, options, correctAnswer, category } = req.body;
-    await Question.findByIdAndUpdate(_id, {
-      _id,
-      question,
-      options,
-      correctAnswer,
-      category
-    }, {new: true});
-    res.status(201).json('Question edited:');
+    const file = req.file;
+
+    let imageUrl = null;
+
+    if (file) {
+      const stream = streamifier.createReadStream(file.buffer);
+
+      const cloudinaryStream = cloudinary.uploader.upload_stream({ folder: 'questionImages' }, async (error, result) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Error uploading image to Cloudinary' });
+          return;
+        }
+
+        imageUrl = result.secure_url;
+
+        const updateData = {
+          question,
+          options,
+          correctAnswer,
+          category,
+          image: imageUrl, // Update with the new image URL
+        };
+
+        const updatedQuestion = await Question.findByIdAndUpdate(_id, updateData, { new: true });
+        res.status(201).json('Question edited successfully');
+      });
+
+      stream.pipe(cloudinaryStream);
+    } else {
+      const updateData = {
+        question,
+        options,
+        correctAnswer,
+        category,
+      };
+
+      const updatedQuestion = await Question.findByIdAndUpdate(_id, updateData, { new: true });
+      res.status(201).json('Question edited successfully');
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -83,7 +161,6 @@ export const validateAnswer = async (req, res) => {
 export const listQuestions = async (req, res) => {
   
   try {
-      
       const questions = await Question.find({});
 
       if (!questions || questions.length === 0) return res.status(404).json({error: "No hay Preguntas que listar"});

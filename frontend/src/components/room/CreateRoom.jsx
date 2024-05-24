@@ -4,20 +4,20 @@ import { QueryCache, QueryClient, useQuery } from '@tanstack/react-query';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+import Modal from 'react-modal';
 
 const CreateRoom = () => {
   const navigate = useNavigate(); // Obtener el objeto history
   const [showForm, setShowForm] = useState(false);
   const [roomName, setRoomName] = useState('');
+  const [showModal, setShowModal] = useState(false);
+
   const [questionCount, setQuestionCount] = useState(3);
   const [maxUsers, setMaxUsers] = useState(2);
   const [categories, setCategories] = useState([]);
   const [createdRoomId, setCreatedRoomId] = useState(null);
 
   const {data:authUserData} = useQuery({queryKey: ["authUser"]})
-  const toggleForm = () => {
-    setShowForm(prevShowForm => !prevShowForm);
-  };
 
   const { data: listCategoriesQuery, isLoading, error } = useQuery({
     queryKey: ['listCategories'],
@@ -81,6 +81,8 @@ const CreateRoom = () => {
   }, [listCategoriesQuery]);
 
 
+  const toggleModal = () => setShowModal(!showModal);
+
   if (isLoading) {
     return (
       <div className="h-screen flex justify-center items-center">
@@ -91,37 +93,26 @@ const CreateRoom = () => {
   
 
   if (error) {
-    return (
-      <div className="mt-6 ml-4 grid sm:grid-flow-row md:grid-flow-row md:grid-cols-2 gap-y-5 content-stretch">
-        <div role="alert" className="alert">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="stroke-info shrink-0 w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-          <span>{error.message}</span>
-        </div>
-      </div>
-    );
+    return <div role="alert" className="alert alert-error">{error.message}</div>;
   }
 
   return (
     <div className='mt-6 mb-6'>
       <Toaster />
-      <button className="btn" onClick={toggleForm}>
+      <button className="btn" onClick={toggleModal}>
         {"Crear sala"}
       </button>
-      {showForm && (
-        <div className="bg-gray-100 mt-5 pt-6 pb-6">
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <Modal
+        isOpen={showModal}
+        onRequestClose={toggleModal}
+        contentLabel="Crear Sala"
+        className="modal-content"
+        overlayClassName="modal-overlay"
+      >
+        <div className="pt-1 relative">
+        <button className='btn btn-sm btn-circle absolute top-0 right-0 ' onClick={toggleModal}>✕</button>
+        <h2 className="text-xl font-semibold mb-4">Crear Sala</h2>
+        <form onSubmit={handleSubmit} className="md:grid-cols-1 gap-4 mt-4">
           <div className="form-control">
             <label htmlFor="roomName">Nombre de la sala</label>
             <input
@@ -133,9 +124,8 @@ const CreateRoom = () => {
               onChange={(e) => setRoomName(e.target.value)}
             />
           </div>
-
           <div className="form-control">
-          <label htmlFor="questionCount">Número de preguntas</label>
+            <label htmlFor="questionCount">Número de preguntas</label>
             <select
               name="questionCount"
               className="select select-bordered w-full"
@@ -147,9 +137,8 @@ const CreateRoom = () => {
               <option value="15">15</option>
             </select>
           </div>
-
           <div className="form-control">
-            <label htmlFor="maxUser">Participantes máximos</label>
+            <label htmlFor="maxUsers">Participantes máximos</label>
             <select
               name="maxUsers"
               className="select select-bordered w-full"
@@ -162,22 +151,21 @@ const CreateRoom = () => {
               <option value="5">5</option>
             </select>
           </div>
-
           <div className="form-control">
             <MultiSelectDropdown
-                formFieldName="categories"
-                options={listCategoriesQuery}
-                selectedOptions={categories}
-                onChange={(selectedCategories) => setCategories(selectedCategories)}
+              formFieldName="categories"
+              options={listCategoriesQuery}
+              selectedOptions={categories}
+              onChange={(selectedCategories) => setCategories(selectedCategories)}
             />
           </div>
-
           <div className="form-control md:col-span-2">
             <input type="submit" value="CREAR" className="btn btn-primary w-full" />
           </div>
         </form>
         </div>
-      )}
+      </Modal>
+
     </div>
   );
 };

@@ -4,7 +4,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
 
 const Question = ({ roomId, userId }) => {
 
-  const TIME_FOR_QUESTION = 15;
+  const TIME_FOR_QUESTION = 250;
 
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -147,7 +147,12 @@ const Question = ({ roomId, userId }) => {
 
   return (
     <div className="flex justify-center items-start bg-gray-100 sm:min-w-full sm:min-h-full lg:min-h-min">
-      <div className="max-w-4xl w-full bg-white rounded-lg shadow-md p-8">
+      <div className="max-w-4xl w-full shadow-md p-8">
+        <div className="w-56 flex justify-between ml-9">
+          {currentQuestion.image && (
+            <figure><img className="mask mask-squircle" src={currentQuestion.image} alt="" /></figure>
+          )}
+        </div>
         <h2 className="text-2xl font-extrabold lg:font-semibold mb-4 text-center">{currentQuestion.question}</h2>
         <div className="grid xl:grid-cols-2 sm:grid-cols-1 gap-4">
           {shuffledOptions.map((option) => (

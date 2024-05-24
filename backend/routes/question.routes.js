@@ -6,5 +6,5 @@ const router = express.Router();
 
 router.get('/category/:categoryId', protectRoute, getQuestionsByCategory);
 router.post('/answer', protectRoute, validateAnswer);
-router.post("/create", protectRoute, createQuestion);
+//router.post("/create", protectRoute, createQuestion);
 export default router;

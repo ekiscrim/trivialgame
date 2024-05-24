@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { UserIcon } from '@heroicons/react/solid';
+import SkeletonCard from "../common/SkeletonCard";
 
 const fetchUserScore = async (roomId, userId) => {
     const res = await fetch(`/api/scores/${roomId}/${userId}`);
@@ -28,7 +29,7 @@ const RoomCard = ({ room, userId }) => {
       queryFn: () => fetchCategories(room._id),
     });
 
-    if (isScoreLoading || isCategoriesLoading) return <LoadingSpinner />;
+    if (isScoreLoading || isCategoriesLoading) return <SkeletonCard />;
     if (scoreError) return <p>Error al cargar los datos de puntuación.</p>;
     if (categoriesError) return <p>Error al cargar las categorías.</p>;
 

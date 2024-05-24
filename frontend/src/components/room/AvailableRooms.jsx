@@ -7,11 +7,11 @@ import RoomCard from "./RoomCard";
 
 const AvailableRooms = () => {
   const [loading, setLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(12);
   const [rooms, setRooms] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-
 
   const { data: user, isLoading: isUserLoading, error: userError } = useQuery({
     queryKey: ["authUser"],
@@ -24,23 +24,27 @@ const AvailableRooms = () => {
 
   const userId = user?._id;
 
-  
+  const fetchRooms = async (page) => {
+    setLoading(page === 1);
+    setIsLoadingMore(page > 1);
+    try {
+      const res = await fetch(`api/rooms/list?page=${page}&pageSize=${pageSize}`);
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error || "Algo fue mal");
+      setHasMore(data.hasMore);
+      return data.rooms;
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      setLoading(false);
+      setIsLoadingMore(false);
+    }
+  };
+
   const { isLoading: isRoomsLoading, error: roomsError, data: listRoomsQuery } = useQuery({
     queryKey: ["listRooms", page, pageSize],
-    queryFn: async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`api/rooms/list?page=${page}&pageSize=${pageSize}`);
-        const data = await res.json();
-        if (!res.ok || data.error) throw new Error(data.error || "Algo fue mal");
-        setHasMore(data.hasMore);
-        return data.rooms;
-      } catch (error) {
-        throw new Error(error.message);
-      } finally {
-        setLoading(false);
-      }
-    },
+    queryFn: () => fetchRooms(page),
+    keepPreviousData: true,
   });
 
   useEffect(() => {
@@ -59,8 +63,7 @@ const AvailableRooms = () => {
 
   return (
     <>
-
-      {loading || isUserLoading || isRoomsLoading ? (
+      {loading || isUserLoading ? (
         <div className="h-screen flex justify-center items-center">
           <LoadingSpinner />
         </div>
@@ -90,7 +93,7 @@ const AvailableRooms = () => {
               </button>
             </div>
           )}
-          {isRoomsLoading && (
+          {isLoadingMore && (
             <div className="flex justify-center mt-4">
               <LoadingSpinner />
             </div>
@@ -100,8 +103,5 @@ const AvailableRooms = () => {
     </>
   );
 };
-
-
-
 
 export default AvailableRooms;
