@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import MultiSelectDropdown from '../common/MultiSelectDropdown';
-import { useQuery } from '@tanstack/react-query';
+import { QueryCache, QueryClient, useQuery } from '@tanstack/react-query';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -60,8 +60,8 @@ const CreateRoom = () => {
       const roomId = data._id;
       setCreatedRoomId(roomId);
      
-      //queryClient.invalidateQueries('listRooms');
       toast.success('Sala creada correctamente');
+      //QueryCache.invalidateQueries('listRooms');
     } catch (error) {
       toast.error('Error al crear la sala');
     }
@@ -114,12 +114,13 @@ const CreateRoom = () => {
   }
 
   return (
-    <div>
+    <div className='mt-6 mb-6'>
       <Toaster />
       <button className="btn" onClick={toggleForm}>
         {"Crear sala"}
       </button>
       {showForm && (
+        <div className="bg-gray-100 mt-5 pt-6 pb-6">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <div className="form-control">
             <label htmlFor="roomName">Nombre de la sala</label>
@@ -141,9 +142,9 @@ const CreateRoom = () => {
               value={questionCount}
               onChange={(e) => setQuestionCount(e.target.value)}
             >
-              <option value="3">3</option>
-              <option value="4">4</option>
               <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
             </select>
           </div>
 
@@ -175,6 +176,7 @@ const CreateRoom = () => {
             <input type="submit" value="CREAR" className="btn btn-primary w-full" />
           </div>
         </form>
+        </div>
       )}
     </div>
   );

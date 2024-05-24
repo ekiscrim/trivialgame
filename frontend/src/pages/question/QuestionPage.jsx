@@ -37,7 +37,6 @@ const QuestionPage = () => {
 
   return (
     <div>
-      <h1>Question Page for Room {roomId}</h1>
       <Question userId={userId._id} roomId={roomId} categoryIds={categoryIds} questionCount={questionCount} />
     </div>
   );

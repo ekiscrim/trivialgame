@@ -172,9 +172,9 @@ const QuestionTab = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen mt-0 flex justify-center items-center">
+    <div className="min-h-screen w-screen mt-0 flex justify-center items-center bg-gray-100">
       <div className="w-full max-w-lg">
-        <h2 className="text-xl font-semibold mb-4">Questions</h2>
+        <h2 className="text-xl font-semibold mb-4 ">Questions</h2>
         <form onSubmit={onSubmit} className="mb-4">
           <div className="form-control">
             <label className="label">
@@ -266,7 +266,7 @@ const QuestionTab = () => {
           {editFormData && (
             <form onSubmit={handleEditSubmit} className="bg-white rounded-lg p-6 w-full max-w-lg mx-auto">
               <button className='btn btn-sm btn-circle' onClick={handleCloseModal}>✕</button>
-              <h2 className="text-xl font-semibold mb-4">Edit Question</h2>
+              <h2 className="text-xl font-semibold mb-4 ">Edit Question</h2>
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Question</span>

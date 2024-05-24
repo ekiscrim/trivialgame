@@ -98,7 +98,27 @@ export const getRoomQuestions = async (req, res) => {
       console.error('Error fetching room questions:', error);
       res.status(500).json({ message: 'Server error' });
     }
-  };
+};
+
+export const getRoomCategories = async (req, res) => {
+    try {
+      const { roomId } = req.params;
+  
+      // Encontrar la sala por ID
+      const room = await Room.findById(roomId).populate('categories', 'title');
+      if (!room) {
+        return res.status(404).json({ message: 'Room not found' });
+      }
+
+      // Extraer los nombres de las categorías
+      const categoryNames = room.categories.map(category => category.title);
+
+      res.status(200).json({ categories: categoryNames });
+    } catch (error) {
+      console.error('Error fetching room categories:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+};
 
 
 export const seeRoom = async (req, res) => {

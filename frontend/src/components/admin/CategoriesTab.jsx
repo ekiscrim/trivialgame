@@ -64,8 +64,7 @@ const CategoriesTab = () => {
   };
 
   return (
-    <div className="min-h-screen w-full mt-0">
-      <h2 className="text-xl font-semibold mb-4">Categories</h2>
+    <div className="min-h-screen min-w-screen mt-0 flex flex-row  bg-gray-100">
       <form onSubmit={onSubmit} className="mb-4 w-full">
         <div className="form-control w-full">
           <label className="label">

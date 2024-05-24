@@ -16,7 +16,7 @@ const AvailableRooms = () => {
   const { data: user, isLoading: isUserLoading, error: userError } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
-      const res = await fetch(`/api/auth/user`);
+      const res = await fetch(`/api/auth/me`);
       if (!res.ok) throw new Error("Failed to fetch user data");
       return res.json();
     },
@@ -59,9 +59,8 @@ const AvailableRooms = () => {
 
   return (
     <>
-      <CreateRoom />
 
-      {loading || isRoomsLoading ? (
+      {loading || isUserLoading || isRoomsLoading ? (
         <div className="h-screen flex justify-center items-center">
           <LoadingSpinner />
         </div>
@@ -78,9 +77,8 @@ const AvailableRooms = () => {
         <p>No hay salas disponibles.</p>
       ) : (
         <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6 ml-5">
-
-            
+          <CreateRoom />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 xl:mt-6 ml-2 mr-2">
             {rooms.map((room, index) => (
               <RoomCard key={index} room={room} userId={userId} />
             ))}

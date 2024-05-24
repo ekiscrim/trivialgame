@@ -38,7 +38,7 @@ const Navbar = ({authUser}) => {
   const { data: authUserData } = useQuery({ queryKey: ["authUser"] });
 
   return (
-    <nav className='w-full bg-gray-800 p-4 fixed top-0 z-50'>
+    <nav className='w-full bg-purple-700 p-3 fixed top-0 z-50'>
       <div className='max-w-6xl mx-auto flex justify-between items-center'>
         <div className='flex items-center gap-4'>
           <Link to='/' className='flex items-center'>
@@ -49,7 +49,7 @@ const Navbar = ({authUser}) => {
             <li>
               <Link
                 to='/'
-                className='flex items-center gap-2 text-white hover:text-gray-400 transition-all'
+                className='flex items-center gap-2 text-white hover:text-violet-200 transition-all'
               >
                 <MdHomeFilled className='w-6 h-6' />
                 <span className='hidden md:block'>Home</span>
@@ -58,7 +58,7 @@ const Navbar = ({authUser}) => {
             <li>
               <Link
                 to='/notifications'
-                className='flex items-center gap-2 text-white hover:text-gray-400 transition-all'
+                className='flex items-center gap-2 text-white hover:text-violet-200 transition-all'
               >
                 <IoNotifications className='w-6 h-6' />
                 <span className='hidden md:block'>Notifications</span>
@@ -67,7 +67,7 @@ const Navbar = ({authUser}) => {
             <li>
               <Link
                 to={`/profile/${authUserData?.username}`}
-                className='flex items-center gap-2 text-white hover:text-gray-400 transition-all'
+                className='flex items-center gap-2 text-white hover:text-violet-200 transition-all'
               >
                 <FaUser className='w-6 h-6' />
                 <span className='hidden md:block'>Profile</span>
@@ -76,7 +76,7 @@ const Navbar = ({authUser}) => {
             <li>
             {authUserData.role === 'admin' && (
             <Link to="/admin">
-              <button className="admin-button flex items-center gap-2 text-white hover:text-gray-400 transition-all">Admin</button>
+              <button className="admin-button flex items-center gap-2 text-white hover:text-violet-200 transition-all">Admin</button>
             </Link>
           )}
             </li>
@@ -91,10 +91,10 @@ const Navbar = ({authUser}) => {
             </div>
             <div className='hidden md:block'>
               <p className='text-white font-bold text-sm w-20 truncate'>{authUserData?.fullName}</p>
-              <p className='text-slate-500 text-sm'>@{authUserData?.username}</p>
+              <p className='text-white text-sm'>@{authUserData?.username}</p>
             </div>
             <BiLogOut
-              className='w-6 h-6 text-white cursor-pointer hover:text-gray-400 transition-all'
+              className='w-6 h-6 text-white cursor-pointer hover:text-violet-200 transition-all'
               onClick={(e) => {
                 e.preventDefault();
                 logoutMutate();

@@ -43,7 +43,7 @@ function App() {
   }
 
   return (
-    <div className='grid place-items-center min-h-screen pt-20 bg-gray-100'>
+    <div className='grid place-items-center min-h-screen pt-20 bg-purple-950'>
       {authUserQuery && <Navbar />}
       <Routes>
         <Route path='/' element={authUserQuery ? <HomePage /> : <Navigate to="/login" />} />

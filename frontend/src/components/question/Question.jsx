@@ -3,6 +3,9 @@ import Timer from './Timer';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 const Question = ({ roomId, userId }) => {
+
+  const TIME_FOR_QUESTION = 15;
+
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -11,7 +14,7 @@ const Question = ({ roomId, userId }) => {
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(TIME_FOR_QUESTION);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,7 +92,7 @@ const Question = ({ roomId, userId }) => {
 
    
     if (!isTimeUp) {
-      setTimeLeft(10);
+      setTimeLeft(TIME_FOR_QUESTION);
     }
   };
 
@@ -103,7 +106,7 @@ const Question = ({ roomId, userId }) => {
       setAnswerStatus(null);
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1); // Always increment currentQuestionIndex
       setIsTimeUp(false);
-      setTimeLeft(10); // Reset time up state
+      setTimeLeft(TIME_FOR_QUESTION); // Reset time up state
     }, 1000); // Wait 1 second before showing the next question
   };
 
@@ -143,10 +146,10 @@ const Question = ({ roomId, userId }) => {
   if (!currentQuestion) return <p>No question data available</p>;
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex justify-center items-start bg-gray-100 sm:min-w-full sm:min-h-full lg:min-h-min">
       <div className="max-w-4xl w-full bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-3xl font-semibold mb-4">{currentQuestion.question}</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <h2 className="text-2xl font-extrabold lg:font-semibold mb-4 text-center">{currentQuestion.question}</h2>
+        <div className="grid xl:grid-cols-2 sm:grid-cols-1 gap-4">
           {shuffledOptions.map((option) => (
             <button
               key={option}
@@ -166,7 +169,7 @@ const Question = ({ roomId, userId }) => {
             </button>
           ))}
         </div>
-        {!selectedOption && !isTimeUp && <Timer initialTime={timeLeft} onTimeUp={handleTimeUp} setTimeLeft={setTimeLeft} />}
+        {!selectedOption && !isTimeUp && <Timer time_for_answer={TIME_FOR_QUESTION} initialTime={timeLeft} onTimeUp={handleTimeUp} setTimeLeft={setTimeLeft} />}
         {selectedOption && answerStatus !== null && (
           <p className="mt-4">{answerStatus === 'correct' ? "¡Correcto!" : "Incorrecto"}</p>
         )}
