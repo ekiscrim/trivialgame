@@ -5,6 +5,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import Modal from 'react-modal';
+import { HiOutlinePencilAlt } from "react-icons/hi";
 
 const CreateRoom = () => {
   const navigate = useNavigate(); // Obtener el objeto history
@@ -100,7 +101,7 @@ const CreateRoom = () => {
     <div className='mt-6 mb-6'>
       <Toaster />
       <button className="btn" onClick={toggleModal}>
-        {"Crear sala"}
+      <HiOutlinePencilAlt />{"Crear sala"}
       </button>
       <Modal
         isOpen={showModal}

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
+import Logo from "../common/Logo"
 const Navbar = ({authUser}) => {
   const queryClient = useQueryClient();
 
@@ -42,8 +42,8 @@ const Navbar = ({authUser}) => {
       <div className='max-w-6xl mx-auto flex justify-between items-center'>
         <div className='flex items-center gap-4'>
           <Link to='/' className='flex items-center'>
-            {/* Puedes agregar un logo aquí si tienes uno */}
-            <span className='text-white text-2xl font-bold'>TRIVIAL QUIZ</span>
+            <Logo />
+            <span className='text-white text-2xl font-bold hidden sm:flex ml-2'>TRIVIALITE</span>
           </Link>
           <ul className='flex items-center gap-4'>
             <li>

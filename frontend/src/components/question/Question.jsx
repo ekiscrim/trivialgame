@@ -4,7 +4,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
 
 const Question = ({ roomId, userId }) => {
 
-  const TIME_FOR_QUESTION = 250;
+  const TIME_FOR_QUESTION = 15;
 
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);

@@ -32,7 +32,7 @@ const ScoresTable = ({ currentUser }) => {
   }
 
   // Encuentra la entrada del usuario actual
-  const currentUserScoreEntry = scores.find(scoreEntry => scoreEntry.user._id === currentUser._id);
+  const currentUserScoreEntry = scores.find(scoreEntry => scoreEntry.user._id === currentUser._id || scoreEntry.user._id === currentUser);
 
   return (
     <div className="w-screen mt-0 flex justify-center">
