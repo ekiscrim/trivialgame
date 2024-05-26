@@ -1,6 +1,8 @@
 import Question from '../models/question.model.js';
 import {v2 as cloudinary} from 'cloudinary';
 import streamifier from 'streamifier';
+import Participant from '../models/participant.model.js';
+import Room from '../models/room.model.js';
 
 // Obtener preguntas de trivial por categoría
 export const getQuestionsByCategory = async (req, res) => {
@@ -146,16 +148,60 @@ export const deleteQuestion = async (req, res) => {
 
 // Validar la respuesta del usuario
 export const validateAnswer = async (req, res) => {
-  const { questionId, selectedOption } = req.body;
+  const { userId, roomId, questionId, selectedOption, timeLeft, currentQuestionIndex } = req.body;
   try {
     const question = await Question.findById(questionId);
     if (!question) return res.status(404).json({ error: 'Question not found' });
     const isCorrect = question.correctAnswer === selectedOption;
-    res.json({ isCorrect });
+    let updatedScore = 0;
+    if (isCorrect) {
+      const basePoints = 10;
+      const timeBonus = Math.max(0, timeLeft); // Assuming timeLeft is sent from the client
+      updatedScore = basePoints + timeBonus;
+    }
+
+    // Guardar la respuesta del participante
+    const participantAnswer = new Participant({
+      userId,
+      roomId,
+      questionId,
+      selectedOption,
+      isCorrect
+    });
+    await participantAnswer.save();
+
+
+    // Actualizar el índice de la última pregunta respondida y el score del participante
+    const participant = await Participant.findOneAndUpdate(
+      { userId, roomId },
+      { $inc: { lastQuestionIndex: 1, score: updatedScore } },
+      { new: true, upsert: true } // Create a new document if not exists
+    );
+    console.log(participant)
+
+    // Verificar si el participante ha respondido todas las preguntas
+    const room = await Room.findById(roomId);
+    const totalQuestions = room.questions.length;
+    const hasCompleted = participant.lastQuestionIndex === totalQuestions;
+
+    res.json({ isCorrect, participant, hasCompleted });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+export const getParticipantProgress = async (req, res) => {
+  const { userId, roomId } = req.params;
+  try {
+    const participant = await Participant.findOne({ userId, roomId });
+    if (!participant) return res.status(404).json({ error: 'Participant not found' });
+    res.json({ lastQuestionIndex: participant.lastQuestionIndex, score: participant.score });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 
 export const listQuestions = async (req, res) => {

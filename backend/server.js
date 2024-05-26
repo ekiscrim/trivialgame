@@ -54,6 +54,7 @@ app.use("/api/validate", questionRoutes);
 app.use("/api/room/:roomId", resultsRoutes);
 app.use("/api/room", resultsRoutes);
 app.use("/api/scores", resultsRoutes);
+app.use("/api/participant", questionRoutes);
 
 
 //admin

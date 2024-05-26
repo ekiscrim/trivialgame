@@ -30,11 +30,12 @@ const RoomPage = () => {
   });
 
   const canStartGame = () => {
-    if (!userScoreData?.hasScore) return true;
     const userInRoom = roomData.users.find(user => user._id === userId._id);
     const maxUsersReached = roomData.users.length >= roomData.room.maxUsers;
-    return userInRoom !== 'undefined' && !userScoreData.hasScore && !maxUsersReached;
+    return !userScoreData.hasScore || userInRoom || !userInRoom;
   };
+
+
 
   const { mutate, isError, isPending } = useMutation({
     mutationFn: async ({ userId, roomId }) => {
@@ -72,6 +73,12 @@ const RoomPage = () => {
     return shuffled;
   };
 
+  if (!roomData || !roomData.room || !roomData.users || !userScoreData) {
+    return <p>Loading room data...</p>;
+  }
+
+  const maxUsersReached = roomData.users.length >= roomData.room.maxUsers;
+
   return (
     <div className="flex flex-col items-center sm:min-w-full lg:min-w-min">
       <h1 className="text-3xl font-bold my-8 text-cyan-300">
@@ -91,18 +98,19 @@ const RoomPage = () => {
               ))}
             </ul>
             {canStartGame() ? (
-              <button
-                onClick={handleStart}
-                className="btn btn-primary mt-4"
-              >
-                {isPending ? "Loading..." : "Start"}
-              </button>
-            ) : (
-              <p className="text-red-500 mt-4">Ya has participado</p>
-            )}
-            {roomData.users.length >= roomData.room.maxUsers && (
-              <p className="text-red-500 mt-4">Maximum number of users reached.</p>
-            )}
+      <button
+        onClick={handleStart}
+        className="btn btn-primary mt-4"
+      >
+        {isPending ? "Loading..." : "Start"}
+      </button>
+    ) : (
+      maxUsersReached ? (
+        <p className="text-red-500 mt-4">Se han alcanzado el número máximo de participantes en la sala</p>
+      ) : (
+        <p className="text-red-500 mt-4">Sala cerrada.</p>
+      )
+    )}
           </div>
         </div>
       )}

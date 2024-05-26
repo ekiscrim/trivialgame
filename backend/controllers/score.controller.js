@@ -43,3 +43,17 @@ export const getUserScoreInRoom = async (req, res) => {
     res.status(500).json({ error: 'Error checking user score', });
   }
 };
+
+
+export const finalScoreAlreadyExists = async (userId, roomId) => {
+  try {
+    // Busca un registro de puntuación final para el usuario y la sala específicos
+    const existingScore = await ScoreModel.findOne({ user: userId, room: roomId });
+
+    // Si se encuentra un registro y tiene un puntaje asignado, devuelve true
+    return existingScore && existingScore.score !== null;
+  } catch (error) {
+    console.error('Error checking final score existence:', error);
+    return false; // Devuelve false en caso de error
+  }
+};

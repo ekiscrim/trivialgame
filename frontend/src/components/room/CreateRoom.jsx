@@ -13,7 +13,7 @@ const CreateRoom = () => {
   const [roomName, setRoomName] = useState('');
   const [showModal, setShowModal] = useState(false);
 
-  const [questionCount, setQuestionCount] = useState(3);
+  const [questionCount, setQuestionCount] = useState(5);
   const [maxUsers, setMaxUsers] = useState(2);
   const [categories, setCategories] = useState([]);
   const [createdRoomId, setCreatedRoomId] = useState(null);
