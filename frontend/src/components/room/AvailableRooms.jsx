@@ -49,7 +49,8 @@ const AvailableRooms = () => {
 
   useEffect(() => {
     if (listRoomsQuery) {
-      setRooms((prevRooms) => [...prevRooms, ...listRoomsQuery]);
+      setRooms(listRoomsQuery);
+      //setRooms((prevRooms) => [...prevRooms, ...listRoomsQuery]);
     }
   }, [listRoomsQuery]);
 
@@ -63,11 +64,12 @@ const AvailableRooms = () => {
 
   return (
     <>
-      {loading || isUserLoading ? (
+      {loading || isUserLoading || isRoomsLoading ? (
         <div className="h-screen flex justify-center items-center">
           <LoadingSpinner />
         </div>
       ) : roomsError ? (
+        <>
         <div className="mt-6 ml-4 grid sm:grid-flow-row md:grid-flow-row md:grid-cols-2 gap-y-5 content-stretch">
           <div role="alert" className="alert">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6">
@@ -76,14 +78,21 @@ const AvailableRooms = () => {
             <span>{roomsError.message}</span>
           </div>
         </div>
+          <CreateRoom />
+        </>
       ) : !rooms || rooms.length === 0 ? (
         <p>No hay salas disponibles.</p>
       ) : (
         <div>
           <CreateRoom />
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 xl:mt-6 ml-2 mr-2">
+          <div className="grid col-span-1 mb-4 relative bg-purple-700 rounded-lg">
+              <h1 className="text-2xl font-extrabold lg:font-semibold m-4 text-center text-cyan-300">{"Salas abiertas"}</h1>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 xl:mt-6 ml-2 mr-2 grid-rows-auto animate-scale-in">
             {rooms.map((room, index) => (
-              <RoomCard key={index} room={room} userId={userId} />
+              <div key={index} className="relative overflow-hidden rounded-lg shadow-lg transition-transform duration-300 transform hover:scale-105 ">
+                <RoomCard key={index} room={room} userId={userId} />
+              </div>
             ))}
           </div>
           {hasMore && (

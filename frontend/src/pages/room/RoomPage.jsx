@@ -30,10 +30,15 @@ const RoomPage = () => {
   });
 
   const canStartGame = () => {
+    if (!roomData || !roomData.users || !roomData.room) return false;
+    
     const userInRoom = roomData.users.find(user => user._id === userId._id);
-    const maxUsersReached = roomData.users.length >= roomData.room.maxUsers;
-    return !userScoreData.hasScore || userInRoom || !userInRoom;
+    const currentTime = Date.now();
+    const timeElapsed = currentTime - new Date(roomData.room.startTime).getTime();
+    const timeRemaining = roomData.room.duration - timeElapsed;
+    return (!userInRoom || !userScoreData.hasScore) && (roomData.room.status === 'waiting' && timeRemaining > 0);
   };
+
 
 
 
@@ -77,7 +82,6 @@ const RoomPage = () => {
     return <p>Loading room data...</p>;
   }
 
-  const maxUsersReached = roomData.users.length >= roomData.room.maxUsers;
 
   return (
     <div className="flex flex-col items-center sm:min-w-full lg:min-w-min">
@@ -91,26 +95,28 @@ const RoomPage = () => {
       {roomData && (
         <div className="card w-full  bg-base-100 shadow-xl my-6">
           <div className="card-body">
-            <h2 className="card-title">Participantes:</h2>
+            <h2 className="card-title">Se han unido a la sala:</h2>
             <ul className="list-disc list-inside">
               {roomData.users.map((user) => (
                 <li key={user._id} className="text-lg">{user.username}</li>
               ))}
             </ul>
-            {canStartGame() ? (
-      <button
-        onClick={handleStart}
-        className="btn btn-primary mt-4"
-      >
-        {isPending ? "Loading..." : "Start"}
-      </button>
-    ) : (
-      maxUsersReached ? (
-        <p className="text-red-500 mt-4">Se han alcanzado el número máximo de participantes en la sala</p>
-      ) : (
-        <p className="text-red-500 mt-4">Sala cerrada.</p>
-      )
-    )}
+            {roomData.room.status === 'finished' ? (
+              <p className="text-red-500 mt-4">La sala ha terminado.</p>
+            ) : (
+              <>
+              {canStartGame() ? (
+                <button
+                  onClick={handleStart}
+                  className="btn btn-primary mt-4"
+                >
+                  {isPending ? "Loading..." : "Start"}
+                </button>
+              ) : (
+                <p className="text-red-500 mt-4">Ya has participado.</p>
+              )}
+              </>
+            )}
           </div>
         </div>
       )}

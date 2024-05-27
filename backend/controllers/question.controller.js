@@ -150,6 +150,18 @@ export const deleteQuestion = async (req, res) => {
 export const validateAnswer = async (req, res) => {
   const { userId, roomId, questionId, selectedOption, timeLeft, currentQuestionIndex } = req.body;
   try {
+    const room = await Room.findById(roomId);
+    if (!room) return res.status(404).json({ error: 'Room not found' });
+
+    const currentTime = Date.now();
+
+    if (currentTime - new Date(room.startTime).getTime() >= room.duration) {
+      room.status = 'finished';
+      await room.save();
+      return res.status(400).json({ error: 'The game is finished' });
+    }
+
+
     const question = await Question.findById(questionId);
     if (!question) return res.status(404).json({ error: 'Question not found' });
     const isCorrect = question.correctAnswer === selectedOption;
@@ -180,7 +192,6 @@ export const validateAnswer = async (req, res) => {
     console.log(participant)
 
     // Verificar si el participante ha respondido todas las preguntas
-    const room = await Room.findById(roomId);
     const totalQuestions = room.questions.length;
     const hasCompleted = participant.lastQuestionIndex === totalQuestions;
 

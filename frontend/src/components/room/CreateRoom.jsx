@@ -43,6 +43,8 @@ const CreateRoom = () => {
       maxUsers,
       categories,
       creatorId: authUserData._id,
+      startTime: Date.now(), // Puedes ajustar esto si el tiempo de inicio debe ser diferente
+      duration: 86400000 // 24 horas en milisegundos
     };
 
 
@@ -136,20 +138,6 @@ const CreateRoom = () => {
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="15">15</option>
-            </select>
-          </div>
-          <div className="form-control">
-            <label htmlFor="maxUsers">Participantes máximos</label>
-            <select
-              name="maxUsers"
-              className="select select-bordered w-full"
-              value={maxUsers}
-              onChange={(e) => setMaxUsers(e.target.value)}
-            >
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
             </select>
           </div>
           <div className="form-control">

@@ -83,6 +83,23 @@ export const createRoom = async (req, res) => {
     }
 };
 
+export const getRoomCreator = async (req, res) => {
+    const { roomId } = req.params;
+    try {
+        const room = await Room.findById(roomId).populate('users', 'username');
+
+        if (!room) {
+            return res.status(404).json({ error: 'Room not found' });
+        }
+
+        const creatorUsername = room.users.length > 0 ? room.users[0].username : 'Unknown';
+
+        res.status(200).json({ creatorUsername });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 export const getRoomQuestions = async (req, res) => {
     try {
       const { roomId } = req.params;

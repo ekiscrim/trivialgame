@@ -61,7 +61,6 @@ const Question = ({ roomId, userId }) => {
         }
         return prevIndex + 1;
       });
-  
     }
   }, [questions, currentQuestionIndex]);
 
