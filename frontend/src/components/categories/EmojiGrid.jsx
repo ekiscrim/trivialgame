@@ -40,7 +40,7 @@ const EmojiGrid = ({ categories }) => {
 
   return (
        
-        <div ref={figureRef} className="place-items-center my-10 grid grid-cols-3 gap-2 absolute ml-3">
+        <div ref={figureRef} className="grid grid-cols-3 gap-2 absolute my-10">
             {/* Aquí se agregarán los emojis */}
         </div>
        

@@ -67,8 +67,10 @@ const RoomCard = ({ room, userId }) => {
     
 <Link to={`rooms/${room._id}`} className="card-link">
   <div className="card w-96 bg-base-100 shadow-xl" style={{ maxWidth: "100%" }}>
-    <figure><img className="hue-rotate-90" src="https://static.vecteezy.com/system/resources/previews/006/691/884/non_2x/blue-question-mark-background-with-text-space-quiz-symbol-vector.jpg" alt="Questions" /></figure>
+    
+    <figure><img className="hue-rotate-90" src="https://static.vecteezy.com/system/resources/previews/006/691/884/non_2x/blue-question-mark-background-with-text-space-quiz-symbol-vector.jpg" alt="Questions" />
       <EmojiGrid categories={categories} />
+    </figure>
     <div className="card-body">
       <h1 className="card-title uppercase font-black">
         {room.roomName}
