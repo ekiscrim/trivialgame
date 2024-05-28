@@ -108,3 +108,9 @@
   position: absolute;
   /* Estilos adicionales para cada emoji */
 }
+
+/*Countdown show options without 0 in the counter */
+
+.countdown>*:before {
+  content: "0\a 1\a 2\a 3\a 4\a 5\a"
+}

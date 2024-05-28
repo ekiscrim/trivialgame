@@ -19,7 +19,7 @@ const EmojiGrid = ({ categories }) => {
 
       // Crear el elemento span para el emoji y establecer sus clases de Tailwind
       const emojiSpan = document.createElement("div");
-      emojiSpan.className = `${emojiSize} ${margin} row-${row} col-${column}`;
+      emojiSpan.className = `${emojiSize} ${margin} row-${row} col-${column}"`;
 
       // Establecer el emoji como contenido del span
       emojiSpan.innerText = emoji;
@@ -40,7 +40,7 @@ const EmojiGrid = ({ categories }) => {
 
   return (
        
-        <div ref={figureRef} className="grid grid-cols-3 gap-2 absolute my-10">
+        <div ref={figureRef} className="grid grid-cols-3 gap-2 absolute left-3 top-8 drop-shadow-[0_5px_5px_rgba(100,100,100,1)]">
             {/* Aquí se agregarán los emojis */}
         </div>
        

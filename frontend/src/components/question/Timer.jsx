@@ -1,37 +1,40 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const Timer = ({ time_for_answer, initialTime, onTimeUp, setTimeLeft }) => {
-  //const [timeLeft, setTimeLeft] = useState(initialTime); // Cambié el tiempo inicial a 10 segundos para que coincida con el ejemplo de Tailwind
+  const [timeLeft, setTimeLeftInternal] = useState(initialTime);
 
   useEffect(() => {
-    if (initialTime <= 0) {
+    if (timeLeft <= 0) {
       onTimeUp();
       return;
     }
 
     const timerId = setInterval(() => {
-      setTimeLeft((prevTimeLeft) => {
-        if (prevTimeLeft === 0) {
+      setTimeLeftInternal((prevTimeLeft) => {
+        if (prevTimeLeft <= 0) {
           clearInterval(timerId);
           onTimeUp();
+          return 0;
         }
-        return prevTimeLeft - 1;
+        const newTimeLeft = prevTimeLeft - 1;
+        return newTimeLeft;
       });
-    }, 1000);
+    }, 1000); // Actualizamos cada segundo para trabajar con valores enteros
 
     return () => clearInterval(timerId);
-  }, [initialTime, onTimeUp, setTimeLeft]);
-  
+  }, [timeLeft, onTimeUp]);
+
   const progressBarStyle = {
-    width: `${(initialTime / time_for_answer) * 100}%`, // Ajusté el valor base a 10 segundos
+    width: `${(timeLeft / time_for_answer) * 100}%`,
     height: '20px',
     backgroundColor: 'bg-primary',
+    transition: 'width 1s linear', // Transición más suave cada segundo
   };
 
   return (
     <div>
       <p className="text-center mt-3">
-        <span>{initialTime}</span>
+        <span>{timeLeft}</span> {/* Mostramos el tiempo como entero */}
       </p>
       <div className="bg-gray-200 h-5 mt-2 rounded-md">
         <div className="h-full bg-blue-500" style={progressBarStyle}></div>

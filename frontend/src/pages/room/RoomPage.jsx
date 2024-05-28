@@ -87,8 +87,8 @@ const RoomPage = () => {
 
   return (
     <div className="flex flex-col items-center sm:min-w-full lg:min-w-min">
-      <div className="grid col-span- mb-4 relative bg-purple-700 rounded-lg p-2">
-      <h1 className="text-3xl font-bold my-8 text-cyan-300">
+      <div className="grid col-span- mb-4 -mt-8 relative bg-purple-700 rounded-lg p-3">
+      <h1 className="text-2xl font-bold my-8 text-cyan-300">
         {roomData && roomData.room ? roomData.room.roomName : <LoadingSpinner />}
       </h1>
       </div>

@@ -3,6 +3,7 @@ import {v2 as cloudinary} from 'cloudinary';
 import streamifier from 'streamifier';
 import Participant from '../models/participant.model.js';
 import Room from '../models/room.model.js';
+import Category from '../models/category.model.js';
 
 // Obtener preguntas de trivial por categoría
 export const getQuestionsByCategory = async (req, res) => {
@@ -213,7 +214,29 @@ export const getParticipantProgress = async (req, res) => {
   }
 };
 
+export const getCategoryFromQuestion = async (req, res) => {
+  const { questionId } = req.params;
+  try {
+    const question = await Question.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: 'Question not found' });
+    }
+    if (!question.category) {
+      return res.status(404).json({ message: 'Category not found for this question' });
+    }
 
+    const category = await Category.findById(question.category);
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    res.status(200).json({ category: category.title });
+    console.log(category.title);
+  } catch (error) {
+    console.error('Error fetching category:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 export const listQuestions = async (req, res) => {
   

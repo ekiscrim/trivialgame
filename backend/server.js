@@ -44,17 +44,18 @@ const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 }
 //parse request from cookie
 app.use(cookieParser());
 
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/rooms", roomRoutes);
-app.use("/api/rooms/:id", questionRoutes);
-app.use("/api/category", categoryRoutes);
-app.use("/api/questions", upload.single('image'), questionRoutes);
-app.use("/api/validate", questionRoutes);
-app.use("/api/room/:roomId", resultsRoutes);
-app.use("/api/room", resultsRoutes);
-app.use("/api/scores", resultsRoutes);
-app.use("/api/participant", questionRoutes);
+app.use("/api/auth", authRoutes);  // Autenticación de usuario
+app.use("/api/users", userRoutes);  // Gestión de usuarios
+app.use("/api/category", categoryRoutes);  // Operaciones relacionadas con categorías
+app.use("/api/questions", upload.single('image'), questionRoutes);  // Operaciones relacionadas con preguntas
+app.use("/api/question", questionRoutes);  // Operaciones específicas de una pregunta
+app.use("/api/validate", questionRoutes);  // Validación de respuestas
+app.use("/api/rooms/:id", questionRoutes);  // Operaciones específicas de una sala de preguntas
+app.use("/api/rooms", roomRoutes);  // Operaciones relacionadas con salas de preguntas
+app.use("/api/participant", questionRoutes);  // Operaciones relacionadas con participantes
+app.use("/api/room/:roomId", resultsRoutes);  // Resultados específicos de una sala
+app.use("/api/room", resultsRoutes);  // Operaciones relacionadas con salas de resultados
+app.use("/api/scores", resultsRoutes);  // Puntuaciones generales
 
 
 //admin

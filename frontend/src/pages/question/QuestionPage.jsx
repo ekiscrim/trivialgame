@@ -36,7 +36,7 @@ const QuestionPage = () => {
   const questionCount = roomData.room.questionCount;
 
   return (
-    <div>
+    <div className="animate-scale-in">
       <Question userId={userId._id} roomId={roomId} categoryIds={categoryIds} questionCount={questionCount} />
     </div>
   );
