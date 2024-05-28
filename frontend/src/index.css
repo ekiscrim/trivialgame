@@ -35,3 +35,76 @@
     animation-name: scaleIn;
     animation-duration: 1s;
   }
+
+
+  /*
+  SCORETABLE
+  */
+
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  gap: 1rem;
+}
+
+.podium-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.podium-item img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+}
+
+.podium-item-1 {
+  order: 2;
+}
+
+.podium-item-2 {
+  order: 1;
+}
+
+.podium-item-3 {
+  order: 3;
+}
+
+.podium-item-1 .podium-rank {
+  font-size: 2rem;
+}
+
+.podium-item-2 .podium-rank {
+  font-size: 1.5rem;
+}
+
+.podium-item-3 .podium-rank {
+  font-size: 1.25rem;
+}
+
+.podium-item-1-margin {
+  margin-left: 0.5rem !important; 
+}
+
+
+.podium-item-3-margin {
+  margin-left: -0.07rem !important; 
+}
+.podium-item-2-margin {
+  margin-left: 0.1rem !important; 
+}
+
+.emoji-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Otros estilos según sea necesario */
+}
+
+.emoji-container > span {
+  position: absolute;
+  /* Estilos adicionales para cada emoji */
+}

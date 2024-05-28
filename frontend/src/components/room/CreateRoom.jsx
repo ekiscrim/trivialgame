@@ -109,7 +109,7 @@ const CreateRoom = () => {
         isOpen={showModal}
         onRequestClose={toggleModal}
         contentLabel="Crear Sala"
-        className="modal-content"
+        className="modal-content animate-scale-in"
         overlayClassName="modal-overlay"
       >
         <div className="pt-1 relative">

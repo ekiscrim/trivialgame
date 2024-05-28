@@ -2,6 +2,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useParams, useNavigate } from 'react-router-dom';
 import ScoresTable from '../../components/score/ScoresTable';
+import SkeletonCard from "../../components/common/SkeletonCard";
+import LoadingSpinner from "../../components/common/LoadingSpinner";
 
 const RoomPage = () => {
   const { id } = useParams();
@@ -60,7 +62,7 @@ const RoomPage = () => {
   const handleStart = () => {
     if (roomData && roomData.room && roomData.room.categories) {
       if (userScoreData && userScoreData.length > 0) {
-        alert("You have already completed this room.");
+        alert("Ya has participado en esta sala");
         return;
       }
       mutate({ userId: userId._id, roomId: roomData.room._id });
@@ -79,19 +81,20 @@ const RoomPage = () => {
   };
 
   if (!roomData || !roomData.room || !roomData.users || !userScoreData) {
-    return <p>Loading room data...</p>;
+    return <SkeletonCard />
   }
 
 
   return (
     <div className="flex flex-col items-center sm:min-w-full lg:min-w-min">
+      <div className="grid col-span- mb-4 relative bg-purple-700 rounded-lg p-2">
       <h1 className="text-3xl font-bold my-8 text-cyan-300">
-        {roomData && roomData.room ? roomData.room.roomName : 'Loading...'}
+        {roomData && roomData.room ? roomData.room.roomName : <LoadingSpinner />}
       </h1>
-      {isLoading && <p className="text-lg">Loading...</p>}
+      </div>
+      {isLoading && <SkeletonCard />}
       {error && <p className="text-lg text-red-500">Error: {error.message}</p>}
       <ScoresTable currentUser={userId._id} />
-
       {roomData && (
         <div className="card w-full  bg-base-100 shadow-xl my-6">
           <div className="card-body">
@@ -110,7 +113,7 @@ const RoomPage = () => {
                   onClick={handleStart}
                   className="btn btn-primary mt-4"
                 >
-                  {isPending ? "Loading..." : "Start"}
+                  {isPending ? "Cargando..." : "Comenzar partida"}
                 </button>
               ) : (
                 <p className="text-red-500 mt-4">Ya has participado.</p>
