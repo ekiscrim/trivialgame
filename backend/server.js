@@ -33,7 +33,7 @@ app.use(express.json({limit: '200mb'})); // to parse req.body
 app.use(express.urlencoded({extendend: false, limit: '50mb'}));//to parse form data (urlencoded)
 
 // Configurar multer para la carga de archivos
-const storage = multer.memoryStorage(); //TODO eliminar en el futuro
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }); // 50MB límite
 
 

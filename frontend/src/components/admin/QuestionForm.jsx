@@ -138,7 +138,7 @@ const QuestionForm = ({ categories, onSubmit }) => {
             image={selectedImage}
             width={250}
             height={250}
-            border={50}
+            border={10}
             color={[255, 255, 255, 0.6]} // RGBA
             scale={1}
             rotate={0}

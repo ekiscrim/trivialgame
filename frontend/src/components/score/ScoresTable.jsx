@@ -58,7 +58,7 @@ const ScoresTable = ({ currentUser }) => {
           const isSecond = index === 1;
           const isThird = index === 2;
 
-          const size = isFirst ? 'w-34 h-34' : 'w-24 h-24';
+          const size = isFirst ? 'w-36 h-36' : 'w-24 h-24';
           const borderColor = isFirst ? 'border-yellow-500' : isSecond ? 'border-gray-400' : 'border-yellow-700';
           const textColor = isFirst ? 'text-yellow-500' : isSecond ? 'text-gray-400' : 'text-yellow-700';
           const emojiSize = isFirst ? 'text-5xl' : isSecond ? 'text-4xl' : 'text-3xl';

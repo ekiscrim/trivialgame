@@ -38,61 +38,53 @@ export const getUserNameById = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-  
-    const {username, currentPassword, newPassword} = req.body;
+	const { username, currentPassword, newPassword } = req.body;
+	const userId = req.user._id;
 
-    let { profileImg } = req.body;
+	try {
+		let user = await User.findById(userId);
+		if (!user) return res.status(404).json({ error: "User no encontrado" });
 
-    const userId = req.user._id;
+		if ((!newPassword && currentPassword) || (!currentPassword && newPassword)) {
+			return res.status(400).json({ error: "Por favor facilita ambas contraseñas la antigua y la nueva" });
+		}
 
-    try {
-        
-        let user = await User.findById(userId);
+		if (currentPassword && newPassword) {
+			const isMatch = await bcrypt.compare(currentPassword, user.password);
+			if (!isMatch) return res.status(400).json({ error: "La contraseña no es correcta" });
+			if (newPassword.length < 6) return res.status(400).json({ error: "La contraseña debe tener 6 caracteres como mínimo" });
 
-        if (!user) return res.status(404).json({error: "User no encontrado"});
+			const salt = await bcrypt.genSalt(10);
+			user.password = await bcrypt.hash(newPassword, salt);
+		}
 
-        if ((!newPassword && currentPassword) ||(!currentPassword && newPassword)) {
-            return res.status(400).json({error: "Por favor facilita ambas contraseñas la antigua y la nueva"});
-        }
-
-        if (currentPassword && newPassword) {
-            const isMatch = await bcrypt.compare(currentPassword, user.password);
-            if (!isMatch) return res.status(400).json({error: "La contraseña no es correcta"});
-            if (newPassword.length < 6) return res.status(400).json({error: "La contraseña debe tener 6 caracteres como minimo"});
-        
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(newPassword, salt);
-        }
-
-		if (profileImg) {
-            //const stream = streamifier.createReadStream(profileImg);
+		if (req.file) {
 			if (user.profileImg) {
-				await cloudinary.uploader.destroy(`profileImg/${user.profileImg.split("/").pop().split(".")[0]}`, result => {
-                    return result;
-                });
+				await cloudinary.uploader.destroy(`profileImg/${user.profileImg.split("/").pop().split(".")[0]}`);
 			}
 
-			const uploadedResponse = await cloudinary.uploader.upload(profileImg, {folder: "profileImg"});
-            profileImg = uploadedResponse.secure_url;
-            //user.profileImg = result.secure_url;
-            //user = await user.save();
-            
-		//});
-        
-        //stream.pipe(uploadedResponse);
-       }
-        user.username = username || user.username;
-        user.profileImg = profileImg || user.profileImg;
-        // TODO aqui irian el resto de campos, que aún hay que pensar
-        //user.profileImg = await profileImg || user.profileImg;
-        user = await user.save();
+			const stream = streamifier.createReadStream(req.file.buffer);
+			const uploadedResponse = await new Promise((resolve, reject) => {
+				const streamLoad = cloudinary.uploader.upload_stream({ folder: "profileImg" }, (error, result) => {
+					if (result) {
+						resolve(result);
+					} else {
+						reject(error);
+					}
+				});
+				stream.pipe(streamLoad);
+			});
 
-        user.password = null; //for not show the password in the response
-        return res.status(200).json(user);
+			user.profileImg = uploadedResponse.secure_url;
+		}
 
-    } catch (error) {
-        console.log("Error en updateUser: ", error.message);
-        res.status(500).json({error: error.message});
-    }
+		user.username = username || user.username;
+		user = await user.save();
+		user.password = null; // No mostrar la contraseña en la respuesta
 
+		return res.status(200).json(user);
+	} catch (error) {
+		console.log("Error en updateUser: ", error.message);
+		return res.status(500).json({ error: error.message });
+	}
 };
