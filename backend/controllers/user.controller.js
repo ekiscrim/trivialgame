@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from 'bcryptjs';
-
+import {v2 as cloudinary} from 'cloudinary';
+import streamifier from 'streamifier';
 
 export const getUserProfile = async (req, res) => {
   
@@ -40,6 +41,8 @@ export const updateUser = async (req, res) => {
   
     const {username, currentPassword, newPassword} = req.body;
 
+    let { profileImg } = req.body;
+
     const userId = req.user._id;
 
     try {
@@ -60,10 +63,28 @@ export const updateUser = async (req, res) => {
             const salt = await bcrypt.genSalt(10);
             user.password = await bcrypt.hash(newPassword, salt);
         }
-        
-        user.username = username || user.username;
-        // TODO aqui irian el resto de campos, que aún hay que pensar
 
+		if (profileImg) {
+            //const stream = streamifier.createReadStream(profileImg);
+			if (user.profileImg) {
+				await cloudinary.uploader.destroy(`profileImg/${user.profileImg.split("/").pop().split(".")[0]}`, result => {
+                    return result;
+                });
+			}
+
+			const uploadedResponse = await cloudinary.uploader.upload(profileImg, {folder: "profileImg"});
+            profileImg = uploadedResponse.secure_url;
+            //user.profileImg = result.secure_url;
+            //user = await user.save();
+            
+		//});
+        
+        //stream.pipe(uploadedResponse);
+       }
+        user.username = username || user.username;
+        user.profileImg = profileImg || user.profileImg;
+        // TODO aqui irian el resto de campos, que aún hay que pensar
+        //user.profileImg = await profileImg || user.profileImg;
         user = await user.save();
 
         user.password = null; //for not show the password in the response

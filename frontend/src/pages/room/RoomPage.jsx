@@ -1,10 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import ScoresTable from '../../components/score/ScoresTable';
 import SkeletonCard from "../../components/common/SkeletonCard";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
-
+import { HiArrowRightStartOnRectangle } from "react-icons/hi2";
 const RoomPage = () => {
   const { id } = useParams();
   const { data: userId } = useQuery({ queryKey: ["authUser"] });
@@ -81,45 +81,57 @@ const RoomPage = () => {
   };
 
   if (!roomData || !roomData.room || !roomData.users || !userScoreData) {
-    return <SkeletonCard />
+    return <LoadingSpinner />
   }
 
 
   return (
-    <div className="flex flex-col items-center sm:min-w-full lg:min-w-min">
-      <div className="grid col-span- mb-4 -mt-8 relative bg-purple-700 rounded-lg p-3">
-      <h1 className="text-2xl font-bold my-8 text-cyan-300">
-        {roomData && roomData.room ? roomData.room.roomName : <LoadingSpinner />}
-      </h1>
+    <div className=" min-w-full h-full">
+      <div className="w-full bg-purple-700 pb-1 -mt-12 rounded-lg top-0">
+        <h1 className="text-2xl font-bold my-4 text-cyan-300 text-center pt-7">
+          {roomData && roomData.room ? roomData.room.roomName : <LoadingSpinner />}
+        </h1>
       </div>
       {isLoading && <SkeletonCard />}
       {error && <p className="text-lg text-red-500">Error: {error.message}</p>}
+      <div className="lg:w-1/2 p-4 mx-auto text-center">
+        {roomData.room.status === 'finished' ? (
+                <p className="text-red-500 mt-4">La sala ha terminado.</p>
+              ) : (
+                <>
+                {canStartGame() ? (
+                  <button
+                    onClick={handleStart}
+                    className="btn btn-primary mt-4 w-full lg:w-96"
+                  >
+                    {isPending ? "Cargando..." : <HiArrowRightStartOnRectangle />} Comenzar Partida</button>
+                ) : (
+                  <div role="alert" className="alert alert-success text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      <span>Ya has participado!</span>
+                  </div>
+                )}
+                </>
+              )}
+      </div>
+
       <ScoresTable currentUser={userId._id} />
       {roomData && (
-        <div className="card w-full  bg-base-100 shadow-xl my-6">
+        <div className="card lg:card sm:w-1/4 lg:w-1/5 lg:p-4 mx-auto text-center bg-base-100 shadow-xl my-6 sticky top-0 left-0 right-0">
           <div className="card-body">
             <h2 className="card-title">Se han unido a la sala:</h2>
             <ul className="list-disc list-inside">
               {roomData.users.map((user) => (
-                <li key={user._id} className="text-lg">{user.username}</li>
+                <Link key={user._id} to={`/profile/${user.username}`}>
+                <div key={user._id} className='avatar bg-purple-500 rounded-lg p-1 flex grid-flow-row space-x-1 items-center mb-2  hover:bg-cyan-600'>
+                <div className='w-8 rounded-full relative ml-2 mr-1 '>
+                  <img src={user?.profileImg || "/avatar-placeholder.png"} alt="Profile" />                  
+                </div>
+                <li key={user._id} className="text-sm list-none text-cyan-50 font-semibold">@{user.username}</li>
+              </div>
+              </Link>
               ))}
             </ul>
-            {roomData.room.status === 'finished' ? (
-              <p className="text-red-500 mt-4">La sala ha terminado.</p>
-            ) : (
-              <>
-              {canStartGame() ? (
-                <button
-                  onClick={handleStart}
-                  className="btn btn-primary mt-4"
-                >
-                  {isPending ? "Cargando..." : "Comenzar partida"}
-                </button>
-              ) : (
-                <p className="text-red-500 mt-4">Ya has participado.</p>
-              )}
-              </>
-            )}
           </div>
         </div>
       )}

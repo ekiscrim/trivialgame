@@ -3,7 +3,7 @@ import Score from "../models/score.model.js"
 
 export const getResults = async (req, res) => {
     try {
-        const scores = await Score.find({ roomId: req.params.roomId }).populate('user', 'username').sort({ score: -1 });
+        const scores = await Score.find({ roomId: req.params.roomId }).populate('user', 'username profileImg').sort({ score: -1 });
         res.status(200).json(scores);
       } catch (error) {
         console.log(error)

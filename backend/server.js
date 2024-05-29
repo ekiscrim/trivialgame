@@ -13,7 +13,7 @@ import adminRoutes from "./routes/admin/admin.routes.js"
 
 import connectMongoDB from "./db/connectMongoDB.js";
 import {v2 as cloudinary} from "cloudinary";
-import bodyParser from "body-parser";
+import bodyParser from "body-parser"; // TODO eliminar en el futuro
 import multer from "multer"
 
 dotenv.config();
@@ -29,14 +29,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 //middleware 
-app.use(express.json()); // to parse req.body
-app.use(express.urlencoded({extended: true})); //to parse form data (urlencoded)
-
-app.use(bodyParser.json({ limit: '200mb' }));
-app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
+app.use(express.json({limit: '200mb'})); // to parse req.body
+app.use(express.urlencoded({extendend: false, limit: '50mb'}));//to parse form data (urlencoded)
 
 // Configurar multer para la carga de archivos
-const storage = multer.memoryStorage();
+const storage = multer.memoryStorage(); //TODO eliminar en el futuro
 const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }); // 50MB límite
 
 
@@ -45,7 +42,7 @@ const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 }
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);  // Autenticación de usuario
-app.use("/api/users", userRoutes);  // Gestión de usuarios
+app.use("/api/users", upload.single('profileImg'), userRoutes);  // Gestión de usuarios
 app.use("/api/category", categoryRoutes);  // Operaciones relacionadas con categorías
 app.use("/api/questions", upload.single('image'), questionRoutes);  // Operaciones relacionadas con preguntas
 app.use("/api/question", questionRoutes);  // Operaciones específicas de una pregunta

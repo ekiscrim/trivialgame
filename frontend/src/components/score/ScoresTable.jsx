@@ -5,6 +5,8 @@ import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import SkeletonCard from "../common/SkeletonCard";
 
+
+
 const fetchScores = async (roomId) => {
   const id = roomId.id || roomId.roomId;
   const response = await fetch(`/api/room/${id}/results`);
@@ -31,7 +33,7 @@ const ScoresTable = ({ currentUser }) => {
   }
 
   if (!scores || scores.length === 0) {
-    return <p className="text-cyan-300">No hay puntuaciones registradas</p>;
+    return <div className=" w-full"><p className="text-cyan-300 text-center">No hay puntuaciones registradas</p></div>;
   }
 
   // Encuentra la entrada del usuario actual
@@ -56,16 +58,16 @@ const ScoresTable = ({ currentUser }) => {
           const isSecond = index === 1;
           const isThird = index === 2;
 
-          const size = isFirst ? 'w-36' : 'w-28';
+          const size = isFirst ? 'w-34 h-34' : 'w-24 h-24';
           const borderColor = isFirst ? 'border-yellow-500' : isSecond ? 'border-gray-400' : 'border-yellow-700';
           const textColor = isFirst ? 'text-yellow-500' : isSecond ? 'text-gray-400' : 'text-yellow-700';
           const emojiSize = isFirst ? 'text-5xl' : isSecond ? 'text-4xl' : 'text-3xl';
           const scoreSize = isFirst ? 'text-6xl' : 'text-4xl';
 
           return (
-            <div key={index} className={`flex flex-col items-center ${isFirst ? 'order-2 podium-item-2-margin' : isSecond ? 'order-1 podium-item-1-margin' : 'order-3 podium-item-3-margin'}`}>
-              <div className={`rounded-full flex justify-center items-center border-8 ${borderColor} ${size}`}>
-                <img src={"/avatar-placeholder.png"} alt="Profile" className={`rounded-full  ${size}`} />
+            <div key={index} className={`flex flex-col items-center ${isFirst ? 'order-2 podium-item-2-margin' : isSecond ? 'order-1 podium-item-1-margin' : 'order-3 podium-item-3-margin pr-2'}`}>
+              <div className={`rounded-full flex justify-center items-center border-8 ${borderColor}`}>
+                <img src={scoreEntry.user.profileImg || "/avatar-placeholder.png"} alt="Profile" className={`rounded-full  ${size}`} />
               </div>
               <div className={`mt-2 text-2xl font-bold ${textColor}`}>
                 {scoreEntry.user.username}

@@ -86,7 +86,7 @@ export const createRoom = async (req, res) => {
 export const getRoomCreator = async (req, res) => {
     const { roomId } = req.params;
     try {
-        const room = await Room.findById(roomId).populate('users', 'username');
+        const room = await Room.findById(roomId).populate('users', 'username profileImg');
 
         if (!room) {
             return res.status(404).json({ error: 'Room not found' });

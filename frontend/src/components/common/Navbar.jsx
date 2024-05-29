@@ -38,7 +38,7 @@ const Navbar = ({authUser}) => {
   const { data: authUserData } = useQuery({ queryKey: ["authUser"] });
 
   return (
-    <nav className='w-full bg-purple-700 p-3 fixed top-0 z-50'>
+    <nav className='w-full bg-purple-700 p-3 fixed z-50 top-0'>
       <div className='max-w-6xl mx-auto flex justify-between items-center'>
         <div className='flex items-center gap-4'>
           <Link to='/' className='flex items-center'>
@@ -83,24 +83,30 @@ const Navbar = ({authUser}) => {
           </ul>
         </div>
         {authUserData && (
-          <div className='flex items-center gap-4'>
-            <div className='avatar'>
-              <div className='w-8 rounded-full'>
-                <img src={authUserData?.profileImg || "/avatar-placeholder.png"} alt="Profile" />
+          <div className="flex">
+          <Link to={`/profile/${authUserData.username}`} className='mt-auto  flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full'>
+            <div className='flex items-center gap-4'>
+              <div className='avatar'>
+                <div className='w-8 rounded-full'>
+                  <img src={authUserData?.profileImg || "/avatar-placeholder.png"} alt="Profile" />
+                </div>
               </div>
-            </div>
-            <div className='hidden md:block'>
-              <p className='text-white font-bold text-sm w-20 truncate'>{authUserData?.fullName}</p>
-              <p className='text-white text-sm'>@{authUserData?.username}</p>
-            </div>
-            <BiLogOut
-              className='w-6 h-6 text-white cursor-pointer hover:text-violet-200 transition-all'
-              onClick={(e) => {
-                e.preventDefault();
-                logoutMutate();
-              }}
-            />
+              <div className='hidden md:block'>
+                <p className='text-white text-sm'>@{authUserData?.username}</p>
+              </div>
           </div>
+          </Link>
+            <div className="flex items-center">
+              <BiLogOut
+                className='w-6 h-6 text-white cursor-pointer hover:text-violet-200 transition-all'
+                onClick={(e) => {
+                  e.preventDefault();
+                  logoutMutate();
+                }}
+              />
+             </div> 
+         </div>
+          
         )}
       </div>
     </nav>
