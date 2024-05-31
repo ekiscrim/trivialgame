@@ -40,6 +40,25 @@ const Question = ({ roomId, userId }) => {
     }
   };
 
+  const submitScore = async (scoreParam) => {
+    try {
+      console.log("Score being submitted:", score); // Log para verificar el puntaje
+      await fetch(`/api/room/${roomId}/score`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, score: scoreParam, roomId }),
+      });
+
+      setFinalScoreExists(true);
+      window.location.href = `/rooms/${roomId}/`;
+    } catch (error) {
+      console.error('Error submitting score:', error);
+    }
+  };
+
+
   useEffect(() => {
     const fetchData = async () => {
       setIsCategoryLoading(true);      
@@ -88,20 +107,22 @@ const Question = ({ roomId, userId }) => {
 
   const handleTimeUp = async () => {
     if (selectedOption) return; // Prevent marking as incorrect if already answered
-    await handleAnswer(currentQuestion._id, 'no-time');
-    setAnswerStatus('incorrect');
     setIsTimeUp(true);
+    setAnswerStatus('incorrect');
+    await handleAnswer(currentQuestion._id, 'no-time');
+
     setTimeout(() => {
       setSelectedOption(null);
       setAnswerStatus(null);
-      setCurrentQuestionIndex((prevIndex) => prevIndex + 1); // Always increment currentQuestionIndex
+      //setCurrentQuestionIndex((prevIndex) => prevIndex + 1); // Always increment currentQuestionIndex
       setIsTimeUp(false);
     }, 1000); // Wait 1 second before showing the next question
   };
 
   const handleAnswer = async (questionId, option) => {
-    if (selectedOption || isTimeUp) return;
 
+    //if (selectedOption || isTimeUp) setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+    if (selectedOption || isTimeUp) return;
     const res = await fetch('/api/validate/answer', {
       method: 'POST',
       headers: {
@@ -126,8 +147,13 @@ const Question = ({ roomId, userId }) => {
       setScore((prevScore) => prevScore + basePoints + timeBonus);
     }
 
+    await updateStatistics(userId, currentCategory, data.isCorrect);
+
     if (data.hasCompleted) {
-      submitScore();
+      setTimeout(() => {
+         setScore(data.participant.score);
+         submitScore(data.participant.score); // Llama a submitScore() después de mostrar la respuesta de la última pregunta
+      }, 1000); // Espera 1 segundo antes de llamar a submitScore()
     } else {
       setTimeout(() => {
         setSelectedOption(null);
@@ -135,6 +161,7 @@ const Question = ({ roomId, userId }) => {
         setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
         setIsTimeUp(false);
         setShowOptions(false);
+        setTimeLeft(TIME_FOR_QUESTION);
       }, 1000);
     }
 
@@ -142,6 +169,21 @@ const Question = ({ roomId, userId }) => {
       setTimeLeft(TIME_FOR_QUESTION);
     }
   };
+
+  const updateStatistics = async (userId, category, isCorrect) => {
+    try {
+      await fetch('/api/statistic/updateStatistics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, category, isCorrect }),
+      });
+    } catch (error) {
+      console.error('Failed to update user statistics', error);
+    }
+  };
+
 
   useEffect(() => {
     const fetchParticipantProgress = async () => {
@@ -167,22 +209,6 @@ const Question = ({ roomId, userId }) => {
     fetchParticipantProgress();
   }, [userId, roomId]);
 
-  const submitScore = async () => {
-    try {
-      await fetch(`/api/room/${roomId}/score`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId, score, roomId }),
-      });
-
-      setFinalScoreExists(true);
-      window.location.href = `/rooms/${roomId}/`;
-    } catch (error) {
-      console.error('Error submitting score:', error);
-    }
-  };
 
   if (isLoadingQuestion) return <SkeletonCard />;
   if (!shuffleComplete && currentQuestionIndex === 0) return <LoadingSpinner />;

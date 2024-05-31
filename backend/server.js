@@ -8,6 +8,7 @@ import roomRoutes from "./routes/room.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
 import questionRoutes from "./routes/question.routes.js";
 import resultsRoutes from "./routes/score.routes.js";
+import statisticsRoutes from "./routes/user.statistic.routes.js"; 
 
 import adminRoutes from "./routes/admin/admin.routes.js"
 
@@ -53,7 +54,7 @@ app.use("/api/participant", questionRoutes);  // Operaciones relacionadas con pa
 app.use("/api/room/:roomId", resultsRoutes);  // Resultados específicos de una sala
 app.use("/api/room", resultsRoutes);  // Operaciones relacionadas con salas de resultados
 app.use("/api/scores", resultsRoutes);  // Puntuaciones generales
-
+app.use("/api/statistic", statisticsRoutes) //Estadisticas de usuario
 
 //admin
 app.use('/api/admin', adminRoutes);
