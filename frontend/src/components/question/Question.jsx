@@ -172,6 +172,8 @@ const Question = ({ roomId, userId }) => {
 
   const updateStatistics = async (userId, category, isCorrect) => {
     try {
+
+
       await fetch('/api/statistic/updateStatistics', {
         method: 'POST',
         headers: {

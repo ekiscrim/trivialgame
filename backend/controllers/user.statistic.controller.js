@@ -1,14 +1,27 @@
 import UserStatistics from "../models/user.statistic.model.js";
-import User from "../models/user.model.js";
+import mongoose from "mongoose";
 
 export const updateUserStatistics = async (req, res) => {
     const { userId, category, isCorrect } = req.body;
   
     try {
-      let userStats = await UserStatistics.findOne({ userId });
+
+      // Convertir el userId de string a ObjectId
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ error: 'Invalid user ID' });
+      }
+
+      // Convertir el userId de string a ObjectId
+      const objectId = mongoose.Types.ObjectId.createFromHexString(userId);
+
+      if (!objectId) {
+        return res.status(400).json({ error: 'User ID is required' });
+      }
+
+      let userStats = await UserStatistics.findOne({ userId: objectId });
   
       if (!userStats) {
-        userStats = new UserStatistics({ userId, categories: [] });
+        userStats = new UserStatistics({ userId: objectId, categories: [] });
       }
   
       let categoryStats = userStats.categories.find((cat) => cat.category === category);
