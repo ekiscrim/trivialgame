@@ -13,7 +13,7 @@ import AdminPage from "./pages/admin/AdminPage";
 import ProtectedRoute from "./components/admin/ProtectedRoutes";
 import Modal from 'react-modal';
 import ResultsPage from "./pages/results/ResultsPage";
-
+import useDeviceDetection from "./hooks/useDeviceDetection";
 // Establecer el elemento raíz para Modal
 Modal.setAppElement('#root');
 
@@ -34,6 +34,8 @@ function App() {
     retry: false
   });
 
+  const device = useDeviceDetection();
+
   if (isLoading) {
     return (
       <div className="h-screen flex justify-center items-center">
@@ -43,8 +45,8 @@ function App() {
   }
 
   return (
-    <div className='grid place-items-center min-h-screen pt-20 bg-purple-950'>
-      {authUserQuery && <Navbar />}
+        <div className={`grid place-items-center min-h-screen  bg-purple-950 ${device === 'Mobile' ? '' : 'pt-20'}`}>
+
       <Routes>
         <Route path='/' element={authUserQuery ? <HomePage /> : <Navigate to="/login" />} />
         <Route path='/register' element={!authUserQuery ? <RegisterPage /> : <Navigate to="/" />} />
@@ -57,6 +59,7 @@ function App() {
         <Route path='/admin' element={<ProtectedRoute element={AdminPage} authUser={authUserQuery} adminOnly />} />
       </Routes>
       <Toaster />
+      {authUserQuery && <Navbar device={device} />}
     </div>
   );
 }

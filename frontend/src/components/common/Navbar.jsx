@@ -6,7 +6,7 @@ import { BiLogOut } from "react-icons/bi";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import Logo from "../common/Logo"
-const Navbar = ({authUser}) => {
+const Navbar = ({authUser, device}) => {
   const queryClient = useQueryClient();
 
   const { mutate: logoutMutate } = useMutation({
@@ -38,7 +38,8 @@ const Navbar = ({authUser}) => {
   const { data: authUserData } = useQuery({ queryKey: ["authUser"] });
 
   return (
-    <nav className='w-full bg-purple-700 p-3 fixed z-50 top-0'>
+<nav className={`w-full bg-purple-700 p-3 fixed bottom-0 z-50 ${device === 'Mobile' ? 'sm:relative sm:z-50 ' : 'xl:top-0 max-h-16 xl:z-50'}`}>
+
       <div className='max-w-6xl mx-auto flex justify-between items-center'>
         <div className='flex items-center gap-4'>
           <Link to='/' className='flex items-center'>

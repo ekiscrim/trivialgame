@@ -86,8 +86,8 @@ const RoomPage = () => {
 
 
   return (
-    <div className=" min-w-full h-full">
-      <div className="w-full bg-purple-700 pb-1 -mt-12 rounded-lg top-0">
+    <div className=" min-w-full">
+      <div className="w-full bg-purple-700 pb-1 -mt-3 rounded-lg top-0">
         <h1 className="text-2xl font-bold my-4 text-cyan-300 text-center pt-7">
           {roomData && roomData.room ? roomData.room.roomName : <LoadingSpinner />}
         </h1>

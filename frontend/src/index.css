@@ -3,6 +3,31 @@
 @tailwind utilities;
 
 
+
+@media (max-width: 768px) {
+  /* Estilos específicos para dispositivos móviles */
+  .navbar-mobile {
+    display: block !important;
+  }
+
+  .navbar-desktop {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  /* Estilos específicos para dispositivos de escritorio */
+  .navbar-mobile {
+    display: none !important;
+  }
+
+  .navbar-desktop {
+    display: block !important;
+  }
+}
+
+
+
 .modal-overlay {
     position: fixed;
     top: 0;
