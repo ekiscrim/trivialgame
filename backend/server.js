@@ -17,6 +17,9 @@ import {v2 as cloudinary} from "cloudinary";
 import bodyParser from "body-parser"; // TODO eliminar en el futuro
 import multer from "multer"
 
+
+import './tasks/update.room.status.cron.js'; // Importar el cron job para que se inicie
+
 dotenv.config();
 
 cloudinary.config({

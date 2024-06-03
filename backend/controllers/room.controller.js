@@ -6,18 +6,18 @@ import User from "../models/user.model.js";
 export const listRooms = async (req, res) => {
     const page = parseInt(req.query.page) || 1; // Obtener el número de página desde la consulta o establecerlo en 1 por defecto
     const pageSize = parseInt(req.query.pageSize) || 10; // Obtener el tamaño de página desde la consulta o establecerlo en 10 por defecto
-
+    const status = req.query.status || 'waiting';
     try {
-        const totalCount = await Room.countDocuments({ status: 'waiting' }); // Obtener el número total de salas
+        const totalCount = await Room.countDocuments({ status }); // Obtener el número total de salas
         const totalPages = Math.ceil(totalCount / pageSize); // Calcular el número total de páginas
         const skip = (page - 1) * pageSize; // Calcular el índice de inicio para la consulta
         
-        const rooms = await Room.find({ status: 'waiting' })
+        const rooms = await Room.find({ status })
             .sort([["createdAt", -1]])
             .skip(skip) // Saltar las salas anteriores en la página actual
             .limit(pageSize); // Limitar el número de salas por página
 
-        if (!rooms || rooms.length === 0) return res.status(404).json({ error: "No hay Salas que listar" });
+        if (!rooms || rooms.length === 0) return res.status(404).json({ error: "No hay Salas que listar. Crea una sala y diviértete" });
         const hasMore = page < totalPages;
         
         //console.log("Datos enviados:", { rooms, totalPages, currentPage: page, pageSize, totalCount, hasMore }); // Agregar el log aquí
@@ -200,3 +200,26 @@ export const startRoom = async (req, res) => {
         res.status(500).json({error: error.message});
     }
 };
+
+export const updateRoomStatus = async (req, res) => {
+    const { roomId } = req.params;
+    const { status } = req.body;
+  
+    if (!['waiting', 'in-progress', 'finished'].includes(status)) {
+      return res.status(400).json({ error: 'Estado inválido' });
+    }
+  
+    try {
+      const room = await Room.findById(roomId);
+      if (!room) {
+        return res.status(404).json({ error: 'Sala no encontrada' });
+      }
+  
+      room.status = status;
+      await room.save();
+  
+      res.status(200).json({ message: 'Estado de la sala actualizado', room });
+    } catch (error) {
+      res.status(500).json({ error: 'Error actualizando el estado de la sala' });
+    }
+  };

@@ -8,6 +8,8 @@ import { HiClock, HiEye, HiOutlineQuestionMarkCircle, HiOutlineTag, HiOutlineUse
 import { HiArrowRightStartOnRectangle, HiMiniTableCells, HiMiniUserGroup } from "react-icons/hi2";
 import { UserIcon } from "@heroicons/react/solid";
 import EmojiGrid from "../categories/EmojiGrid"
+import { HiLockClosed } from "react-icons/hi2";
+
 const fetchUserScore = async (roomId, userId) => {
   const res = await fetch(`/api/scores/${roomId}/${userId}`);
   if (!res.ok) throw new Error(`Failed to fetch score for room ${roomId}`);
@@ -26,6 +28,26 @@ const fetchRoomCreator = async (roomId) => {
   if (!response.ok) throw new Error('Failed to fetch room creator');
   return response.json();
 };
+
+const updateRoomStatus = async (roomId, status) => {
+  try {
+    const res = await fetch(`/api/rooms/${roomId}/status`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    if (!res.ok) {
+      throw new Error('Error actualizando el estado de la sala');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+
 
 const getBackgroundColor = (categories) => {
   if (!categories || categories.length === 0) {
@@ -84,6 +106,19 @@ const RoomCard = ({ room, userId }) => {
 
   const timeLeft = useCountdown(new Date(room.startTime).getTime() + room.duration);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (timeLeft <= 0) {
+        updateRoomStatus(room._id, 'finished')
+          .then(response => console.log('Room status updated:', response))
+          .catch(error => console.error('Error updating room status:', error));
+      }
+    }, 60000); // Verificar cada minuto
+
+    return () => clearInterval(interval);
+  }, [timeLeft, room._id]);
+
+
   if (isScoreLoading || isCategoriesLoading || isCreatorLoading) return <SkeletonCard />;
   if (scoreError) return <p>Error al cargar los datos de puntuación.</p>;
   if (categoriesError) return <p>Error al cargar las categorías.</p>;
@@ -134,8 +169,13 @@ const RoomCard = ({ room, userId }) => {
             </>
           )}
   
-          <div className="flex items-center mb-2">
-            <HiClock className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Tiempo restante: <strong>{formatTimeLeft(timeLeft)}</strong></span>
+          <div className="items-center text-center mb-2">
+            
+            <span className="items-center text-center w-full">
+              {timeLeft > 0 && <HiClock className="w-5 h-5 mr-1 text-gray-500" /> && `Tiempo restante: `}
+              {timeLeft > 0 &&  <strong>{formatTimeLeft(timeLeft)}</strong>}
+              {timeLeft < 0 && <HiLockClosed /> && <strong>Sala cerrada</strong>}
+            </span>
           </div>
           <div className="flex items-center mb-2">
             <UserIcon className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Creador de la sala:</span> <strong>{creatorData.creatorUsername}</strong>
