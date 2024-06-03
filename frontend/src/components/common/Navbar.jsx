@@ -44,7 +44,7 @@ const Navbar = ({authUser, device}) => {
         <div className='flex items-center gap-4'>
           <Link to='/' className='flex items-center'>
             <Logo />
-            <span className='text-white text-2xl font-bold hidden sm:flex ml-2'>TRIVIALITE</span>
+            <span className='text-white text-3xl font-bold hidden sm:flex ml-2'>TRIVIALITE</span>
           </Link>
           <ul className='flex items-center gap-4'>
             <li>

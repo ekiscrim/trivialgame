@@ -111,9 +111,9 @@ const RoomPage = () => {
 
 
   return (
-<div className="min-w-full h-full">
-  <div className="bg-purple-700 pb-4 -mt-8 rounded-lg">
-    <h1 className="text-2xl font-bold my-4 text-cyan-300 text-center pt-7">
+<div className="min-w-full h-full mb-20">
+  <div className="bg-purple-700 pb-4 rounded-lg">
+    <h1 className="text-2xl font-bold my-4 text-cyan-300 text-center pt-16">
       Sala: {roomData && roomData.room ? roomData.room.roomName : <LoadingSpinner />}
     </h1>
     <div className="flex items-center justify-center -mt-5">
@@ -128,7 +128,7 @@ const RoomPage = () => {
     </span>
     <div className='avatar ml-2'>
     <div className='w-8 h-8 rounded-full'>
-      <img src={creatorData ? creatorData.profileImg : <LoadingSpinner />} alt="Avatar de Usuario" />
+      <img src={creatorData ? creatorData.profileImg || '/avatar-placeholder.png' : <LoadingSpinner />} alt="Avatar de Usuario" />
     </div>
     </div>
   </div>

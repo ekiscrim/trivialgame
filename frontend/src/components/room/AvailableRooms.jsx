@@ -100,9 +100,9 @@ const AvailableRooms = () => {
               <div className="grid col-span-1 relative">
                 <h1 className="text-2xl lg:font-semibold mb-6 text-center uppercase font-semibold text-cyan-300">{status === 'waiting' ? 'Salas abiertas' : 'Salas cerradas'}</h1>
               </div>
-              <div className="flex flex-wrap justify-center gap-6 xl:mt-6 ml-2 mr-2 animate-scale-in">
+              <div className="flex flex-wrap flex items-stretch justify-center gap-6 xl:mt-6 ml-2 mr-2 animate-scale-in">
                 {allRooms.map((room, index) => (
-                  <div key={index} className="w-80 relative overflow-hidden rounded-lg shadow-lg transition-transform duration-300 transform hover:scale-105">
+                  <div key={index} className="w-80 flex-grow relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
                     <RoomCard key={index} room={room} userId={userId} />
                   </div>
                 ))}

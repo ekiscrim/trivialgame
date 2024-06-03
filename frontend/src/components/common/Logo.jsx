@@ -5,8 +5,8 @@ const Logo = (props) => (
     xmlns:bx="https://boxy-svg.com"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 500 500"
-    width="2em"
-    height="2em"
+    width="40"
+    height="40"
     {...props}
   >
     <defs>
