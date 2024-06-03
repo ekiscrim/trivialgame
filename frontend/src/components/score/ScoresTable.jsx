@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
@@ -66,9 +66,11 @@ const ScoresTable = ({ currentUser }) => {
 
           return (
             <div key={index} className={`flex flex-col items-center ${isFirst ? 'order-2 podium-item-2-margin' : isSecond ? 'order-1 podium-item-1-margin' : 'order-3 podium-item-3-margin pr-2'}`}>
-              <div className={`rounded-full flex justify-center items-center border-8 ${borderColor}`}>
-                <img src={scoreEntry.user.profileImg || "/avatar-placeholder.png"} alt="Profile" className={`rounded-full  ${size}`} />
-              </div>
+              <Link to={`/profile/${scoreEntry.user.username}`}>
+                <div className={`rounded-full flex justify-center items-center border-8 ${borderColor}`}>
+                  <img src={scoreEntry.user.profileImg || "/avatar-placeholder.png"} alt="Profile" className={`rounded-full  ${size}`} />
+                </div>
+              </Link>
               <div className={`mt-2 text-2xl font-bold ${textColor}`}>
                 {scoreEntry.user.username}
               </div>
