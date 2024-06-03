@@ -93,8 +93,9 @@ export const getRoomCreator = async (req, res) => {
         }
 
         const creatorUsername = room.users.length > 0 ? room.users[0].username : 'Unknown';
+        const profileImg = room.users.length > 0 ? room.users[0].profileImg : '/avatar-placeholder.png';
 
-        res.status(200).json({ creatorUsername });
+        res.status(200).json({ creatorUsername, profileImg });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

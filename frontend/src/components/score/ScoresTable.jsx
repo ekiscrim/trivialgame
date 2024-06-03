@@ -25,7 +25,7 @@ const ScoresTable = ({ currentUser }) => {
   });
 
   if (isLoading) {
-    return <SkeletonCard />
+    return <LoadingSpinner />
   }
 
   if (isError) {

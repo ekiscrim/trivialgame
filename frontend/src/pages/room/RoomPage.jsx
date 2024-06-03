@@ -8,7 +8,9 @@ import { HiArrowRightStartOnRectangle } from "react-icons/hi2";
 const RoomPage = () => {
   const { id } = useParams();
   const { data: userId } = useQuery({ queryKey: ["authUser"] });
+
   const navigate = useNavigate();
+
 
   const { data: roomData, isLoading, error } = useQuery({
     queryKey: ["roomData", id],
@@ -19,6 +21,32 @@ const RoomPage = () => {
       return res.json();
     },
   });
+
+  const { data: creatorData, isLoading: isCreatorLoading, error: creatorError } = useQuery({
+    queryKey: ["roomCreator", id],
+    queryFn: () => fetchRoomCreator(id),
+  });
+
+
+  const fetchRoomCreator = async (roomId) => {
+    const response = await fetch(`/api/rooms/${roomId}/creator`);
+    if (!response.ok) throw new Error('Failed to fetch room creator');
+    return response.json();
+  };
+  
+
+  const fetchCategories = async (roomId) => {
+    const res = await fetch(`/api/rooms/${roomId}/categories`);
+    if (!res.ok) throw new Error(`Failed to fetch categories for room ${roomId}`);
+    const data = await res.json();
+    return data.categories || [];
+  };
+
+  const { data: categories, isLoading: isCategoriesLoading, error: categoriesError } = useQuery({
+    queryKey: ["categories", id],
+    queryFn: () => fetchCategories(id),
+  });
+
 
   const { data: userScoreData, isLoading: isLoadingScore } = useQuery({
     queryKey: ["userScoreData", id, userId],
@@ -40,9 +68,6 @@ const RoomPage = () => {
     const timeRemaining = roomData.room.duration - timeElapsed;
     return (!userInRoom || !userScoreData.hasScore) && (roomData.room.status === 'waiting' && timeRemaining > 0);
   };
-
-
-
 
   const { mutate, isError, isPending } = useMutation({
     mutationFn: async ({ userId, roomId }) => {
@@ -86,13 +111,35 @@ const RoomPage = () => {
 
 
   return (
-    <div className=" min-w-full">
-      <div className="w-full bg-purple-700 pb-1 -mt-3 rounded-lg top-0">
-        <h1 className="text-2xl font-bold my-4 text-cyan-300 text-center pt-7">
-          {roomData && roomData.room ? roomData.room.roomName : <LoadingSpinner />}
-        </h1>
-      </div>
-      {isLoading && <SkeletonCard />}
+<div className="min-w-full h-full">
+  <div className="bg-purple-700 pb-4 -mt-8 rounded-lg">
+    <h1 className="text-2xl font-bold my-4 text-cyan-300 text-center pt-7">
+      Sala: {roomData && roomData.room ? roomData.room.roomName : <LoadingSpinner />}
+    </h1>
+    <div className="flex items-center justify-center -mt-5">
+    <span className=" font-self my-4 text-cyan-300">
+      Creada por: {creatorData ? (
+        <Link to={`/profile/${creatorData.username}`} className="text-cyan-300 hover:text-cyan-400">
+          {creatorData.creatorUsername}
+        </Link>
+      ) : (
+        <LoadingSpinner />
+      )}
+    </span>
+    <div className='avatar ml-2'>
+    <div className='w-8 h-8 rounded-full'>
+      <img src={creatorData ? creatorData.profileImg : <LoadingSpinner />} alt="Avatar de Usuario" />
+    </div>
+    </div>
+  </div>
+      <div className="flex flex-wrap justify-center gap-2 px-4">
+      {categories && categories.map((category, index) => (
+        <div key={index} className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-full px-3 py-1 text-sm text-white">{category}</div>
+      ))}
+    </div>
+  </div>
+
+      {isLoading && <LoadingSpinner />}
       {error && <p className="text-lg text-red-500">Error: {error.message}</p>}
       <div className="lg:w-1/2 p-4 mx-auto text-center">
         {roomData.room.status === 'finished' ? (
