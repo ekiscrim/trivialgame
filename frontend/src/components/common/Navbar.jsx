@@ -38,7 +38,7 @@ const Navbar = ({authUser, device}) => {
   const { data: authUserData } = useQuery({ queryKey: ["authUser"] });
 
   return (
-<nav className={`w-full bg-purple-700 p-3 fixed bottom-0 z-50 ${device === 'Mobile' ? 'sm:relative sm:z-50 ' : 'xl:top-0 max-h-16 xl:z-50'}`}>
+<nav className={`w-full bg-purple-700 p-3  bottom-0 z-50 ${device === 'Mobile' ? 'fixed z-50 ' : 'fixed top-0 max-h-16 z-50'}`}>
 
       <div className='max-w-6xl mx-auto flex justify-between items-center'>
         <div className='flex items-center gap-4'>

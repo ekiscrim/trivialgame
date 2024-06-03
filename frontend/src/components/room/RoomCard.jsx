@@ -135,7 +135,7 @@ const RoomCard = ({ room, userId }) => {
 
   return (
     <Link to={`rooms/${room._id}`} className="card-link">
-      <div className="card w-96 bg-base-100 shadow-xl" style={{ maxWidth: "100%" }}>
+      <div className="card w-96 bg-base-100 shadow-xl mb-20" style={{ maxWidth: "100%" }}>
         <figure className={`items-center relative flex`} style={{ background: backgroundColor }}>
           <img
             className="w-full object-cover"
