@@ -33,13 +33,13 @@ const Statistics = ({ userId }) => {
   return (
 
 <div>
-  <div className="grid col-span-1 mb-4 relative bg-purple-700">
+  <div className="grid col-span-1 mb-4 relative">
     <h2 className='text-2xl font-extrabold lg:font-semibold m-4 text-center text-cyan-300 bg'>Estadísticas</h2>
   </div> 
-  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
     {Object.entries(statsByCategory).map(([category, stats]) => (
       <div key={category} className="flex">
-        <div className="bg-white shadow-md rounded p-4 text-center flex flex-col flex-grow">
+        <div className="bg-white shadow-xl rounded p-4 text-center flex flex-col flex-grow">
           <h3><strong>{category}</strong></h3>
           <p>Totales: <strong>{stats.total}</strong></p>
           <p>Correctas: <strong>{stats.correct}</strong></p>

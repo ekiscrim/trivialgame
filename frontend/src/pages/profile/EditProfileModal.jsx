@@ -62,14 +62,14 @@ const EditProfileModal = ({ authUser }) => {
 	return (
 		<>
 			<button
-				className='btn btn-outline rounded-full btn-sm'
+				className='btn btn-primary rounded-full btn-sm '
 				onClick={() => document.getElementById("edit_profile_modal").showModal()}
 			>
 				Editar perfil
 			</button>
 			<dialog id='edit_profile_modal' className='modal'>
 				<div className='modal-box border rounded-md border-gray-700 shadow-md'>
-					<h3 className='font-bold text-lg my-3'>Update Profile</h3>
+					<h3 className='font-bold text-lg my-3'>Editar datos de perfil</h3>
 					<form
 						className='flex flex-col gap-4'
 						onSubmit={(e) => {
@@ -80,7 +80,7 @@ const EditProfileModal = ({ authUser }) => {
 						<div className='flex flex-wrap gap-2'>
 							<input
 								type='text'
-								placeholder='Username'
+								placeholder='Nombre de usuario'
 								className='flex-1 input border border-gray-700 rounded p-2 input-md'
 								value={formData.username}
 								name='username'
@@ -90,7 +90,7 @@ const EditProfileModal = ({ authUser }) => {
 						<div className='flex flex-wrap gap-2'>
 							<input
 								type='password'
-								placeholder='Current Password'
+								placeholder='Contraseña actual'
 								className='flex-1 input border border-gray-700 rounded p-2 input-md'
 								value={formData.currentPassword}
 								name='currentPassword'
@@ -98,7 +98,7 @@ const EditProfileModal = ({ authUser }) => {
 							/>
 							<input
 								type='password'
-								placeholder='New Password'
+								placeholder='Nueva contraseña'
 								className='flex-1 input border border-gray-700 rounded p-2 input-md'
 								value={formData.newPassword}
 								name='newPassword'

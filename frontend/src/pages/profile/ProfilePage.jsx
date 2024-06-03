@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from 'react-hot-toast';
-import SkeletonCard from "../../components/common/SkeletonCard";
 import AvatarEditor from "react-avatar-editor";
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -93,13 +92,13 @@ const ProfilePage = () => {
 
     return (
         <>
-            <div className='flex flex-col w-full lg:w-1/2 min-h-screen bg-base-100 shadow-xl'>
-                {(isLoading || isRefetching) && <SkeletonCard />}
+            <div className='flex flex-col w-full lg:w-1/2 min-h-screen'>
+                {(isLoading || isRefetching) && <LoadingSpinner />}
                 {!isLoading && !isRefetching && !user && <p className='text-center text-lg mt-4'>User not found</p>}
-                <div className='w-full bg-base-200'>
+                <div className='w-full text-primary'>
                     <div className='flex gap-10 px-4 py-2 items-center'>
                         <Link to='/'>
-                            <FaArrowLeft className='w-4 h-4' />
+                            <FaArrowLeft className='w-7 h-7' />
                         </Link>
                         <div className='flex flex-col'>
                             <p className='font-bold text-lg'>{user?.fullName}</p>
@@ -129,7 +128,7 @@ const ProfilePage = () => {
                             />
                         )}
                     </div>
-                    <div className='flex justify-end px-4'>
+                    <div className='flex justify-end px-4 '>
                         {isMyProfile && (
                             <EditProfileModal
                                 authUser={authUser}
@@ -139,13 +138,13 @@ const ProfilePage = () => {
                     </div>
                     <div className='flex flex-col gap-4 px-4'>
                         <div className='flex flex-col'>
-                            <span className='font-bold text-lg'>{user?.username}</span>
-                            <span className='text-sm text-slate-500'>@{user?.username}</span>
+                            <span className='font-bold text-lg text-primary'>{user?.username}</span>
+                            <span className='text-sm text-primary'>@{user?.username}</span>
                         </div>
                         <div className='flex gap-2 flex-wrap'>
                             <div className='flex gap-2 items-center mb-2'>
-                                <IoCalendarOutline className='w-4 h-4 text-slate-500' />
-                                <span className='text-sm text-slate-500'>{formatMemberSinceDate(user?.createdAt)} </span>
+                                <IoCalendarOutline className='w-4 h-4 text-primary' />
+                                <span className='text-sm text-primary'>{formatMemberSinceDate(user?.createdAt)} </span>
                             </div>
                         </div>
                     </div>
