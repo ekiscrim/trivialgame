@@ -1,17 +1,13 @@
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner";
-import EmojiGrid from "../categories/EmojiGrid";
-import { UserIcon } from '@heroicons/react/solid';
-import { HiMiniTableCells } from "react-icons/hi2";
-import { HiMiniUserGroup } from "react-icons/hi2";
-import { HiClock } from "react-icons/hi2";
-import { HiEye } from "react-icons/hi2";
-import { HiArrowRightStartOnRectangle } from "react-icons/hi2";
-
 import SkeletonCard from "../common/SkeletonCard";
 import useCountdown from '../../hooks/useCountdown';
-
+import { HiClock, HiEye, HiOutlineQuestionMarkCircle, HiOutlineTag, HiOutlineUser, HiOutlineUsers } from "react-icons/hi";
+import { HiArrowRightStartOnRectangle, HiMiniTableCells, HiMiniUserGroup } from "react-icons/hi2";
+import { UserIcon } from "@heroicons/react/solid";
+import EmojiGrid from "../categories/EmojiGrid"
 const fetchUserScore = async (roomId, userId) => {
   const res = await fetch(`/api/scores/${roomId}/${userId}`);
   if (!res.ok) throw new Error(`Failed to fetch score for room ${roomId}`);
@@ -31,6 +27,43 @@ const fetchRoomCreator = async (roomId) => {
   return response.json();
 };
 
+const getBackgroundColor = (categories) => {
+  if (!categories || categories.length === 0) {
+    return ''; // No categories, return empty string
+  }
+
+  const categoryColors = [];
+
+  categories.forEach((category) => {
+    if (category.includes('Geografía')) {
+      categoryColors.push('#00b4db'); // Azul
+    }
+    if (category.includes('Historia')) {
+      categoryColors.push('#f6d365'); // Amarillo
+    }
+    if (category.includes('Deportes')) {
+      categoryColors.push('#ff7e5f'); // Naranja
+    }
+    if (category.includes('Ciencias')) {
+      categoryColors.push('#3ee1a9'); // Verde
+    }
+    if (category.includes('Entretenimiento')) {
+      categoryColors.push('#ff9a9e'); // Rosa
+    }
+    if (category.includes('Arte')) {
+      categoryColors.push('#9d50bb'); // Morado
+    }
+  });
+
+  if (categoryColors.length === 1) {
+    return categoryColors[0]; // Single color
+  } else if (categoryColors.length > 1) {
+    const gradientColors = categoryColors.join(', ');
+    return `linear-gradient(135deg, ${gradientColors})`; // Multiple colors
+  }
+
+  return ''; // Default case
+};
 
 const RoomCard = ({ room, userId }) => {
   const { data: userScore, isLoading: isScoreLoading, error: scoreError } = useQuery({
@@ -56,6 +89,8 @@ const RoomCard = ({ room, userId }) => {
   if (categoriesError) return <p>Error al cargar las categorías.</p>;
   if (creatorError) return <p>Error al cargar el creador de la sala.</p>;
 
+  const backgroundColor = getBackgroundColor(categories);
+
   const formatTimeLeft = (time) => {
     const hours = Math.floor(time / 3600000);
     const minutes = Math.floor((time % 3600000) / 60000);
@@ -64,67 +99,69 @@ const RoomCard = ({ room, userId }) => {
   };
 
   return (
-    
-<Link to={`rooms/${room._id}`} className="card-link">
-  <div className="card w-96 bg-base-100 shadow-xl" style={{ maxWidth: "100%" }}>
-    
-    <figure className="items-center">
-      <img className="hue-rotate-90" src="https://static.vecteezy.com/system/resources/previews/006/691/884/non_2x/blue-question-mark-background-with-text-space-quiz-symbol-vector.jpg" alt="Questions" />
-      <EmojiGrid categories={categories} />
-    </figure>
-    <div className="card-body">
-      <h1 className="card-title uppercase font-black">
-        {room.roomName}
-      </h1>
-        {userScore?.hasScore && (
-          <>
-          <div className="badge badge-success bg-green-400">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="w-5 h-6 text-white"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-            </svg>
+    <Link to={`rooms/${room._id}`} className="card-link">
+      <div className="card w-96 bg-base-100 shadow-xl" style={{ maxWidth: "100%" }}>
+        <figure className={`items-center relative flex`} style={{ background: backgroundColor }}>
+          <img
+            className="w-full object-cover"
+            src="/question.png"
+            alt="Questions"
+          />
+          <div className="absolute inset-0 flex justify-start items-end">
+            <div className="bg-black bg-opacity-50 px-2 py-1 rounded text-white">
+              <h1 className="text-lg uppercase font-black">{room.roomName}</h1>
+            </div>
           </div>
-          <span className="text-green-400 text-xs">Ya has participado</span>
-          </>
-        )}
-      
-      <div className="flex items-center mb-2">
-        <HiClock className="w-5 h-5 mr-1 text-gray-500"/> <span className="mr-2">Tiempo restante: <strong>{formatTimeLeft(timeLeft)}</strong></span>
-      </div>
-      <div className="flex items-center mb-2">
-        <UserIcon className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Creador de la sala:</span> <strong>{creatorData.creatorUsername}</strong>
-      </div>
-      <div className="flex items-center mb-2">
-        <HiMiniTableCells className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Número de preguntas:</span> <strong>{room.questions.length}</strong>
-      </div>
-      <div className="flex items-center mb-2">
-        <HiMiniUserGroup className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Participantes:</span> <strong>{room.users.length}</strong>
-      </div>
-      <div className="mb-2">
-        {categories.map((category, index) => (
-          <div key={index} className="badge badge-ghost mr-2 mb-2 w-full">{category}</div>
-        ))}
-      </div>
-      <div className="flex justify-end absolute -mt-14">
-        <div className="card-actions">
+          <div className="absolute inset-0 bg-white bg-opacity-20 flex">
+            <EmojiGrid categories={categories} />
+          </div>
+        </figure>
+        <div className="card-body flex flex-col justify-between h-full">
           {userScore?.hasScore && (
-            <button className="btn btn-primary min-w-full"><HiEye /> Ver resultados</button>
+            <>
+              <div className="badge badge-success bg-green-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  className="w-5 h-6 text-white"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <span className="text-green-400 text-xs">Ya has participado</span>
+            </>
           )}
-          {!userScore?.hasScore && (
-            <button className="btn btn-primary"> <HiArrowRightStartOnRectangle />Unirse a la sala</button>
-          )}
+  
+          <div className="flex items-center mb-2">
+            <HiClock className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Tiempo restante: <strong>{formatTimeLeft(timeLeft)}</strong></span>
+          </div>
+          <div className="flex items-center mb-2">
+            <UserIcon className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Creador de la sala:</span> <strong>{creatorData.creatorUsername}</strong>
+          </div>
+          <div className="flex items-center mb-2">
+            <HiMiniTableCells className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Número de preguntas:</span> <strong>{room.questions.length}</strong>
+          </div>
+          <div className="flex items-center mb-2">
+            <HiMiniUserGroup className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Participantes:</span> <strong>{room.users.length}</strong>
+          </div>
+          <div className="mb-2">
+            {categories.map((category, index) => (
+              <div key={index} className="badge badge-ghost mr-2 mb-2 w-full">{category}</div>
+            ))}
+          </div>
+          <div className="card-actions">
+            {userScore?.hasScore ? (
+              <button className="btn btn-primary min-w-full"><HiEye /> Ver resultados</button>
+            ) : (
+              <button className="btn btn-primary w-full"> <HiArrowRightStartOnRectangle />Unirse a la sala</button>
+            )}
+          </div>
         </div>
       </div>
-    </div>           
-  </div>
-</Link>
-
+    </Link>
   );
+  
 };
-
 export default RoomCard;
