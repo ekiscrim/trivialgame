@@ -55,25 +55,24 @@ const getBackgroundColor = (categories) => {
   }
 
   const categoryColors = [];
-
-  categories.forEach((category) => {
+  categories.forEach((category, index) => {
     if (category.includes('Geografía')) {
-      categoryColors.push('#00b4db'); // Azul
+      categoryColors.push(`#00b4db ${index * (100 / categories.length)}% ${(index + 1) * (100 / categories.length)}%`); // Azul
     }
     if (category.includes('Historia')) {
-      categoryColors.push('#f6d365'); // Amarillo
+      categoryColors.push(`#f6d365 ${index * (100 / categories.length)}% ${(index + 1) * (100 / categories.length)}%`); // Amarillo
     }
     if (category.includes('Deportes')) {
-      categoryColors.push('#ff7e5f'); // Naranja
+      categoryColors.push(`#ff7e5f ${index * (100 / categories.length)}% ${(index + 1) * (100 / categories.length)}%`); // Naranja
     }
     if (category.includes('Ciencias')) {
-      categoryColors.push('#3ee1a9'); // Verde
+      categoryColors.push(`#3ee1a9 ${index * (100 / categories.length)}% ${(index + 1) * (100 / categories.length)}%`); // Verde
     }
     if (category.includes('Entretenimiento')) {
-      categoryColors.push('#ff9a9e'); // Rosa
+      categoryColors.push(`#ff9a9e ${index * (100 / categories.length)}% ${(index + 1) * (100 / categories.length)}%`); // Rosa
     }
     if (category.includes('Arte')) {
-      categoryColors.push('#9d50bb'); // Morado
+      categoryColors.push(`#9d50bb ${index * (100 / categories.length)}% ${(index + 1) * (100 / categories.length)}%`); // Morado
     }
   });
 
@@ -81,7 +80,7 @@ const getBackgroundColor = (categories) => {
     return categoryColors[0]; // Single color
   } else if (categoryColors.length > 1) {
     const gradientColors = categoryColors.join(', ');
-    return `linear-gradient(135deg, ${gradientColors})`; // Multiple colors
+    return `linear-gradient(45deg, ${gradientColors})`; // Multiple colors
   }
 
   return ''; // Default case
@@ -136,7 +135,7 @@ const RoomCard = ({ room, userId }) => {
   return (
     <Link to={`rooms/${room._id}`} className="card-link">
       <div className="card w-96 bg-base-100 shadow-xl mb-20" style={{ maxWidth: "100%" }}>
-        <figure className={`items-center relative flex`} style={{ background: backgroundColor }}>
+        <figure className={`items-center relative flex`} style={{ background: backgroundColor, border: "5px solid #fff"}}>
           <img
             className="w-full object-cover"
             src="/question.png"
