@@ -37,7 +37,7 @@ const Statistics = ({ userId }) => {
 <div>
 <div className="grid col-span-1 mb-4 relative">
   <div className="bg-white p-4 rounded-lg shadow-md">
-    <h2 className='text-2xl font-extrabold lg:font-semibold text-center text-purple-500 mb-4'>Estadísticas</h2>
+    <h2 className='text-2xl font-extrabold lg:font-semibold text-center text-purple-500 mb-4 uppercase'>Estadísticas</h2>
     <div className="flex flex-col items-center space-y-4">
       <div className="flex items-center justify-between w-full">
         <p className="text-lg font-semibold">Puntuación total:</p>

@@ -46,7 +46,7 @@ function App() {
   }
 
   return (
-        <div className={`grid place-items-center min-h-screen  bg-purple-950 ${device === 'Mobile' ? '' : 'pt-20'}`}>
+        <div className={`grid place-items-center min-h-screen  ${device === 'Mobile' ? '' : 'pt-20'}`}>
 
       <Routes>
         <Route path='/' element={authUserQuery ? <HomePage /> : <Navigate to="/login" />} />

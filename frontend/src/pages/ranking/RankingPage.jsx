@@ -22,7 +22,7 @@ const RankingsPage = () => {
 
     return (
         <div className="container mx-auto my-8 h-full">
-            <h1 className="text-3xl font-bold text-center mb-4 text-cyan-300">Rankings</h1>
+            <h1 className="text-3xl font-bold text-center mb-4 text-cyan-300 uppercase">Rankings</h1>
             <FilterSelector selectedFilter={filter} onSelectFilter={setFilter} />
             <RankingTable rankings={rankings} filter={filter} />
         </div>

@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 
+body {
+  background-color: #33005a;
+  background: rgba(255, 255, 255, 0.6);
+  background-image: radial-gradient(#ca00aa 0.75px, #33005a 0.75px);
+  background-size: 15px 15px;
+}
 
 @media (max-width: 768px) {
   /* Estilos específicos para dispositivos móviles */

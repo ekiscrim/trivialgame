@@ -113,7 +113,7 @@ const Navbar = ({authUser, device}) => {
         </Link>
         <div className="flex items-center">
           <BiLogOut
-            className='w-6 h-6 text-white cursor-pointer hover:text-violet-200 transition-all'
+            className={`${device === 'Mobile' ? 'hidden' : 'w-6 h-6 text-white cursor-pointer hover:text-violet-200 transition-all'}`}
             onClick={(e) => {
               e.preventDefault();
               logoutMutate();
