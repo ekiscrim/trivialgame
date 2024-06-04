@@ -6,8 +6,10 @@
 body {
   background-color: #33005a;
   background: rgba(255, 255, 255, 0.6);
-  background-image: radial-gradient(#ca00aa 0.75px, #33005a 0.75px);
-  background-size: 15px 15px;
+  background-image:  radial-gradient(#ca00aa 0.75px, transparent 0.75px), radial-gradient(#ca00aa 0.75px, #33005a 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0,15px 15px;
+  background-color: #33005a;
 }
 
 @media (max-width: 768px) {

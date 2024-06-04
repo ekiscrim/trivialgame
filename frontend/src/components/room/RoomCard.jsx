@@ -134,8 +134,24 @@ const RoomCard = ({ room, userId }) => {
 
   return (
     <Link to={`rooms/${room._id}`} className="card-link">
-      <div className="card w-96 bg-base-100 shadow-xl mb-20" style={{ maxWidth: "100%" }}>
-        <figure className={`items-center relative flex`} style={{ background: backgroundColor, border: "5px solid #fff"}}>
+      {userScore?.hasScore && (
+                  <>
+                    <div className="badge badge-success bg-green-400 w-14 h-14 sticky top-0 float-right -mt-6 mr-2  z-50 ">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        className="w-40 h-40 text-white"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="5" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  </>
+                )}
+
+      <div className="card w-96 bg-gradient-to-t from-indigo-500 via-purple-500 to-pink-500 shadow-xl mb-20" style={{ maxWidth: "100%", }}>
+        <figure className={`items-center relative flex`} style={{ background: backgroundColor}}>
           <img
             className="w-full object-cover"
             src="/question.png"
@@ -151,43 +167,25 @@ const RoomCard = ({ room, userId }) => {
           </div>
         </figure>
         <div className="card-body flex flex-col justify-between h-full">
-          {userScore?.hasScore && (
-            <>
-              <div className="badge badge-success bg-green-400">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  className="w-5 h-6 text-white"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <span className="text-green-400 text-xs">Ya has participado</span>
-            </>
-          )}
-  
-          <div className="items-center text-center mb-2">
-            
-            <span className="items-center text-center w-full">
-              {timeLeft > 0 && <HiClock className="w-5 h-5 mr-1 text-gray-500" /> && `Tiempo restante: `}
-              {timeLeft > 0 &&  <strong>{formatTimeLeft(timeLeft)}</strong>}
-              {timeLeft < 0 && <HiLockClosed /> && <strong>Sala cerrada</strong>}
-            </span>
+          <div className="items-center text-center ">  
+            <div className="flex items-center mb-2 text-white">
+                {timeLeft > 0 && <><HiClock className="w-5 h-5 mr-1 text-purple-950" /><span className="mr-2">Tiempo restante:</span></> }
+                {timeLeft > 0 &&  <strong>{formatTimeLeft(timeLeft)}</strong>}
+                {timeLeft < 0 && <><HiLockClosed className="w-5 h-5 mr-1 text-purple-950" /><span className="ml-2">Sala cerrada</span></>}
+            </div>
           </div>
-          <div className="flex items-center mb-2">
-            <UserIcon className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Creador de la sala:</span> <strong>{creatorData.creatorUsername}</strong>
+          <div className="flex items-center mb-2 text-white">
+            <UserIcon className="w-5 h-5 mr-1 text-purple-950" /> <span className="mr-2">Creador de la sala:</span> <strong>{creatorData.creatorUsername}</strong>
           </div>
-          <div className="flex items-center mb-2">
-            <HiMiniTableCells className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Número de preguntas:</span> <strong>{room.questions.length}</strong>
+          <div className="flex items-center mb-2 text-white">
+            <HiMiniTableCells className="w-5 h-5 mr-1 text-purple-950" /> <span className="mr-2">Número de preguntas:</span> <strong>{room.questions.length}</strong>
           </div>
-          <div className="flex items-center mb-2">
-            <HiMiniUserGroup className="w-5 h-5 mr-1 text-gray-500" /> <span className="mr-2">Participantes:</span> <strong>{room.users.length}</strong>
+          <div className="flex items-center mb-2 text-white">
+            <HiMiniUserGroup className="w-5 h-5 mr-1 text-purple-950" /> <span className="mr-2">Participantes:</span> <strong>{room.users.length}</strong>
           </div>
           <div className="mb-2">
             {categories.map((category, index) => (
-              <div key={index} className="badge badge-ghost mr-2 mb-2 w-full">{category}</div>
+              <div key={index} className="bg-gradient-to-r from-violet-950 to-purple-900 rounded-full px-3 py-1 text-sm text-white mb-2">{category}</div>
             ))}
           </div>
           <div className="card-actions">

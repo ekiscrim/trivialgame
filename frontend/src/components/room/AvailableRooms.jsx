@@ -98,7 +98,7 @@ const AvailableRooms = () => {
           ) : (
             <>
               <div className="grid col-span-1 relative">
-                <h1 className="text-3xl font-bold text-center mb-4 uppercase text-cyan-300">{status === 'waiting' ? 'Salas abiertas' : 'Salas cerradas'}</h1>
+                <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">{status === 'waiting' ? 'Salas abiertas' : 'Salas cerradas'}</h1>
               </div>
               <div className="flex flex-wrap flex items-stretch justify-center gap-6 xl:mt-6 ml-2 mr-2 animate-scale-in">
                 {allRooms.map((room, index) => (
@@ -109,7 +109,7 @@ const AvailableRooms = () => {
               </div>
               {hasMore && (
                 <div className="flex justify-center relative mb-40">
-                  <button onClick={handleLoadMoreClick} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">
+                  <button onClick={handleLoadMoreClick} className="btn btn-primary ">
                     Cargar más
                   </button>
                 </div>
