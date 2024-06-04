@@ -38,7 +38,7 @@ export const getUserScoreInRoom = async (req, res) => {
     if (!score) {
       return res.status(200).json({ hasScore: false });
     }
-    res.status(200).json({ hasScore: true });
+    res.status(200).json({ hasScore: true, score });
   } catch (error) {
     res.status(500).json({ error: 'Error checking user score', });
   }

@@ -5,11 +5,15 @@ import ScoresTable from '../../components/score/ScoresTable';
 import SkeletonCard from "../../components/common/SkeletonCard";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { HiArrowRightStartOnRectangle } from "react-icons/hi2";
+import ShareComponent from "../../components/room/ShareComponent";
+import { useLocation } from 'react-router-dom';
+
 const RoomPage = () => {
   const { id } = useParams();
   const { data: userId } = useQuery({ queryKey: ["authUser"] });
 
   const navigate = useNavigate();
+  const urlDeLaSala = String(window.location);
 
 
   const { data: roomData, isLoading, error } = useQuery({
@@ -105,7 +109,7 @@ const RoomPage = () => {
     return shuffled;
   };
 
-  if (!roomData || !roomData.room || !roomData.users || !userScoreData) {
+  if (!roomData || !roomData.room || !roomData.users || !userScoreData || isLoadingScore) {
     return <LoadingSpinner />
   }
 
@@ -153,11 +157,15 @@ const RoomPage = () => {
                   >
                     {isPending ? "Cargando..." : <HiArrowRightStartOnRectangle />} Comenzar Partida</button>
                 ) : (
-                  <div role="alert" className="alert alert-success text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                      <span>Ya has participado!</span>
-                  </div>
+                  
+                    <div role="alert" className="alert alert-success text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span>Ya has participado!</span>
+                        <ShareComponent score={userScoreData.score.score} roomUrl={urlDeLaSala} />
+                    </div>
+
                 )}
+
                 </>
               )}
       </div>
