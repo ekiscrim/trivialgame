@@ -108,7 +108,7 @@ const AvailableRooms = () => {
                 ))}
               </div>
               {hasMore && (
-                <div className="flex justify-center mt-4">
+                <div className="flex justify-center relative mb-40">
                   <button onClick={handleLoadMoreClick} className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md">
                     Cargar más
                   </button>

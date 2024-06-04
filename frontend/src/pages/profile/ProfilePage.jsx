@@ -10,6 +10,8 @@ import { formatMemberSinceDate } from "../../utils/date";
 import EditProfileModal from "../profile/EditProfileModal";
 import Statistics from "../../components/profile/Statistics";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
+import { useNavigate  } from "react-router-dom";
+import { BiLogOut } from "react-icons/bi";
 
 const ProfilePage = () => {
     const [profileImg, setProfileImg] = useState(null);
@@ -61,6 +63,34 @@ const ProfilePage = () => {
             toast.error(error.message);
         }
     });
+
+    const { mutate: logoutMutate } = useMutation({
+        mutationFn: async () => {
+          try {
+            const res = await fetch("/api/auth/logout", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+            });
+            const data = await res.json();
+    
+            if (!res.ok) throw new Error(data.message || "Algo fue mal");
+            return data;
+          } catch (error) {
+            throw new Error(error);
+          }
+        },
+        onSuccess: () => {
+          toast.success("Has salido correctamente");
+          queryClient.invalidateQueries({ queryKey: ["authUser"] });
+        },
+        onError: () => {
+          toast.success("Hubo un error");
+        }
+      });
+
+
     const isMyProfile = authUser?._id === user?._id;
     const handleImgChange = (e) => {
         const file = e.target.files[0];
@@ -91,16 +121,29 @@ const ProfilePage = () => {
         refetch();
     }, [username, refetch]);
 
+    let history = useNavigate();
+
     return (
         <>
             <div className='flex flex-col w-full lg:w-1/2 min-h-screen'>
                 {(isLoading || isRefetching) && <LoadingSpinner />}
                 {!isLoading && !isRefetching && !user && <p className='text-center text-lg mt-4'>User not found</p>}
                 <div className='w-full text-primary'>
-                    <div className='flex gap-10 px-4 py-2 items-center'>
-                        <Link to='/'>
+                    <div className='flex px-4 py-2 items-center'>
+                        <Link onClick={() => history(-1)} >
                             <FaArrowLeft className='w-7 h-7' />
                         </Link>
+                        <div className="flex items-end ml-auto">
+                            <BiLogOut
+                                className='w-8 h-8 text-primary cursor-pointer hover:text-violet-200 transition-all'
+                                onClick={(e) => {
+                                e.preventDefault();
+                                logoutMutate();
+                                }}
+                            />
+                            Salir
+                        </div>
+
                         <div className='flex flex-col'>
                             <p className='font-bold text-lg'>{user?.fullName}</p>
                         </div>

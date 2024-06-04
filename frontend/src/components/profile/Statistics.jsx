@@ -35,12 +35,25 @@ const Statistics = ({ userId }) => {
   return (
 
 <div>
-  <div className="grid col-span-1 mb-4 relative">
-      <p className="bg-white ">Total Score: {rankingUser.totalScore}</p>
-      <p className="bg-white ">Monthly Score: {rankingUser.monthlyScore}</p>
-      <p className="bg-white ">Weekly Score: {rankingUser.weeklyScore}</p>
-    <h2 className='text-2xl font-extrabold lg:font-semibold m-4 text-center text-cyan-300 bg'>Estadísticas</h2>
-  </div> 
+<div className="grid col-span-1 mb-4 relative">
+  <div className="bg-white p-4 rounded-lg shadow-md">
+    <h2 className='text-2xl font-extrabold lg:font-semibold text-center text-purple-500 mb-4'>Estadísticas</h2>
+    <div className="flex flex-col items-center space-y-4">
+      <div className="flex items-center justify-between w-full">
+        <p className="text-lg font-semibold">Puntuación total:</p>
+        <p className="text-lg">{rankingUser.totalScore}</p>
+      </div>
+      <div className="flex items-center justify-between w-full">
+        <p className="text-lg font-semibold">Puntuación este mes:</p>
+        <p className="text-lg">{rankingUser.monthlyScore}</p>
+      </div>
+      <div className="flex items-center justify-between w-full">
+        <p className="text-lg font-semibold">Puntuación de esta semana:</p>
+        <p className="text-lg">{rankingUser.weeklyScore}</p>
+      </div>
+    </div>
+  </div>
+</div>
   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
     {Object.entries(statsByCategory).map(([category, stats]) => (
       <div key={category} className="flex">
