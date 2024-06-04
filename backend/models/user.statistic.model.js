@@ -9,6 +9,10 @@ const userStatisticsSchema = new mongoose.Schema({
       correct: { type: Number, default: 0 },
     },
   ],
+  totalScore: { type: Number, default: 0 },
+  monthlyScore: { type: Number, default: 0 },
+  weeklyScore: { type: Number, default: 0 },
+  lastUpdated: { type: Date, default: Date.now }
 });
 
 const UserStatistics = mongoose.model("UserStatistics", userStatisticsSchema);

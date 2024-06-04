@@ -9,6 +9,7 @@ import categoryRoutes from "./routes/category.routes.js";
 import questionRoutes from "./routes/question.routes.js";
 import resultsRoutes from "./routes/score.routes.js";
 import statisticsRoutes from "./routes/user.statistic.routes.js"; 
+import rankingRoutes from "./routes/ranking.routes.js";
 
 import adminRoutes from "./routes/admin/admin.routes.js"
 
@@ -17,8 +18,9 @@ import {v2 as cloudinary} from "cloudinary";
 import bodyParser from "body-parser"; // TODO eliminar en el futuro
 import multer from "multer"
 
-
-import './tasks/update.room.status.cron.js'; // Importar el cron job para que se inicie
+//crons
+import './tasks/update.room.status.cron.js';
+import './tasks/reset.scores.cron.js';
 
 dotenv.config();
 
@@ -58,6 +60,7 @@ app.use("/api/room/:roomId", resultsRoutes);  // Resultados específicos de una 
 app.use("/api/room", resultsRoutes);  // Operaciones relacionadas con salas de resultados
 app.use("/api/scores", resultsRoutes);  // Puntuaciones generales
 app.use("/api/statistic", statisticsRoutes) //Estadisticas de usuario
+app.use("/api/rankings", rankingRoutes); //Ranking de usuarios
 
 //admin
 app.use('/api/admin', adminRoutes);

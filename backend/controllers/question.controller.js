@@ -190,7 +190,7 @@ export const validateAnswer = async (req, res) => {
       { $inc: { lastQuestionIndex: 1, score: updatedScore } },
       { new: true, upsert: true } // Create a new document if not exists
     );
-    console.log(participant)
+    console.log("PARTICIPANT", participant, "PARTICIPANT ANSWER", participantAnswer)
 
     // Verificar si el participante ha respondido todas las preguntas
     const totalQuestions = room.questions.length;

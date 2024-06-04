@@ -3,6 +3,9 @@ import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
+import { HiMiniTrophy } from "react-icons/hi2";
+import { HiMiniMinusCircle } from "react-icons/hi2";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import Logo from "../common/Logo"
@@ -58,11 +61,11 @@ const Navbar = ({authUser, device}) => {
             </li>
             <li>
               <Link
-                to='/notifications'
+                to='/rankings'
                 className='flex items-center gap-2 text-white hover:text-violet-200 transition-all'
               >
-                <IoNotifications className='w-6 h-6' />
-                <span className='hidden md:block'>Notifications</span>
+                <HiMiniTrophy  className='w-6 h-6' />
+                <span className='hidden md:block'>Ranking</span>
               </Link>
             </li>
             <li>
@@ -76,8 +79,9 @@ const Navbar = ({authUser, device}) => {
             </li>
             <li>
             {authUserData.role === 'admin' && (
-            <Link to="/admin">
-              <button className="admin-button flex items-center gap-2 text-white hover:text-violet-200 transition-all">Admin</button>
+            <Link to="/admin" className='flex items-center gap-2 text-white hover:text-violet-200 transition-all'>
+              <HiMiniMinusCircle className='w-6 h-6' />
+              <span className="hidden md:block">Admin</span>
             </Link>
           )}
             </li>

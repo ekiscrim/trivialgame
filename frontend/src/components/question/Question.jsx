@@ -141,13 +141,16 @@ const Question = ({ roomId, userId }) => {
     
     setShowCountdown(true); // Reset the countdown for the next question
 
+    let scoreToSend = 0;
+
     if (data.isCorrect) {
       const basePoints = 10;
       const timeBonus = Math.max(0, timeLeft);
+      scoreToSend = basePoints + timeBonus;
       setScore((prevScore) => prevScore + basePoints + timeBonus);
     }
 
-    await updateStatistics(userId, currentCategory, data.isCorrect);
+    await updateStatistics(userId, currentCategory, data.isCorrect, scoreToSend);
 
     if (data.hasCompleted) {
       setTimeout(() => {
@@ -170,7 +173,7 @@ const Question = ({ roomId, userId }) => {
     }
   };
 
-  const updateStatistics = async (userId, category, isCorrect) => {
+  const updateStatistics = async (userId, category, isCorrect, score) => {
     try {
 
 
@@ -179,7 +182,7 @@ const Question = ({ roomId, userId }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, category, isCorrect }),
+        body: JSON.stringify({ userId, category, isCorrect, score }),
       });
     } catch (error) {
       console.error('Failed to update user statistics', error);

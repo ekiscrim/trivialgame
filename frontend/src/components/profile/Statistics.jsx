@@ -6,6 +6,7 @@ import { Doughnut } from 'react-chartjs-2';
 const Statistics = ({ userId }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [statsByCategory, setStatsByCategory] = useState({});
+  const [rankingUser, setRankingUser] = useState({});
   Chart.register(ArcElement)
   useEffect(() => {
     const fetchUserStats = async () => {
@@ -17,6 +18,7 @@ const Statistics = ({ userId }) => {
         const data = await res.json();
         setIsLoading(false);
         setStatsByCategory(data.statsByCategory);
+        setRankingUser(data.user);
       } catch (error) {
         setIsLoading(false);
         setStatsByCategory(false);
@@ -34,6 +36,9 @@ const Statistics = ({ userId }) => {
 
 <div>
   <div className="grid col-span-1 mb-4 relative">
+      <p className="bg-white ">Total Score: {rankingUser.totalScore}</p>
+      <p className="bg-white ">Monthly Score: {rankingUser.monthlyScore}</p>
+      <p className="bg-white ">Weekly Score: {rankingUser.weeklyScore}</p>
     <h2 className='text-2xl font-extrabold lg:font-semibold m-4 text-center text-cyan-300 bg'>Estadísticas</h2>
   </div> 
   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">

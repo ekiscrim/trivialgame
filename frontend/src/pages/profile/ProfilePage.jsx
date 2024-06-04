@@ -35,6 +35,7 @@ const ProfilePage = () => {
             }
         }
     });
+
     const { mutate: updateProfile, isPending: isUpdatingProfile } = useMutation({
         mutationFn: async (formData) => {
             try {
