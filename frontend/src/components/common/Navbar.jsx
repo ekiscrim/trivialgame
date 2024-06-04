@@ -45,7 +45,7 @@ const Navbar = ({authUser, device}) => {
   <div className='max-w-6xl mx-auto flex justify-between items-center'>
     <div className={`flex items-center gap-4 ${device === 'Mobile' ? 'sm:gap-2' : ''}`}>
       <Link to='/' className='flex items-center'>
-        <Logo />
+        <Logo width={40} height={40} />
         <span className={`text-white text-3xl font-bold hidden ${device === 'Mobile' ? '' : 'sm:flex'} ml-2`}>TRIVIALITE</span>
       </Link>
       <ul className={`flex items-center gap-4 ${device === 'Mobile' ? 'sm:gap-2' : ''}`}>

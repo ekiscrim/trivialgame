@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 //import XSvg from "../../../components/svgs/X";
-
+ import Logo from "../../../components/common/Logo"
 //import { MdOutlineMail } from "react-icons/md";
 import { MdPassword } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -59,11 +59,13 @@ const LoginPage = () => {
 	return (
 		<div className='max-w-screen-xl mx-auto flex h-screen'>
 			<div className='flex-1 hidden lg:flex items-center  justify-center'>
-				{/*<XSvg className='lg:w-2/3 fill-white' />*/}
+				<Logo width={260} height={260} className='mr-20 mb-20' />
+				
 			</div>
 			<div className='flex-1 flex flex-col justify-center items-center'>
 				<form className='flex gap-4 flex-col' onSubmit={handleSubmit}>
-					{/*<XSvg className='w-24 lg:hidden fill-white' />*/}
+					<Logo width={160} height={160} className='lg:hidden' />
+					<h1 className="text-purple-500 text-4xl font-bold">TRIVIALITE</h1>
 					<h1 className='text-4xl font-extrabold text-primary'>{"Let's"} go.</h1>
 					<label className='input input-bordered rounded flex items-center gap-2'>
             <FaUser />

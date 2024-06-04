@@ -5,8 +5,8 @@ const Logo = (props) => (
     xmlns:bx="https://boxy-svg.com"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 500 500"
-    width="40"
-    height="40"
+    width={props.width}
+    height={props.height}
     {...props}
   >
     <defs>
@@ -84,7 +84,7 @@ const Logo = (props) => (
         strokeWidth: 0,
       }}
     />
-    <rect
+    {/*<rect
       width={234.777}
       height={234.777}
       x={255.49}
@@ -102,7 +102,7 @@ const Logo = (props) => (
         fill: "url(#c)",
         stroke: "url(#gradient-2)",
       }}
-    />
+    /> */}
     <rect
       width={234.777}
       height={234.777}
