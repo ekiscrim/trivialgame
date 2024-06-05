@@ -7,6 +7,7 @@ import EditQuestionModal from './EditQuestionModal';
 const QuestionTab = () => {
   const [questions, setQuestions] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editFormData, setEditFormData] = useState(null);
   const [isDirty, setIsDirty] = useState(false);
@@ -14,32 +15,57 @@ const QuestionTab = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await fetch('/api/admin/questions');
+        if (selectedCategory) {
+          const response = await fetch(`/api/admin/questions?category=${selectedCategory}`);
+          if (!response.ok) {
+            throw new Error('Error fetching questions by category');
+          }
+          const data = await response.json();
+          setQuestions(data);
+        }
+      } catch (error) {
+        console.error('Error fetching questions by category:', error);
+      }
+    };
+    fetchQuestions();
+  }, [selectedCategory, isDirty]);
+
+    useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const response = await fetch('/api/admin/categories');
+          if (!response.ok) {
+            throw new Error('Error fetching categories');
+          }
+          const data = await response.json();
+          setCategories(data);
+        } catch (error) {
+          console.error('Error fetching categories:', error);
+        }
+      };
+      fetchCategories();
+    }, [isDirty]);
+
+
+    const handleCategoryChange = async (categoryId) => {
+      try {
+        setSelectedCategory(categoryId);
+        let response;
+        if (categoryId === "") {
+          response = await fetch(`/api/admin/questions`);
+        } else {
+          response = await fetch(`/api/admin/questions?category=${categoryId}`);
+        }
         if (!response.ok) {
-          throw new Error('Error fetching questions');
+          throw new Error('Error fetching questions by category');
         }
         const data = await response.json();
         setQuestions(data);
       } catch (error) {
-        console.error('Error fetching questions:', error);
+        console.error('Error fetching questions by category:', error);
       }
     };
-    fetchQuestions();
 
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch('/api/admin/categories');
-        if (!response.ok) {
-          throw new Error('Error fetching categories');
-        }
-        const data = await response.json();
-        setCategories(data);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-    fetchCategories();
-  }, [questions, isDirty]);
 
   const handleAddQuestion = async (formData, resetForm) => {
     try {
@@ -64,7 +90,7 @@ const QuestionTab = () => {
       resetForm();
       setIsDirty(false);
     } catch (error) {
-      toast.error('Error al añadir la pregunta');
+      toast.error('Error adding the question');
       console.error('Error creating question:', error);
     }
   };
@@ -138,9 +164,9 @@ const QuestionTab = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen mt-0 flex justify-center items-center bg-gray-100">
-      <div className="w-full max-w-lg">
-        <h2 className="text-xl font-semibold mb-4">Questions</h2>
+    <div className="min-h-screen flex justify-center bg-gray-100 py-4">
+      <div className="w-full max-w-md">
+        <h2 className="text-xl font-semibold mb-4">Preguntas</h2>
         <QuestionForm categories={categories} onSubmit={handleAddQuestion} />
         <QuestionList questions={questions} onEdit={handleEditQuestion} onDelete={handleDeleteQuestion} />
         <EditQuestionModal
@@ -152,6 +178,25 @@ const QuestionTab = () => {
           onSubmit={handleEditSubmit}
           isDirty={isDirty}
         />
+      </div>
+      <div className="mb-4">
+          <label htmlFor="category" className="block font-medium text-gray-700">Filtrar por categoría:</label>
+          <select
+            id="category"
+            name="category"
+            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            value={selectedCategory}
+            onChange={(e) => handleCategoryChange(e.target.value)}
+          >
+            <option value="">Selecciona una categoría</option>
+            {categories.map(category => {
+                const categoryQuestions = questions.filter(question => question.category === category._id);
+                return (
+                  <option key={category._id} value={category._id}>{category.title} ({categoryQuestions.length})
+                  </option>
+                ); 
+              })}
+          </select>
       </div>
     </div>
   );

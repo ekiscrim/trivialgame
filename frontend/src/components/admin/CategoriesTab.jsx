@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { TrashIcon } from '@heroicons/react/solid'; // Importar el ícono de papelera
+import { useForm } from 'react-hook-form';
 
 const CategoriesTab = () => {
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const [categories, setCategories] = useState([]);
-  const [formData, setFormData] = useState({ title: '' });
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -22,29 +23,26 @@ const CategoriesTab = () => {
     fetchCategories();
   }, []);
 
-  const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const onSubmit = async e => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
       const response = await fetch('/api/admin/categories', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
       if (!response.ok) {
         throw new Error('Error creating category');
       }
-      const data = await response.json();
-      setCategories([...categories, data]);
-      setFormData({ title: '' });
+      const category = await response.json();
+      setCategories([...categories, category]);
+      reset(); 
     } catch (error) {
       console.error('Error creating category:', error);
     }
   };
-
   const handleDeleteCategory = async (categoryId) => {
     const confirmed = window.confirm('Are you sure you want to delete this category and all related questions?');
     if (confirmed) {
@@ -64,20 +62,33 @@ const CategoriesTab = () => {
   };
 
   return (
-    <div className="min-h-screen min-w-screen mt-0 flex flex-row  bg-gray-100">
-      <form onSubmit={onSubmit} className="mb-4 w-full">
-        <div className="form-control w-full">
-          <label className="label">
-            <span className="label-text">Category Name</span>
+    <div className="w-full bg-white p-6 rounded-md shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Categories</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="mb-4">
+        <div className="form-control">
+          <label htmlFor="title" className="label">
+            Category Name
           </label>
-          <input type="text" name="title" value={formData.title} onChange={onChange} className="input input-bordered w-full" />
+          <input
+            type="text"
+            id="title"
+            name="title"
+            {...register('title', { required: true })}
+            className={`input input-bordered w-full ${errors.title && 'input-error'}`}
+          />
+          {errors.title && <span className="text-xs text-error">Category name is required</span>}
         </div>
-        <button type="submit" className="btn btn-primary mt-2 w-full">Add Category</button>
+        <button type="submit" className="btn btn-primary mt-2 w-full">
+          Add Category
+        </button>
       </form>
-      <ul className="list-disc pl-5 w-full">
-        {categories.map((category,index) => (
-          <li key={category._id} className={`flex pb-6 items-center justify-between ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
-            <span className='text-lg'>{category.title}</span>
+      <ul className="list-disc pl-5">
+        {categories.map((category, index) => (
+          <li
+            key={category._id}
+            className={`flex pb-6 items-center justify-between ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}
+          >
+            <span className="text-lg">{category.title}</span>
             <button onClick={() => handleDeleteCategory(category._id)} className="btn btn-sm btn-error">
               <TrashIcon className="h-5 w-5 text-white" />
             </button>

@@ -52,7 +52,7 @@ const shuffleArray = (array) => {
 
 export const createRoom = async (req, res) => {
     try {
-            const { roomName, questionCount, maxUsers, categories, creatorId } = req.body;
+            const { roomName, questionCount, categories, creatorId } = req.body;
             
             // Realizar consulta para obtener preguntas basadas en las categorías seleccionadas
             const questions = await Question.find({ category: { $in: categories } });
@@ -61,8 +61,7 @@ export const createRoom = async (req, res) => {
 
             const newRoom = new Room({ 
                 roomName, 
-                questionCount, 
-                maxUsers, 
+                questionCount,
                 categories, 
                 questions: selectedQuestions.map(question => question._id), // Asociar IDs de preguntas
                 users: [creatorId] });
@@ -72,7 +71,6 @@ export const createRoom = async (req, res) => {
                 _id: newRoom.id,
                 roomName: newRoom.roomName,
                 questionCount: newRoom.questionCount,
-                maxUsers: newRoom.maxUsers,
                 categories: newRoom.categories,
                 users: newRoom.users,
                 questions: selectedQuestions // Opcional: enviar las preguntas seleccionadas en la respuesta, es para testear

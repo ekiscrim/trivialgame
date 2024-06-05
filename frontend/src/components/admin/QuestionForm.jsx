@@ -2,11 +2,38 @@ import { useRef, useState } from 'react';
 import AvatarEditor from 'react-avatar-editor';
 import toast from 'react-hot-toast';
 
+
 const QuestionForm = ({ categories, onSubmit }) => {
   const [formData, setFormData] = useState({ question: '', category: '', options: ['', '', '', ''], correctAnswer: '', image: null });
   const [errors, setErrors] = useState({ question: '', category: '', options: '', correctAnswer: '' });
   const [selectedImage, setSelectedImage] = useState(null);
   const editorRef = useRef(null);
+  const [incorrectAnswers, setIncorrectAnswers] = useState([]);
+  // Función para generar respuestas incorrectas utilizando IA
+  const generateIncorrectAnswers = async (question) => {
+    try {
+      const apiKey = import.meta.env.VITE_HUGGINGFACE_API_KEY;
+      const response = await fetch('https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          inputs: `Genera una lista numerada del 1 al 4 con respuestas incorrectas para la siguiente pregunta: ${question}`,
+          options: {
+            num_return_sequences: 4, // Generar 4 respuestas
+            do_sample: true, // Muestrear respuestas
+          },
+        }),
+      });
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error generando respuestas:', error);
+      return [];
+    }
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -24,6 +51,23 @@ const QuestionForm = ({ categories, onSubmit }) => {
           const file = new File([blob], 'editedImage.png', { type: 'image/png' });
           setFormData({ ...formData, image: file });
         });
+    }
+  };
+
+  const handleQuestionBlur = async () => {
+    if (formData.question.trim() !== '') {
+      const incorrect = await generateIncorrectAnswers(formData.question);
+      setIncorrectAnswers(incorrect);
+      // Extraer las respuestas incorrectas del texto generado
+      const incorrectResponses = incorrect[0].generated_text.match(/\d+\.\s+(.+)/g).map(match => match.replace(/^\d+\.\s+/, ''));
+      // Insertar respuestas incorrectas en los campos de respuesta
+      const newOptions = [...formData.options];
+      incorrectResponses.forEach((answer, index) => {
+        if (index < newOptions.length) {
+          newOptions[index] = answer;
+        }
+      });
+      setFormData({ ...formData, options: newOptions });
     }
   };
 
@@ -82,17 +126,17 @@ const QuestionForm = ({ categories, onSubmit }) => {
     <form onSubmit={handleSubmit} className="mb-4" encType="multipart/form-data">
       <div className="form-control">
         <label className="label">
-          <span className="label-text">Question</span>
+          <span className="label-text">Pregunta</span>
         </label>
         <input type="text" name="question" value={formData.question} onChange={onChange} className="input input-bordered w-full" />
         {errors.question && <p className="text-red-500">{errors.question}</p>}
       </div>
       <div className="form-control">
         <label className="label">
-          <span className="label-text">Category</span>
+          <span className="label-text">Categoría</span>
         </label>
         <select name="category" value={formData.category} onChange={onChange} className="input input-bordered w-full">
-          <option value="">Select a category</option>
+          <option value="">Selecciona una categoría</option>
           {categories.map(category => (
             <option key={category._id} value={category._id}>{category.title}</option>
           ))}
@@ -101,7 +145,18 @@ const QuestionForm = ({ categories, onSubmit }) => {
       </div>
       <div className="form-control">
         <label className="label">
-          <span className="label-text">Options</span>
+          <input
+            type="checkbox"
+            checked={incorrectAnswers.length > 0}
+            onChange={handleQuestionBlur}
+          />
+          <span className="label-text">Generar respuestas por IA</span>
+        </label>
+      </div>
+
+      <div className="form-control">
+        <label className="label">
+          <span className="label-text">Opciones de respuesta</span>
         </label>
         {formData.options.map((option, index) => (
           <input
@@ -118,12 +173,23 @@ const QuestionForm = ({ categories, onSubmit }) => {
         ))}
         {errors.options && <p className="text-red-500">{errors.options}</p>}
       </div>
+      {incorrectAnswers.length > 0 && (
+        <div>
+          <h3>Respuestas incorrectas generadas:</h3>
+          <ul>
+            {incorrectAnswers.map((answer, index) => (
+              <li key={index}>{answer.generated_text}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="form-control">
         <label className="label">
-          <span className="label-text">Correct Answer</span>
+          <span className="label-text">Respuesta correcta</span>
         </label>
         <select name="correctAnswer" value={formData.correctAnswer} onChange={onChange} className="input input-bordered w-full">
-          <option value="">Select the correct answer</option>
+          <option value="">Selecciona la respuesta correcta</option>
           {formData.options.map((option, index) => (
             <option key={index} value={option}>{option}</option>
           ))}

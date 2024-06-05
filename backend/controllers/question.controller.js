@@ -240,16 +240,21 @@ export const getCategoryFromQuestion = async (req, res) => {
 };
 
 export const listQuestions = async (req, res) => {
-  
+  const categoryId = req.query.category;
   try {
-      const questions = await Question.find({});
+    let questions;
+    if (categoryId) {
+      questions = await Question.find({ category: categoryId });
+    } else {
+      questions = await Question.find();
+    }
 
-      if (!questions || questions.length === 0) return res.status(404).json({error: "No hay Preguntas que listar"});
+    if (!questions || questions.length === 0) return res.status(404).json({error: "No hay Preguntas que listar"});
 
-      res.status(200).json(questions);
+    res.status(200).json(questions);
   
-} catch (error) {
+  } catch (error) {
 
-      res.status(500).json({error: error.message});
-}
+        res.status(500).json({error: error.message});
+  }
 };

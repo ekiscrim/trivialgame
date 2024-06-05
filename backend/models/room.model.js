@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const RoomSchema = new Schema({
     roomName: { type: String, required: true },
     questionCount: { type: Number, required: true },
-    maxUsers: { type: Number, required: true },
     categories: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
     questions: [{type: Schema.Types.ObjectId, ref: 'Question'}],
     status: { type: String, enum: ['waiting', 'in-progress', 'finished'], default: 'waiting' },
