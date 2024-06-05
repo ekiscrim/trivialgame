@@ -8,6 +8,8 @@ export const register = async (req, res) => {
     try {
         const {username, password, role, email} = req.body;
 
+        username = username.toLowerCase();
+
         const existingUser = await User.findOne({ username });
         const existingEmail = await User.findOne({ email });
 

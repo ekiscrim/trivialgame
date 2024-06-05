@@ -159,7 +159,8 @@ export const validateAnswer = async (req, res) => {
     if (currentTime - new Date(room.startTime).getTime() >= room.duration) {
       room.status = 'finished';
       await room.save();
-      return res.status(400).json({ error: 'The game is finished' });
+      //redirect
+      //return res.status(400).json({ error: 'The game is finished' });
     }
 
 

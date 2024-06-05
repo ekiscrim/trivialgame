@@ -72,7 +72,7 @@ const AvailableRooms = () => {
 
   return (
     <>
-      <div className="mt-6 mb-6 flex flex-col items-center justify-center">
+      <div className=" flex flex-col items-center justify-center">
         <div className="flex items-center justify-center -ml-2">
           <Logo className='w-12 sm:hidden fill-white' />
           <div className="flex flex-col items-center justify-center text-center">
