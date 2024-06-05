@@ -1,8 +1,6 @@
-import * as React from "react"
 const Logo = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    xmlns:bx="https://boxy-svg.com"
     xmlnsXlink="http://www.w3.org/1999/xlink"
     viewBox="0 0 500 500"
     width={props.width}
@@ -10,7 +8,7 @@ const Logo = (props) => (
     {...props}
   >
     <defs>
-      <linearGradient bx:pinned="true" id="a">
+      <linearGradient id="a">
         <stop
           offset={0.066}
           style={{
@@ -66,12 +64,7 @@ const Logo = (props) => (
       />
     </defs>
     <rect
-      width={234.777}
-      height={234.777}
-      x={8.32}
-      y={14.906}
-      rx={17}
-      ry={17}
+
       style={{
         fillRule: "nonzero",
         fill: "url(#b)",
@@ -104,12 +97,7 @@ const Logo = (props) => (
       }}
     /> */}
     <rect
-      width={234.777}
-      height={234.777}
-      x={9.075}
-      y={257.319}
-      rx={17}
-      ry={17}
+
       style={{
         fillRule: "nonzero",
         strokeMiterlimit: 10.26,
@@ -123,12 +111,7 @@ const Logo = (props) => (
       }}
     />
     <rect
-      width={234.777}
-      height={234.777}
-      x={255.463}
-      y={256.49}
-      rx={17}
-      ry={17}
+
       style={{
         fillRule: "nonzero",
         strokeMiterlimit: 10.26,
@@ -142,7 +125,7 @@ const Logo = (props) => (
       }}
     />
     <path
-      bx:shape="cog 788.5 306.5 0 10.68 44.5 0.64 4 1@ca30703c"
+      
       d="M782.167 262h12.666l.08 35.96a10.68 10.68 0 0 1 2.128 2.128l35.959.079v12.666l-35.96.08a10.68 10.68 0 0 1-2.128 2.128L794.833 351h-12.666l-.08-35.96a10.68 10.68 0 0 1-2.128-2.128L744 312.833v-12.666l35.96-.08a10.68 10.68 0 0 1 2.128-2.128Zm6.333 44.5h0"
       style={{
         paintOrder: "fill",
@@ -155,7 +138,7 @@ const Logo = (props) => (
       transform="matrix(1.3861 1.24804 -1.1639 1.29265 -612.164 -1244.16)"
     />
     <path
-      bx:shape="cog 788.5 306.5 0 10.68 44.5 0.64 4 1@ca30703c"
+      
       d="M782.167 262h12.666l.08 35.96a10.68 10.68 0 0 1 2.128 2.128l35.959.079v12.666l-35.96.08a10.68 10.68 0 0 1-2.128 2.128L794.833 351h-12.666l-.08-35.96a10.68 10.68 0 0 1-2.128-2.128L744 312.833v-12.666l35.96-.08a10.68 10.68 0 0 1 2.128-2.128Zm6.333 44.5h0"
       style={{
         paintOrder: "fill",
@@ -168,7 +151,7 @@ const Logo = (props) => (
       transform="matrix(1.3861 1.24804 -1.1639 1.29265 -605.624 -1008.729)"
     />
     <path
-      bx:shape="cog 788.5 306.5 0 10.68 44.5 0.64 4 1@ca30703c"
+      
       d="M782.167 262h12.666l.08 35.96a10.68 10.68 0 0 1 2.128 2.128l35.959.079v12.666l-35.96.08a10.68 10.68 0 0 1-2.128 2.128L794.833 351h-12.666l-.08-35.96a10.68 10.68 0 0 1-2.128-2.128L744 312.833v-12.666l35.96-.08a10.68 10.68 0 0 1 2.128-2.128Zm6.333 44.5h0"
       style={{
         paintOrder: "fill",

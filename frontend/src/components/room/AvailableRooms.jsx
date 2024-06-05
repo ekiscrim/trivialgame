@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner";
 import CreateRoom from "./CreateRoom";
 import RoomCard from "./RoomCard";
+import Logo from "../common/Logo";
 
 const AvailableRooms = () => {
   const [loading, setLoading] = useState(false);
@@ -71,13 +72,22 @@ const AvailableRooms = () => {
 
   return (
     <>
-      <div className="mt-6 mb-6 flex items-center justify-center">
-        <CreateRoom /> {/* Siempre se muestra el botón de creación de sala */}
-        <div className="ml-4">
-          <select onChange={handleStatusChange} value={status} className=" select select-bordered">
-            <option value="waiting">Salas abiertas</option>
-            <option value="finished">Salas cerradas</option>
-          </select>
+      <div className="mt-6 mb-6 flex flex-col items-center justify-center">
+        <div className="flex items-center justify-center -ml-2">
+          <Logo className='w-12 sm:hidden fill-white' />
+          <div className="flex flex-col items-center justify-center text-center">
+            <span className={`text-white text-3xl font-bold sm:hidden`}>VioQUIZ</span>
+            <span className={`text-white text-xs font-bold text-end italic sm:hidden`}>Desafía tu mente, <br/>conquista lo trivial.</span>
+          </div>
+        </div>
+        <div className="mt-4 flex items-center justify-center">
+          <CreateRoom /> {/* Siempre se muestra el botón de creación de sala */}
+          <div className="ml-4">
+            <select onChange={handleStatusChange} value={status} className=" select select-bordered">
+              <option value="waiting">Salas abiertas</option>
+              <option value="finished">Salas cerradas</option>
+            </select>
+          </div>
         </div>
       </div>
       {loading || isUserLoading ? (
@@ -124,7 +134,7 @@ const AvailableRooms = () => {
         </div>
       )}
     </>
-  );  
+  );
  };
 
 export default AvailableRooms;

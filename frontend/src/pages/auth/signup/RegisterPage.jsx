@@ -54,14 +54,12 @@ const RegisterPage = () => {
 	return (
 		<div className='max-w-screen-xl mx-auto flex h-screen px-10'>
 			<div className='flex-1 hidden lg:flex items-center  justify-center'>
-
-          <Logo className=' lg:w-2/3 fill-white' />
+				<Logo className=' lg:w-2/3 fill-white' />
 			</div>
 			<div className='flex-1 flex flex-col justify-center items-center'>
 				<form className='lg:w-2/3  mx-auto md:mx-20 flex gap-4 flex-col' onSubmit={handleSubmit}>
-			
-          <Logo className='w-24 lg:hidden fill-white' />
-          <h1 className="text-purple-500 text-4xl font-bold">VioQUIZ</h1>
+					<Logo className='w-24 lg:hidden fill-white' />
+					<h1 className="text-purple-500 text-4xl font-bold">VioQUIZ</h1>
 					<h1 className='text-4xl font-extrabold text-primary'>Registrate para participar</h1>
 
 					<div className='flex gap-4 flex-wrap'>
