@@ -38,7 +38,7 @@ const RegisterPage = () => {
 		
 		},
 		onSuccess: () => {
-			toast.success("Cuenta creada correctamente");
+			toast.success("Revisa tu correo electrónico para verificar la cuenta", { duration: 4000 });
 		}
 	});
 
