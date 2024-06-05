@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 //import XSvg from "../../../components/svgs/X";
  import Logo from "../../../components/common/Logo"
@@ -13,7 +13,7 @@ const LoginPage = () => {
 		username: "",
 		password: "",
 	});
-	
+
 	const queryClient = useQueryClient();
 
 	const {mutate:loginMutation, 
@@ -33,7 +33,7 @@ const LoginPage = () => {
 						
 						const data = await res.json();
 
-						if (!res.ok) throw new Error(data.message || "Algo fue mal");
+						if (!res.ok) throw new Error(data.message || data.error);
 						return data;
 
 					} catch (error) {
@@ -56,16 +56,31 @@ const LoginPage = () => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
+    const location = useLocation();
+	const verifiedOnceRef = useRef(false);
+	const urlParams = new URLSearchParams(location.search);
+	const verified = urlParams.get("verified");
+    useEffect(() => {
+        if (verified === "true" && !verifiedOnceRef.current) {
+			verifiedOnceRef.current = true;
+            // Mostrar el toast después de un pequeño retraso
+            setTimeout(() => {
+                toast.success("Tu correo electrónico ha sido verificado. Ahora puedes iniciar sesión.");
+				console.log('i fire once');
+            }, 1000); // Espera 1 segundo antes de mostrar el toast
+        }
+    }, []);
+
+
 	return (
 		<div className='max-w-screen-xl mx-auto flex h-screen'>
 			<div className='flex-1 hidden lg:flex items-center  justify-center'>
-				<Logo width={260} height={260} className='mr-20 mb-20' />
-				
+			<Logo className=' lg:w-2/3 fill-white' />
 			</div>
 			<div className='flex-1 flex flex-col justify-center items-center'>
 				<form className='flex gap-4 flex-col' onSubmit={handleSubmit}>
-					<Logo width={160} height={160} className='lg:hidden' />
-					<h1 className="text-purple-500 text-4xl font-bold">TRIVIALITE</h1>
+				<Logo className='w-24 lg:hidden fill-white' />
+					<h1 className="text-purple-500 text-4xl font-bold">VioQUIZ</h1>
 					<h1 className='text-4xl font-extrabold text-primary'>{"Let's"} go.</h1>
 					<label className='input input-bordered rounded flex items-center gap-2'>
             <FaUser />
@@ -91,7 +106,12 @@ const LoginPage = () => {
 						/>
 					</label>
 					<button className='btn rounded-full btn-primary text-white'>{isPending ? "Cargando..." : "Acceder"}</button>
-					{isError && <p className='text-red-500'>{error.message}</p>}
+					{isError && (
+						<div role="alert" className="alert alert-error h-min">
+							<svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+							<span>{error.message || error.error}</span>
+						</div>
+					)}
 				</form>
 				<div className='flex flex-col gap-2 mt-4'>
 					<p className='text-primary text-lg'>{"¿No"} tienes cuenta?</p>

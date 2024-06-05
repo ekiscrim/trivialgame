@@ -48,6 +48,7 @@ const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 }
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);  // Autenticación de usuario
+app.use("/api/verify", authRoutes); //Verificacion de usuario
 app.use("/api/users", upload.single('profileImg'), userRoutes);  // Gestión de usuarios
 app.use("/api/category", categoryRoutes);  // Operaciones relacionadas con categorías
 app.use("/api/questions", upload.single('image'), questionRoutes);  // Operaciones relacionadas con preguntas

@@ -22,6 +22,12 @@ export const protectRoute = async(req, res, next) => {
             return res.status(404).json({error: "User no encontrado"})
         }
 
+        // Verificar si el usuario está confirmado
+        if (!user.emailConfirmed) {
+          return res.status(403).json({ error: "Acceso denegado: El usuario no ha confirmado su correo electrónico" });
+        }
+      
+
         req.user = user;
         next(); //execute getMe after the request from auth.routes.js
 
