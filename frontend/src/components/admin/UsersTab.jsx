@@ -25,6 +25,33 @@ const UsersTab = () => {
     fetchUsers();
   }, [isDirty]);
 
+  const [impersonateUserId, setImpersonateUserId] = useState(null);
+
+  const handleImpersonate = async (userId) => {
+    try {
+      // Realiza una solicitud al backend para iniciar sesión como el usuario seleccionado
+      const response = await fetch('/api/admin/impersonate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+      });
+      if (response.ok) {
+        // Si la solicitud es exitosa, redirige a la página de inicio o a otra página del usuario impersonado
+        // Aquí redirigimos a la página de inicio como ejemplo
+        window.location.href = '/';
+      } else {
+        // Si la solicitud falla, muestra un mensaje de error en la consola
+        console.error('Error al iniciar sesión como usuario:', response.statusText);
+      }
+    } catch (error) {
+      // Si hay un error en la solicitud, muestra un mensaje de error en la consola
+      console.error('Error al iniciar sesión como usuario:', error);
+    }
+  };
+
+
 
   const handleDeleteUser = async (userId) => {
     const confirmed = window.confirm('Are you sure you want to delete this user?');
@@ -92,7 +119,7 @@ const UsersTab = () => {
     <div className="min-h-screen flex justify-center bg-gray-100 py-4">
       <div className="w-full max-w-md">
         <h2 className="text-xl font-semibold mb-4">Users</h2>
-        <UserList users={users} onEdit={handleEditUser} onDelete={handleDeleteUser} />
+        <UserList users={users} onEdit={handleEditUser} onDelete={handleDeleteUser} onImpersonate={handleImpersonate} />
         <EditUserModal
           isOpen={editModalOpen}
           onRequestClose={handleCloseModal}

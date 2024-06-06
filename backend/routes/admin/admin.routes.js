@@ -3,7 +3,7 @@ const router = express.Router();
 import { protectRoute, adminRoute } from '../../middleware/protectRoute.js';
 import { createCategory, listCategories, deleteCategory } from '../../controllers/category.controller.js';
 import { listQuestions, createQuestion,deleteQuestion,editQuestion } from '../../controllers/question.controller.js';
-import { listUsers, editUser, deleteUser } from '../../controllers/user.controller.js';
+import { listUsers, editUser, deleteUser, impersonateUser } from '../../controllers/user.controller.js';
 
 import bodyParser from "body-parser";
 import multer from "multer"
@@ -29,6 +29,7 @@ router.delete('/question/:id', protectRoute, adminRoute, deleteQuestion);
 router.get('/users', protectRoute, adminRoute, listUsers);
 router.put('/user/:id', protectRoute, adminRoute, editUser);
 router.delete('/user/:id', protectRoute, adminRoute, deleteUser);
+router.post('/impersonate', protectRoute, adminRoute, impersonateUser);
 
 
 export default router;

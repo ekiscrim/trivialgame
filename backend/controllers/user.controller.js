@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import bcrypt from 'bcryptjs';
 import {v2 as cloudinary} from 'cloudinary';
 import streamifier from 'streamifier';
+import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
 
 export const getUserProfile = async (req, res) => {
     const { username } = req.params;
@@ -140,3 +141,20 @@ export const deleteUser = async (req, res) => {
 		res.status(500).json({ message: 'Error deleting user', error });
 	  }
   };
+
+export const impersonateUser = async (req, res) => {
+	try {
+		const { userId } = req.body;
+		// Comprobar si el usuario tiene permiso para impersonar
+		if (req.user.role !== 'admin') {
+		return res.status(403).json({ message: 'No tienes permiso para impersonar usuarios' });
+		}
+		// Generar un nuevo token de acceso para el usuario seleccionado
+		const token = generateTokenAndSetCookie(userId, res);
+		
+		res.status(200).json({ message: 'Usuario impersonado correctamente' });
+	} catch (error) {
+		console.error('Error al impersonar usuario:', error.message);
+		res.status(500).json({ message: 'Error interno al impersonar usuario' });
+	}
+}; 
