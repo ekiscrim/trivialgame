@@ -25,7 +25,8 @@
     "react-router-dom": "^6.23.1",
     "react-scroll-to-top": "^3.0.0",
     "react-share": "^5.1.0",
-    "react-use": "^17.5.0"
+    "react-use": "^17.5.0",
+    "trivialgame": "file:.."
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.13",

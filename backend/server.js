@@ -1,7 +1,7 @@
+import path from "path";
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import roomRoutes from "./routes/room.routes.js";
@@ -34,6 +34,7 @@ cloudinary.config({
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const __dirname = path.resolve();
 
 //middleware 
 app.use(express.json({limit: '200mb'})); // to parse req.body
@@ -66,6 +67,13 @@ app.use("/api/rankings", rankingRoutes); //Ranking de usuarios
 
 //admin
 app.use('/api/admin', adminRoutes);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+  app.get("*", (req, res)=> {
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+  })
+}
 
 
 app.listen(PORT, () => {
