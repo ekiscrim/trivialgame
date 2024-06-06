@@ -222,3 +222,46 @@ export const updateRoomStatus = async (req, res) => {
       res.status(500).json({ error: 'Error actualizando el estado de la sala' });
     }
   };
+
+
+// @desc    Get all rooms
+// @route   GET /api/rooms
+// @access  Private/Admin
+export const listRoomsAdmin = async (req, res) => {
+    try {
+      // Obtén la lista de salas y carga las preguntas asociadas
+      const rooms = await Room.find({}).populate('questions').sort({ createdAt: -1 });
+      
+      res.json(rooms);
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+
+// @desc    Update room
+// @route   PUT /api/rooms
+// @access  Private/Admin
+export const editRoom = async (req, res) => {
+    const { roomId } = req.params;
+    const { roomName, status } = req.body;
+    try {
+        const room = await Room.findById(roomId);
+        if (!room) {
+            return res.status(404).json({ error: 'Sala no encontrada' });
+        }
+
+        if (roomName) {
+            room.roomName = roomName;
+        }
+        if (status) {
+            room.status = status;
+        }
+
+        await room.save();
+
+        res.status(200).json({ message: 'Sala actualizada', room });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al actualizar la sala' });
+    }
+};

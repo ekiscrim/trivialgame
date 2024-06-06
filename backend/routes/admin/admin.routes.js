@@ -4,6 +4,7 @@ import { protectRoute, adminRoute } from '../../middleware/protectRoute.js';
 import { createCategory, listCategories, deleteCategory } from '../../controllers/category.controller.js';
 import { listQuestions, createQuestion,deleteQuestion,editQuestion } from '../../controllers/question.controller.js';
 import { listUsers, editUser, deleteUser, impersonateUser } from '../../controllers/user.controller.js';
+import { listRoomsAdmin, editRoom } from '../../controllers/room.controller.js';
 
 import bodyParser from "body-parser";
 import multer from "multer"
@@ -30,6 +31,11 @@ router.get('/users', protectRoute, adminRoute, listUsers);
 router.put('/user/:id', protectRoute, adminRoute, editUser);
 router.delete('/user/:id', protectRoute, adminRoute, deleteUser);
 router.post('/impersonate', protectRoute, adminRoute, impersonateUser);
+
+//Rutas para salas
+router.get('/rooms', protectRoute, adminRoute, listRoomsAdmin);
+router.put('/rooms/:roomId', protectRoute, adminRoute, editRoom);
+
 
 
 export default router;

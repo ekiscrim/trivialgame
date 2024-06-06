@@ -3,7 +3,7 @@ import Tab from '../../components/admin/Tab';
 import CategoriesTab from '../../components/admin/CategoriesTab';
 import QuestionsTab from '../../components/admin/QuestionsTab';
 import UsersTab from '../../components/admin/UsersTab';
-// import RoomsTab from '../../components/admin/RoomsTab';
+import RoomsTab from '../../components/admin/RoomsTab';
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('categories');
@@ -24,8 +24,7 @@ const AdminPage = () => {
       case 'users':
          return <UsersTab />;
       case 'rooms':
-        // return <RoomsTab />;
-        return;
+        return <RoomsTab />;
       default:
         return <CategoriesTab />;
     }

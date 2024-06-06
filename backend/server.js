@@ -21,7 +21,8 @@ import multer from "multer"
 //crons
 import './tasks/update.room.status.cron.js';
 import './tasks/reset.scores.cron.js';
-
+import './tasks/remove.room.old.cron.js'; // Cron job que elimina las salas antiguas
+import { deleteOldRoomsAndParticipants } from './tasks/remove.room.old.cron.js';
 dotenv.config();
 
 cloudinary.config({
@@ -70,4 +71,5 @@ app.use('/api/admin', adminRoutes);
 app.listen(PORT, () => {
   console.log(`Server is Running in port ${PORT}`);
   connectMongoDB();
+  //deleteOldRoomsAndParticipants();
 });
