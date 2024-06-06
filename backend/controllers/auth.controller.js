@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
     try {
-        const {username, password, role, email} = req.body;
+        let {username, password, role, email} = req.body;
 
         username = username.toLowerCase();
 
@@ -90,7 +90,8 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
 
-        const {username, password} = req.body;
+        let {username, password} = req.body;
+        username = username.toLowerCase();
         const user = await User.findOne({username});
         if (!user) {
             return res.status(400).json({error: "Nombre de usuario o contraseña incorrecta"});

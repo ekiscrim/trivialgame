@@ -15,6 +15,7 @@ import Modal from 'react-modal';
 import ResultsPage from "./pages/results/ResultsPage";
 import useDeviceDetection from "./hooks/useDeviceDetection";
 import RankingsPage from "./pages/ranking/RankingPage";
+import ScrollToTop from "react-scroll-to-top";
 // Establecer el elemento raíz para Modal
 Modal.setAppElement('#root');
 
@@ -60,6 +61,7 @@ function App() {
         <Route path="/rankings" element={authUserQuery ? <RankingsPage /> : <Navigate to="/login" />} />
         <Route path='/admin' element={<ProtectedRoute element={AdminPage} authUser={authUserQuery} adminOnly />} />
       </Routes>
+      <ScrollToTop style={{marginBottom: "40px", paddingLeft: "6px", right: "10px"}} smooth />
       <Toaster />
       {authUserQuery && <Navbar device={device} />}
     </div>
