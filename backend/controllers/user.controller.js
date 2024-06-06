@@ -88,3 +88,45 @@ export const updateUser = async (req, res) => {
 		return res.status(500).json({ error: error.message });
 	}
 };
+
+
+export const listUsers = async (req, res) => {
+	try {
+	  const users = await User.find({});
+	  res.json(users);
+	} catch (error) {
+	  res.status(500).json({ message: 'Error fetching users', error });
+	}
+  };
+  
+
+export const editUser = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const { username, email, role } = req.body;
+		const user = await User.findByIdAndUpdate(
+		id,
+		{ username, email, role },
+		{ new: true }
+		);
+		if (!user) {
+		return res.status(404).json({ message: 'User not found' });
+		}
+		res.json(user);
+	} catch (error) {
+		res.status(500).json({ message: 'Error updating user', error });
+	}
+};
+
+export const deleteUser = async (req, res) => {
+	try {
+	  const { id } = req.params;
+	  const user = await User.findByIdAndDelete(id);
+	  if (!user) {
+		return res.status(404).json({ message: 'User not found' });
+	  }
+	  res.json({ message: 'User deleted successfully' });
+	} catch (error) {
+	  res.status(500).json({ message: 'Error deleting user', error });
+	}
+  };
