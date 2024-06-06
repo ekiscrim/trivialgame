@@ -92,14 +92,17 @@ export const login = async (req, res) => {
 
         let {username, password} = req.body;
         username = username.toLowerCase();
-        const user = await User.findOne({username});
-        if (!user) {
-            return res.status(400).json({error: "Nombre de usuario o contraseña incorrecta"});
+        const user = await User.findOne({ username });
+
+        // Verificar si el usuario existe y no está marcado como eliminado
+        if (!user || user.deleted) {
+            return res.status(400).json({ error: "Nombre de usuario o contraseña incorrecta" });
         }
+
         const isPasswordCorrect = await bcrypt.compare(password, user.password || "");
         
         if (!isPasswordCorrect) {
-            return res.status(400).json({error: "Nombre de usuario o contraseña incorrecta"});
+            return res.status(400).json({ error: "Nombre de usuario o contraseña incorrecta" });
         }
 
         if (!user.emailConfirmed) {
@@ -111,13 +114,14 @@ export const login = async (req, res) => {
         res.status(200).json({
             _id: user._id,
             username: user.username
-        })
+        });
         
     } catch (error) {
         console.log("Error en el controlador de login ", error.message);
-        res.status(500).json({error: 'Error interno'});
+        res.status(500).json({ error: 'Error interno' });
     }
 };
+
 
 export const logout = async (req, res) => {
     try {

@@ -59,8 +59,10 @@ const Statistics = ({ userId }) => {
     </div>
   </div>
 </div>
-  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
-    {Object.entries(statsByCategory).map(([category, stats]) => (
+<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
+  {Object.entries(statsByCategory)
+    .filter(([category, stats]) => stats.total > 0) // Filtrar categorías con un total mayor que cero
+    .map(([category, stats]) => (
       <div key={category} className="flex">
         <div className="bg-white shadow-xl rounded p-4 text-center flex flex-col flex-grow">
           <h3><strong>{category}</strong></h3>
@@ -83,7 +85,7 @@ const Statistics = ({ userId }) => {
         </div>
       </div>
     ))}
-  </div>
+</div>
 </div>
 
 

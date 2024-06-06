@@ -4,20 +4,28 @@ import {v2 as cloudinary} from 'cloudinary';
 import streamifier from 'streamifier';
 
 export const getUserProfile = async (req, res) => {
-  
-    const {username} = req.params;
+    const { username } = req.params;
 
     try {
-        const user = await User.findOne({username}).select("-password");
+        // Buscar al usuario por su nombre de usuario
+        const user = await User.findOne({ username }).select("-password");
 
-        if (!user) return res.status(404).json({error: "Usuario no encontrado"});
+        // Verificar si se encontró un usuario
+        if (!user) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
 
+        // Verificar si el usuario tiene la propiedad 'deleted' y si está marcada como 'true'
+        if (user.deleted === true) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        // Devolver el usuario si no está marcado como eliminado
         res.status(200).json(user);
-    
-  } catch (error) {
-        console.log("Error en getUserProfile ",error.message);
-        res.status(500).json({error: error.message});
-  }
+    } catch (error) {
+        console.log("Error en getUserProfile ", error.message);
+        res.status(500).json({ error: error.message });
+    }
 };
 
 export const getUserNameById = async (req, res) => {
@@ -92,7 +100,8 @@ export const updateUser = async (req, res) => {
 
 export const listUsers = async (req, res) => {
 	try {
-	  const users = await User.find({});
+	  // Solo buscar usuarios que no estén marcados como eliminados
+	  const users = await User.find({ deleted: { $ne: true } });
 	  res.json(users);
 	} catch (error) {
 	  res.status(500).json({ message: 'Error fetching users', error });
@@ -120,13 +129,14 @@ export const editUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
 	try {
-	  const { id } = req.params;
-	  const user = await User.findByIdAndDelete(id);
-	  if (!user) {
-		return res.status(404).json({ message: 'User not found' });
+		const { id } = req.params;
+		// Buscamos al usuario por su ID y actualizamos el campo `deleted` a `true`
+		const user = await User.findByIdAndUpdate(id, { deleted: true });
+		if (!user) {
+		  return res.status(404).json({ message: 'User not found' });
+		}
+		res.json({ message: 'User deleted successfully' });
+	  } catch (error) {
+		res.status(500).json({ message: 'Error deleting user', error });
 	  }
-	  res.json({ message: 'User deleted successfully' });
-	} catch (error) {
-	  res.status(500).json({ message: 'Error deleting user', error });
-	}
   };

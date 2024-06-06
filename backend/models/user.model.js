@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
         role: {type: String, enum: ['user', 'moderador', 'admin'], default: 'user'},
         email: {type: String, required: true, unique: true},
         emailConfirmed: {type: Boolean, default: false},
+        deleted: {type: Boolean, default: false},
     }, {timestamps: true})
 
 const User = mongoose.model("User", userSchema);

@@ -17,7 +17,14 @@ export const getRankings = async(req, res) => {
                 break;
         }
 
-        const rankings = await UserStatistics.find().sort(sortCriteria).limit(10).populate('userId', 'username profileImg');
+        const rankings = await UserStatistics.find()
+        .populate({
+          path: 'userId',
+          select: 'username profileImg',
+          match: { $or: [{ deleted: { $exists: false } }, { deleted: false }] } // Selecciona usuarios no eliminados o usuarios sin el campo 'deleted'
+        })
+        .sort(sortCriteria)
+        .limit(10);
 
         res.json(rankings);
     } catch (error) {
