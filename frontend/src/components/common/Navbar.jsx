@@ -48,7 +48,7 @@ const Navbar = ({authUser, device}) => {
         <Logo width={40} height={40} />
         <span className={`text-white text-3xl font-bold hidden ${device === 'Mobile' ? '' : 'sm:flex'} ml-2`}>VioQUIZ</span>
       </Link>
-      <ul className={`flex items-center gap-4 ${device === 'Mobile' ? 'sm:gap-2' : ''}`}>
+      <ul className={`flex items-center gap-4 ${device === 'Mobile' ? 'gap-8' : ''}`}>
         <li>
           <div>
             <Link to='/' className={`${device === 'Mobile' ? 'sm:flex sm:flex-col sm:text-center sm:items-center gap-2' : 'sm:flex sm:flex-col sm:text-center sm:items-center gap-2'} text-white hover:text-violet-200 transition-all`}>
@@ -106,7 +106,7 @@ const Navbar = ({authUser, device}) => {
                 <img src={authUserData?.profileImg || "/avatar-placeholder.png"} alt="Profile" />
               </div>
             </div>
-            <div className={`${device === 'Mobile' ? '' : 'hidden sm:block'}`}>
+            <div className={`${device === 'Mobile' ? 'hidden' : 'block'}`}>
               <p className='text-white text-sm'>@{authUserData?.username}</p>
             </div>
           </div>
