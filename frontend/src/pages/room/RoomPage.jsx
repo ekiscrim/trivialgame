@@ -123,7 +123,7 @@ const RoomPage = () => {
     <div className="flex items-center justify-center -mt-5">
     <span className=" font-self my-4 text-cyan-300">
       Creada por: {creatorData ? (
-        <Link to={`/profile/${creatorData.username}`} className="text-cyan-300 hover:text-cyan-400">
+        <Link to={`/profile/${creatorData.creatorUsername}`} className="text-cyan-300 hover:text-cyan-400">
           {creatorData.creatorUsername}
         </Link>
       ) : (
