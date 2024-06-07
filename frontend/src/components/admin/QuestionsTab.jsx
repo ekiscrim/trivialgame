@@ -170,7 +170,7 @@ const QuestionTab = () => {
           <select
             id="category"
             name="category"
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            className="input input-bordered w-full"
             value={selectedCategory}
             onChange={(e) => handleCategoryChange(e.target.value)}
           >
