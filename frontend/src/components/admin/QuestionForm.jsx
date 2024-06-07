@@ -2,13 +2,13 @@ import { useRef, useState } from 'react';
 import AvatarEditor from 'react-avatar-editor';
 import toast from 'react-hot-toast';
 
-
 const QuestionForm = ({ categories, onSubmit }) => {
   const [formData, setFormData] = useState({ question: '', category: '', options: ['', '', '', ''], correctAnswer: '', image: null });
   const [errors, setErrors] = useState({ question: '', category: '', options: '', correctAnswer: '' });
   const [selectedImage, setSelectedImage] = useState(null);
   const editorRef = useRef(null);
   const [incorrectAnswers, setIncorrectAnswers] = useState([]);
+
   // Función para generar respuestas incorrectas utilizando IA
   const generateIncorrectAnswers = async (question) => {
     try {
@@ -20,9 +20,9 @@ const QuestionForm = ({ categories, onSubmit }) => {
           'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          inputs: `Genera una lista numerada del 1 al 4 con respuestas incorrectas para la siguiente pregunta: ${question}`,
+          inputs: `Genera una lista numerada del 1 al 4 con respuestas. Una de estas respuestas es la correcta, las otras tres serán incorrectas para la siguiente pregunta: ${question}`,
           options: {
-            num_return_sequences: 4, // Generar 4 respuestas
+            num_return_sequences: 1, // Generar 1 conjunto de respuestas
             do_sample: true, // Muestrear respuestas
           },
         }),
@@ -54,20 +54,27 @@ const QuestionForm = ({ categories, onSubmit }) => {
     }
   };
 
-  const handleQuestionBlur = async () => {
+  const handleGenerateAnswers = async () => {
     if (formData.question.trim() !== '') {
       const incorrect = await generateIncorrectAnswers(formData.question);
       setIncorrectAnswers(incorrect);
+
       // Extraer las respuestas incorrectas del texto generado
-      const incorrectResponses = incorrect[0].generated_text.match(/\d+\.\s+(.+)/g).map(match => match.replace(/^\d+\.\s+/, ''));
-      // Insertar respuestas incorrectas en los campos de respuesta
-      const newOptions = [...formData.options];
-      incorrectResponses.forEach((answer, index) => {
-        if (index < newOptions.length) {
-          newOptions[index] = answer;
-        }
-      });
-      setFormData({ ...formData, options: newOptions });
+      const incorrectResponses = incorrect[0]?.generated_text.match(/\d+\.\s+(.+)/g)?.map(match => match.replace(/^\d+\.\s+/, ''));
+      if (incorrectResponses && incorrectResponses.length >= 4) {
+        // Insertar respuestas incorrectas en los campos de respuesta
+        const newOptions = [...formData.options];
+        incorrectResponses.forEach((answer, index) => {
+          if (index < newOptions.length) {
+            newOptions[index] = answer;
+          }
+        });
+        setFormData({ ...formData, options: newOptions });
+      } else {
+        toast.error('No se pudieron generar suficientes respuestas incorrectas.');
+      }
+    } else {
+      toast.error('Por favor, escribe una pregunta primero.');
     }
   };
 
@@ -87,28 +94,28 @@ const QuestionForm = ({ categories, onSubmit }) => {
     const newErrors = { ...errors };
 
     if (!formData.question.trim()) {
-      newErrors.question = 'Please enter a question';
+      newErrors.question = 'Por favor, escribe una pregunta';
       valid = false;
     } else {
       newErrors.question = '';
     }
 
     if (!formData.category) {
-      newErrors.category = 'Please select a category';
+      newErrors.category = 'Por favor, selecciona una categoría';
       valid = false;
     } else {
       newErrors.category = '';
     }
 
     if (formData.options.some(option => !option.trim())) {
-      newErrors.options = 'Please enter all options';
+      newErrors.options = 'Por favor, escribe todas las opciones';
       valid = false;
     } else {
       newErrors.options = '';
     }
 
     if (!formData.correctAnswer) {
-      newErrors.correctAnswer = 'Please select the correct answer';
+      newErrors.correctAnswer = 'Por favor, selecciona la opción correcta';
       valid = false;
     } else {
       newErrors.correctAnswer = '';
@@ -145,12 +152,12 @@ const QuestionForm = ({ categories, onSubmit }) => {
       </div>
       <div className="form-control">
         <label className="label">
-          <input
-            type="checkbox"
-            checked={incorrectAnswers.length > 0}
-            onChange={handleQuestionBlur}
-          />
-          <span className="label-text">Generar respuestas por IA</span>
+          <button
+            type="button"
+            className='btn btn-neutral mt-4 w-full'
+            onClick={handleGenerateAnswers}>
+          Generar opciones de respuestas por IA
+          </button>
         </label>
       </div>
 
@@ -174,15 +181,15 @@ const QuestionForm = ({ categories, onSubmit }) => {
         {errors.options && <p className="text-red-500">{errors.options}</p>}
       </div>
       {incorrectAnswers.length > 0 && (
-        <div>
-          <h3>Respuestas incorrectas generadas:</h3>
-          <ul>
+        <div className="bg-white p-4 rounded-lg shadow-md mt-4">
+          <h3 className="text-lg font-semibold mb-2">Respuestas incorrectas generadas:</h3>
+          <ul className="list-none pl-5 space-y-2">
             {incorrectAnswers.map((answer, index) => (
-              <li key={index}>{answer.generated_text}</li>
+              <li key={index} className="text-gray-700">{answer.generated_text}</li>
             ))}
           </ul>
         </div>
-      )}
+        )}
 
       <div className="form-control">
         <label className="label">
@@ -216,7 +223,7 @@ const QuestionForm = ({ categories, onSubmit }) => {
           </button>
         )}
       </div>
-      <button type="submit" className="btn btn-primary mt-4 w-full">Add Question</button>
+      <button type="submit" className="btn btn-primary mt-4 w-full">Añadir pregunta</button>
     </form>
   );
 };

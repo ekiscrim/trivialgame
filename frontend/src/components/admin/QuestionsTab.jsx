@@ -30,42 +30,40 @@ const QuestionTab = () => {
     fetchQuestions();
   }, [selectedCategory, isDirty]);
 
-    useEffect(() => {
-      const fetchCategories = async () => {
-        try {
-          const response = await fetch('/api/admin/categories');
-          if (!response.ok) {
-            throw new Error('Error fetching categories');
-          }
-          const data = await response.json();
-          setCategories(data);
-        } catch (error) {
-          console.error('Error fetching categories:', error);
-        }
-      };
-      fetchCategories();
-    }, [isDirty]);
-
-
-    const handleCategoryChange = async (categoryId) => {
+  useEffect(() => {
+    const fetchCategories = async () => {
       try {
-        setSelectedCategory(categoryId);
-        let response;
-        if (categoryId === "") {
-          response = await fetch(`/api/admin/questions`);
-        } else {
-          response = await fetch(`/api/admin/questions?category=${categoryId}`);
-        }
+        const response = await fetch('/api/admin/categories');
         if (!response.ok) {
-          throw new Error('Error fetching questions by category');
+          throw new Error('Error fetching categories');
         }
         const data = await response.json();
-        setQuestions(data);
+        setCategories(data);
       } catch (error) {
-        console.error('Error fetching questions by category:', error);
+        console.error('Error fetching categories:', error);
       }
     };
+    fetchCategories();
+  }, [isDirty]);
 
+  const handleCategoryChange = async (categoryId) => {
+    try {
+      setSelectedCategory(categoryId);
+      let response;
+      if (categoryId === "") {
+        response = await fetch(`/api/admin/questions`);
+      } else {
+        response = await fetch(`/api/admin/questions?category=${categoryId}`);
+      }
+      if (!response.ok) {
+        throw new Error('Error fetching questions by category');
+      }
+      const data = await response.json();
+      setQuestions(data);
+    } catch (error) {
+      console.error('Error fetching questions by category:', error);
+    }
+  };
 
   const handleAddQuestion = async (formData, resetForm) => {
     try {
@@ -131,7 +129,7 @@ const QuestionTab = () => {
         formDataWithImage.append('image', editFormData.image);
       }
       editFormData.options.forEach(option => formDataWithImage.append('options', option));
-  
+
       const response = await fetch(`/api/admin/question/${editFormData._id}`, {
         method: 'PUT',
         body: formDataWithImage,
@@ -147,7 +145,6 @@ const QuestionTab = () => {
       console.error('Error updating question:', error);
     }
   };
-  
 
   const handleCloseModal = () => {
     if (isDirty) {
@@ -168,18 +165,7 @@ const QuestionTab = () => {
       <div className="w-full max-w-md">
         <h2 className="text-xl font-semibold mb-4">Preguntas</h2>
         <QuestionForm categories={categories} onSubmit={handleAddQuestion} />
-        <QuestionList questions={questions} onEdit={handleEditQuestion} onDelete={handleDeleteQuestion} />
-        <EditQuestionModal
-          isOpen={editModalOpen}
-          onRequestClose={handleCloseModal}
-          categories={categories}
-          editFormData={editFormData}
-          setEditFormData={setEditFormData}
-          onSubmit={handleEditSubmit}
-          isDirty={isDirty}
-        />
-      </div>
-      <div className="mb-4">
+        <div className="mb-4">
           <label htmlFor="category" className="block font-medium text-gray-700">Filtrar por categoría:</label>
           <select
             id="category"
@@ -190,13 +176,23 @@ const QuestionTab = () => {
           >
             <option value="">Selecciona una categoría</option>
             {categories.map(category => {
-                const categoryQuestions = questions.filter(question => question.category === category._id);
-                return (
-                  <option key={category._id} value={category._id}>{category.title} ({categoryQuestions.length})
-                  </option>
-                ); 
-              })}
+              const categoryQuestions = questions.filter(question => question.category === category._id);
+              return (
+                <option key={category._id} value={category._id}>{category.title} ({categoryQuestions.length})</option>
+              );
+            })}
           </select>
+        </div>
+        <QuestionList questions={questions} onEdit={handleEditQuestion} onDelete={handleDeleteQuestion} />
+        <EditQuestionModal
+          isOpen={editModalOpen}
+          onRequestClose={handleCloseModal}
+          categories={categories}
+          editFormData={editFormData}
+          setEditFormData={setEditFormData}
+          onSubmit={handleEditSubmit}
+          isDirty={isDirty}
+        />
       </div>
     </div>
   );
