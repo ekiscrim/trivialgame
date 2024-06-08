@@ -18,6 +18,8 @@ const fetchScores = async (roomId) => {
   return response.json();
 };
 
+
+
 const ScoresTable = ({ currentUser }) => {
   const id = useParams();
   const { width, height } = useWindowSize();
@@ -109,39 +111,51 @@ const ScoresTable = ({ currentUser }) => {
             <table className="table-auto w-full mb-9">
               <thead>
                 <tr>
-                  <th className="px-0 py-0"></th>
+                  <th className="px-3 py-2"></th>
+                  <th className="px-3 py-2"></th>
                   <th className="px-4 py-2 text-white">Usuario</th>
                   <th className="px-4 py-2 text-white">Puntuación</th>
-                  <th className="px-4 py-2 text-white">Acciones</th>
+                  <th className="px- py-2 text-white">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {restOfUsers.map((scoreEntry, index) => (
-                  <tr key={index} className={index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'}>
-                    <td className="border px-4 py-2 text-center">
-                      <div className='avatar'>
-                        <div className='w-8 rounded-full'>
-                          <img src={scoreEntry.user.profileImg || "/avatar-placeholder.png"} alt="Profile" />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="border px-4 py-2 text-center text-lg text-white">{scoreEntry.user.username}</td>
-                    <td className="border px-4 py-2 text-center text-lg text-white">
-                      {scoreEntry.score}
-                    </td>
-                    <td className="border px-4 py-2 text-center">
-                    <button
-                      className="bg-purple-500 text-white py-1 px-2 rounded flex items-center"
-                      onClick={() => openModal(scoreEntry.user._id)}
-                    >
-                      <HiMiniEye className="mr-1" />
-                      <span>Progreso</span>
-                    </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              {restOfUsers.map((scoreEntry, index) => (
+            <tr
+              key={index}
+              className={(index + 4) % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'}
+              style={currentUser && currentUser === scoreEntry.user._id ? { backgroundColor: 'purple' } : {}}
+            >
+              <td className="border px-4 py-2 text-center text-white">
+                {index + 4}
+              </td>
+              <td className="border px-4 py-2 text-center">
+                <div className='avatar'>
+                  <div className='w-8 rounded-full'>
+                  <Link to={`/profile/${scoreEntry.user.username}`}>
+                    <img src={scoreEntry.user.profileImg || "/avatar-placeholder.png"} alt="Profile" />
+                  </Link>
+                  </div>
+                </div>
+              </td>
+              
+                <td className="border px-4 py-2 text-center text-lg text-white">
+                  <Link to={`/profile/${scoreEntry.user.username}`}>{scoreEntry.user.username}</Link>
+                  </td>             
+              <td className="border px-4 py-2 text-center text-lg text-white">
+                {scoreEntry.score}
+              </td>
+              <td className="border px-4 py-2 text-center items-center">
+                <button
+                  className="bg-purple-500 text-white py-1 px-2 rounded"
+                  onClick={() => openModal(scoreEntry.user._id)}
+                >
+                  <HiMiniEye />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
           </div>
         )}
       </div>

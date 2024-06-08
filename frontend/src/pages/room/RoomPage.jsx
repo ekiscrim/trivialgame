@@ -7,8 +7,12 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { HiArrowRightStartOnRectangle } from "react-icons/hi2";
 import ShareComponent from "../../components/room/ShareComponent";
 import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from "react";
 
 const RoomPage = () => {
+  const [progress, setProgress] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const { id } = useParams();
   const { data: userId } = useQuery({ queryKey: ["authUser"] });
 
@@ -16,6 +20,7 @@ const RoomPage = () => {
   const urlDeLaSala = String(window.location);
 
 
+  
   const { data: roomData, isLoading, error } = useQuery({
     queryKey: ["roomData", id],
     queryFn: async () => {
@@ -109,7 +114,35 @@ const RoomPage = () => {
     return shuffled;
   };
 
-  if (!roomData || !roomData.room || !roomData.users || !userScoreData || isLoadingScore) {
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        if (!roomData || !roomData.room) {
+          return;
+        }
+        const response = await fetch(`/api/participant/${roomData.room._id}/${userId._id}`);
+        if (!response.ok) {
+          throw new Error("Error fetching progress");
+        }
+        const data = await response.json();
+        setProgress(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching progress", error);
+        setLoading(false);
+      }
+    };
+
+    fetchProgress();
+  }, [roomData, userId]);
+
+  const handleUpdateProgress = (newProgressData) => {
+    setProgress(newProgressData);
+  };
+
+
+
+  if (!roomData || !roomData.room || !roomData.users || !userScoreData || isLoadingScore || loading) {
     return <LoadingSpinner />
   }
 
@@ -161,7 +194,7 @@ const RoomPage = () => {
                     <div role="alert" className="alert alert-success text-white">
                       <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         <span>Ya has participado!</span>
-                        <ShareComponent score={userScoreData.score.score} roomUrl={urlDeLaSala} />
+                        <ShareComponent score={userScoreData.score.score} roomUrl={urlDeLaSala} progress={progress} />
                     </div>
 
                 )}
@@ -170,7 +203,7 @@ const RoomPage = () => {
               )}
       </div>
 
-      <ScoresTable currentUser={userId._id} />
+      <ScoresTable currentUser={userId._id} onUpdateProgress={handleUpdateProgress} />
       {roomData && (
         <div className="card lg:card sm:w-1/4 lg:w-1/5 lg:p-4 mx-auto text-center bg-base-100 shadow-xl my-6 sticky top-0 left-0 right-0">
           <div className="card-body">

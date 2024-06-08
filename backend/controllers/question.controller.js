@@ -207,8 +207,20 @@ export const validateAnswer = async (req, res) => {
 export const getParticipantProgress = async (req, res) => {
   const { userId, roomId } = req.params;
   try {
-    const participant = await Participant.findOne({ userId, roomId });
-    if (!participant) return res.status(404).json({ error: 'Participant not found' });
+    let participant = await Participant.findOne({ userId, roomId });
+
+    // Si el participante no existe, crear una nueva entrada con valores predeterminados
+    if (!participant) {
+      participant = new Participant({
+        userId,
+        roomId,
+        lastQuestionIndex: 0,
+        score: 0
+      });
+      await participant.save();
+    }
+
+    // Devolver el progreso del participante
     res.json({ lastQuestionIndex: participant.lastQuestionIndex, score: participant.score });
   } catch (error) {
     res.status(500).json({ error: error.message });
