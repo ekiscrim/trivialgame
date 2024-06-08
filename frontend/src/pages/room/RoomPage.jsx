@@ -6,7 +6,6 @@ import SkeletonCard from "../../components/common/SkeletonCard";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { HiArrowRightStartOnRectangle } from "react-icons/hi2";
 import ShareComponent from "../../components/room/ShareComponent";
-import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from "react";
 
 const RoomPage = () => {
@@ -19,8 +18,12 @@ const RoomPage = () => {
   const navigate = useNavigate();
   const urlDeLaSala = String(window.location);
 
+  const fetchRoomCreator = async (roomId) => {
+    const response = await fetch(`/api/rooms/${roomId}/creator`);
+    if (!response.ok) throw new Error('Failed to fetch room creator');
+    return response.json();
+  };
 
-  
   const { data: roomData, isLoading, error } = useQuery({
     queryKey: ["roomData", id],
     queryFn: async () => {
@@ -36,14 +39,6 @@ const RoomPage = () => {
     queryFn: () => fetchRoomCreator(id),
   });
 
-
-  const fetchRoomCreator = async (roomId) => {
-    const response = await fetch(`/api/rooms/${roomId}/creator`);
-    if (!response.ok) throw new Error('Failed to fetch room creator');
-    return response.json();
-  };
-  
-
   const fetchCategories = async (roomId) => {
     const res = await fetch(`/api/rooms/${roomId}/categories`);
     if (!res.ok) throw new Error(`Failed to fetch categories for room ${roomId}`);
@@ -55,7 +50,6 @@ const RoomPage = () => {
     queryKey: ["categories", id],
     queryFn: () => fetchCategories(id),
   });
-
 
   const { data: userScoreData, isLoading: isLoadingScore } = useQuery({
     queryKey: ["userScoreData", id, userId],
@@ -70,7 +64,6 @@ const RoomPage = () => {
 
   const canStartGame = () => {
     if (!roomData || !roomData.users || !roomData.room) return false;
-    
     const userInRoom = roomData.users.find(user => user._id === userId._id);
     const currentTime = Date.now();
     const timeElapsed = currentTime - new Date(roomData.room.startTime).getTime();
@@ -140,67 +133,64 @@ const RoomPage = () => {
     setProgress(newProgressData);
   };
 
-
-
   if (!roomData || !roomData.room || !roomData.users || !userScoreData || isLoadingScore || loading) {
-    return <LoadingSpinner />
+    return <LoadingSpinner />;
   }
 
-
   return (
-<div className="min-w-full h-full mb-20">
-  <div className="bg-purple-700 pb-4 rounded-lg">
-    <h1 className="text-2xl font-bold my-4 text-cyan-300 text-center pt-16">
-      Sala: {roomData && roomData.room ? roomData.room.roomName : <LoadingSpinner />}
-    </h1>
-    <div className="flex items-center justify-center -mt-5">
-    <span className=" font-self my-4 text-cyan-300">
-      Creada por: {creatorData ? (
-        <Link to={`/profile/${creatorData.creatorUsername}`} className="text-cyan-300 hover:text-cyan-400">
-          {creatorData.creatorUsername}
-        </Link>
-      ) : (
-        <LoadingSpinner />
-      )}
-    </span>
-    <div className='avatar ml-2'>
-    <div className='w-8 h-8 rounded-full'>
-      <img src={creatorData ? creatorData.profileImg || '/avatar-placeholder.png' : <LoadingSpinner />} alt="Avatar de Usuario" />
-    </div>
-    </div>
-  </div>
-      <div className="flex flex-wrap justify-center gap-2 px-4">
-      {categories && categories.map((category, index) => (
-        <div key={index} className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-full px-3 py-1 text-sm text-white">{category}</div>
-      ))}
-    </div>
-  </div>
+    <div className="min-w-full h-full mb-20">
+      <div className={`${roomData.room.roomType === 'super' ? 'bg-red-700' : 'bg-purple-700'} pb-4 rounded-lg`}>
+        <h1 className={`text-2xl font-bold my-4 ${roomData.room.roomType === 'super' ? 'text-white' : 'text-cyan-300'} text-center pt-16`}>
+          Sala: {roomData && roomData.room ? roomData.room.roomName : <LoadingSpinner />}
+        </h1>
+        <div className="flex items-center justify-center -mt-5">
+          <span className={`font-self my-4 ${roomData.room.roomType === 'super' ? 'text-white' : 'text-cyan-300'}`}>
+            Creada por: {creatorData ? (
+              <Link to={`/profile/${creatorData.creatorUsername}`} className={`${roomData.room.roomType === 'super' ? 'text-white hover:text-gray-300' : 'text-cyan-300 hover:text-cyan-400'}`}>
+                {creatorData.creatorUsername}
+              </Link>
+            ) : (
+              <LoadingSpinner />
+            )}
+          </span>
+          <div className="avatar ml-2">
+            <div className="w-8 h-8 rounded-full">
+              <img src={creatorData ? creatorData.profileImg || '/avatar-placeholder.png' : <LoadingSpinner />} alt="Avatar de Usuario" />
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap justify-center gap-2 px-4">
+          {categories && categories.map((category, index) => (
+            <div key={index} className={`${roomData.room.roomType === 'super' ? 'bg-gradient-to-r from-red-500 to-yellow-500' : 'bg-gradient-to-r from-purple-500 to-blue-500'} rounded-full px-3 py-1 text-sm text-white`}>
+              {category} {roomData.room.roomType === 'super' && '💣'}
+            </div>
+          ))}
+        </div>
+      </div>
 
       {isLoading && <LoadingSpinner />}
       {error && <p className="text-lg text-red-500">Error: {error.message}</p>}
       <div className="lg:w-1/2 p-4 mx-auto text-center">
         {roomData.room.status === 'finished' ? (
-                <p className="text-red-500 mt-4">La sala ha terminado.</p>
-              ) : (
-                <>
-                {canStartGame() ? (
-                  <button
-                    onClick={handleStart}
-                    className="btn btn-primary mt-4 w-full lg:w-96"
-                  >
-                    {isPending ? "Cargando..." : <HiArrowRightStartOnRectangle />} Comenzar Partida</button>
-                ) : (
-                  
-                    <div role="alert" className="alert alert-success text-white">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        <span>Ya has participado!</span>
-                        <ShareComponent score={userScoreData.score.score} roomUrl={urlDeLaSala} progress={progress} />
-                    </div>
-
-                )}
-
-                </>
-              )}
+          <p className="text-red-500 mt-4">La sala ha terminado.</p>
+        ) : (
+          <>
+            {canStartGame() ? (
+              <button
+                onClick={handleStart}
+                className="btn btn-primary mt-4 w-full lg:w-96"
+              >
+                {isPending ? "Cargando..." : <HiArrowRightStartOnRectangle />} Comenzar Partida
+              </button>
+            ) : (
+              <div role="alert" className="alert alert-success text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>Ya has participado!</span>
+                <ShareComponent score={userScoreData.score.score} roomUrl={urlDeLaSala} progress={progress} />
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       <ScoresTable currentUser={userId._id} onUpdateProgress={handleUpdateProgress} />
@@ -211,13 +201,13 @@ const RoomPage = () => {
             <ul className="list-disc list-inside">
               {roomData.users.map((user) => (
                 <Link key={user._id} to={`/profile/${user.username}`}>
-                <div key={user._id} className='avatar bg-purple-500 rounded-lg p-1 flex grid-flow-row space-x-1 items-center mb-2  hover:bg-cyan-600'>
-                <div className='w-8 rounded-full relative ml-2 mr-1 '>
-                  <img src={user?.profileImg || "/avatar-placeholder.png"} alt="Profile" />                  
-                </div>
-                <li key={user._id} className="text-sm list-none text-cyan-50 font-semibold">@{user.username}</li>
-              </div>
-              </Link>
+                  <div key={user._id} className="avatar bg-purple-500 rounded-lg p-1 flex grid-flow-row space-x-1 items-center mb-2 hover:bg-cyan-600">
+                    <div className="w-8 rounded-full relative ml-2 mr-1">
+                      <img src={user?.profileImg || "/avatar-placeholder.png"} alt="Profile" />
+                    </div>
+                    <li key={user._id} className="text-sm list-none text-cyan-50 font-semibold">@{user.username}</li>
+                  </div>
+                </Link>
               ))}
             </ul>
           </div>

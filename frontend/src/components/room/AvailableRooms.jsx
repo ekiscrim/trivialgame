@@ -78,18 +78,18 @@ const AvailableRooms = () => {
         </div>
       ) : (
         <div>
-          <div className=" flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center">
             <div className="flex items-center justify-center -ml-2">
               <Logo className='w-12 sm:hidden fill-white' />
               <div className="flex flex-col items-center justify-center text-center">
                 <span className={`text-white text-3xl font-bold sm:hidden`}>VioQUIZ</span>
-                <span className={`text-white text-xs font-bold text-end italic sm:hidden`}>Desafía tu mente, <br/>conquista lo trivial.</span>
+                <span className={`text-white text-xs font-bold text-end italic sm:hidden`}>Desafía tu mente, <br />conquista lo trivial.</span>
               </div>
             </div>
             <div className="mt-4 flex items-center justify-center">
               <CreateRoom />
               <div className="ml-4">
-                <select onChange={handleStatusChange} value={status} className=" select select-bordered">
+                <select onChange={handleStatusChange} value={status} className="select select-bordered">
                   <option value="waiting">Salas abiertas</option>
                   <option value="finished">Salas cerradas</option>
                 </select>
@@ -102,39 +102,39 @@ const AvailableRooms = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                <span>{roomsError ? roomsError.message :  <LoadingSpinner />}</span>
+                <span>{roomsError ? roomsError.message : <LoadingSpinner />}</span>
               </div>
             </div>
           ) : (
             <>
-              <div className="grid col-span-1 relative mb-10">
+              <div className="flex flex-col items-center justify-center">
                 {allRooms.some(room => room.roomType === 'super') && (
-                  <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">{'SALA BOMBA'}</h1>
+                  <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">SALAS BOMBA</h1>
                 )}
-                {allRooms.map((room, index) => (
-                  <div key={index} className="max-h-96 relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
-                    {room.roomType === 'super' && (
-                      <SuperRoomCard key={index} room={room} userId={userId} />
-                    )}
-                  </div>
-                ))}
+                <div className="flex flex-wrap justify-center gap-6">
+                  {allRooms.filter(room => room.roomType === 'super').map((room, index) => (
+                    <div key={index} className="w-80 relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
+                      <SuperRoomCard room={room} userId={userId} />
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="grid col-span-1 relative">
-                <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">{status === 'waiting' ? 'Salas abiertas' : 'Salas cerradas'}</h1>
+              <div className="flex flex-col items-center justify-center mt-10">
+                <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">
+                  {status === 'waiting' ? 'Salas abiertas' : 'Salas cerradas'}
+                </h1>
+                <div className="flex flex-wrap justify-center gap-6">
+                  {allRooms.filter(room => room.roomType === 'normal').map((room, index) => (
+                    <div key={index} className="w-80 relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
+                      <RoomCard room={room} userId={userId} />
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap flex items-stretch justify-center gap-6 xl:mt-6 ml-2 mr-2 animate-scale-in">
-                {allRooms
-                .filter(room => room.roomType === 'normal')
-                .map((room, index) => (
-                <div key={index} className="w-80  relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
-                  <RoomCard key={index} room={room} userId={userId} />
-                </div>
-                ))}
-                </div>
               {hasMore && (
-                <div className="flex justify-center relative mb-40">
-                  <button onClick={handleLoadMoreClick} className="btn btn-primary ">
+                <div className="flex justify-center mt-10 mb-40">
+                  <button onClick={handleLoadMoreClick} className="btn btn-primary">
                     Cargar más
                   </button>
                 </div>
