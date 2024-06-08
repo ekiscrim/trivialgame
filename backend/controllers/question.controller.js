@@ -215,6 +215,17 @@ export const getParticipantProgress = async (req, res) => {
   }
 };
 
+export const getParticipantProgressAll = async (req, res) => {
+  const { roomId, userId } = req.params;
+  try {
+    const participants = await Participant.find({ roomId, userId  }).sort("lastQuestionIndex");
+    res.json(participants);
+    if (!participants) return res.status(404).json({ error: 'Participants not found' });
+  }catch (error) {
+    res.status(500).json({ error: "Error fetching progress" });
+  }
+};
+
 export const getCategoryFromQuestion = async (req, res) => {
   const { questionId } = req.params;
   try {

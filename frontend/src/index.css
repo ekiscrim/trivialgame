@@ -150,3 +150,10 @@ body {
 .countdown>*:before {
   content: "0\a 1\a 2\a 3\a 4\a 5\a"
 }
+
+/* no pintar la barra de progreso en los steps */
+.step::before {
+  left: -50%;
+  display: none;
+}
+
