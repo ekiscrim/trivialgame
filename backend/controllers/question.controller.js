@@ -163,9 +163,9 @@ export const validateAnswer = async (req, res) => {
       //return res.status(400).json({ error: 'The game is finished' });
     }
 
-
     const question = await Question.findById(questionId);
     if (!question) return res.status(404).json({ error: 'Question not found' });
+    
     const isCorrect = question.correctAnswer === selectedOption;
     let updatedScore = 0;
     if (isCorrect) {
@@ -174,24 +174,26 @@ export const validateAnswer = async (req, res) => {
       updatedScore = basePoints + timeBonus;
     }
 
-    // Guardar la respuesta del participante
-    const participantAnswer = new Participant({
-      userId,
-      roomId,
-      questionId,
-      selectedOption,
-      isCorrect
-    });
-    await participantAnswer.save();
-
-
     // Actualizar el índice de la última pregunta respondida y el score del participante
     const participant = await Participant.findOneAndUpdate(
       { userId, roomId },
       { $inc: { lastQuestionIndex: 1, score: updatedScore } },
       { new: true, upsert: true } // Create a new document if not exists
     );
-    console.log("PARTICIPANT", participant, "PARTICIPANT ANSWER", participantAnswer)
+
+    // Guardar la respuesta del participante
+    const participantAnswer = new Participant({
+      userId,
+      roomId,
+      questionId,
+      selectedOption,
+      isCorrect,
+      lastQuestionIndex: participant.lastQuestionIndex, // Use the updated lastQuestionIndex
+      score: updatedScore // Use the updated score
+    });
+    await participantAnswer.save();
+
+    console.log("PARTICIPANT", participant, "PARTICIPANT ANSWER", participantAnswer);
 
     // Verificar si el participante ha respondido todas las preguntas
     const totalQuestions = room.questions.length;

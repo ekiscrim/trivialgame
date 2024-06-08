@@ -11,24 +11,27 @@ const ProgressComponent = ({ roomId, userId }) => {
         setLoading(false);
         return;
       }
-  
+
       try {
         const response = await fetch(`/api/participant/${roomId}/${userId}`);
         if (!response.ok) {
           throw new Error('Error fetching progress');
         }
         const data = await response.json();
-        setProgress(data);
+        
+        // Filtrar respuestas sin questionId o selectedOption
+        const filteredProgress = data.filter(step => step.questionId && step.selectedOption);
+
+        setProgress(filteredProgress);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching progress", error);
         setLoading(false);
       }
     };
-  
+
     fetchProgress();
   }, [roomId, userId]);
-  
 
   if (loading) {
     return <div className="loading-spinner">Cargando...</div>;
@@ -37,7 +40,7 @@ const ProgressComponent = ({ roomId, userId }) => {
   return (
     <div className="flex flex-col items-center w-full bg-black p-9">
       <h2 className="text-2xl font-semibold mb-6 text-purple-100">Resultados</h2>
-      <ul className="steps flex flex-wrap justify-center ">
+      <ul className="steps flex flex-wrap justify-center">
         {progress.map((step, index) => (
           <li
             key={index}
