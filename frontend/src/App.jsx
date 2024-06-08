@@ -41,7 +41,7 @@ function App() {
   const device = useDeviceDetection();
   const location = useLocation();
   // Verificar si la ruta actual es la página QuestionPage
-  const isQuestionPage = /^\/room\/[a-zA-Z0-9]+\/questions\/[a-zA-Z0-9]+$/.test(location.pathname);
+  const isQuestionPage = /^\/room\/[a-zA-Z0-9]+\/questions\/([a-zA-Z0-9]+,?)+$/.test(location.pathname);
 
 
 
