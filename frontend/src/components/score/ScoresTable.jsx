@@ -114,8 +114,8 @@ const ScoresTable = ({ currentUser }) => {
                   <th className="px-3 py-2"></th>
                   <th className="px-3 py-2"></th>
                   <th className="px-4 py-2 text-white">Usuario</th>
-                  <th className="px-4 py-2 text-white">Puntuación</th>
-                  <th className="px- py-2 text-white">Acciones</th>
+                  <th className="px-4 py-2 text-white">Puntos</th>
+                  <th className="px- py-2 text-white">Progreso</th>
                 </tr>
               </thead>
               <tbody>
@@ -138,7 +138,7 @@ const ScoresTable = ({ currentUser }) => {
                 </div>
               </td>
               
-                <td className="border px-4 py-2 text-center text-lg text-white">
+                <td className="border px-4 py-2 text-center text-md text-white">
                   <Link to={`/profile/${scoreEntry.user.username}`}>{scoreEntry.user.username}</Link>
                   </td>             
               <td className="border px-4 py-2 text-center text-lg text-white">
