@@ -1,8 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from 'react-router-dom';
 import Question from '../../components/question/Question';
+import { useEffect } from "react";
 
 const QuestionPage = () => {
+  
+  useEffect(() => {
+    const handleBackNavigation = (event) => {
+      event.preventDefault();
+      window.history.forward(); // Avanzar una página para mantener al usuario en la página actual
+    };
+
+    window.history.pushState(null, null, window.location.pathname); // Agregar una nueva entrada al historial
+    window.addEventListener('popstate', handleBackNavigation);
+
+    return () => {
+      window.removeEventListener('popstate', handleBackNavigation);
+    };
+  }, []);
+
   const {data:userId} = useQuery({queryKey: ["authUser"]})
   const { roomId, categoryId } = useParams();
   const { data: roomData, isLoading, error } = useQuery({
@@ -34,6 +50,8 @@ const QuestionPage = () => {
   // Aquí asumimos que roomData.room.categories es un array de IDs de categorías
   const categoryIds = roomData.room.categories;
   const questionCount = roomData.room.questionCount;
+
+
 
   return (
     <div className="animate-scale-in">

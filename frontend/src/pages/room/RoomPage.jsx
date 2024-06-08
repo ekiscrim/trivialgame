@@ -18,6 +18,22 @@ const RoomPage = () => {
   const navigate = useNavigate();
   const urlDeLaSala = String(window.location);
 
+  useEffect(() => {
+    const handleBackNavigation = (event) => {
+      event.preventDefault();
+      window.history.forward(); // Avanzar una página para mantener al usuario en la página actual
+    };
+
+    window.history.pushState(null, null, window.location.pathname); // Agregar una nueva entrada al historial
+    window.addEventListener('popstate', handleBackNavigation);
+
+    return () => {
+      window.removeEventListener('popstate', handleBackNavigation);
+    };
+  }, []);
+
+
+
   const fetchRoomCreator = async (roomId) => {
     const response = await fetch(`/api/rooms/${roomId}/creator`);
     if (!response.ok) throw new Error('Failed to fetch room creator');

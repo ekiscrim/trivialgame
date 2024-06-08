@@ -59,6 +59,22 @@ const Question = ({ roomId, userId }) => {
   };
 
   useEffect(() => {
+    const handleBackNavigation = (event) => {
+      event.preventDefault();
+      window.history.forward(); // Avanzar una página para mantener al usuario en la página actual
+    };
+
+    window.history.pushState(null, null, window.location.pathname); // Agregar una nueva entrada al historial
+    window.addEventListener('popstate', handleBackNavigation);
+
+    return () => {
+      window.removeEventListener('popstate', handleBackNavigation);
+    };
+  }, []);
+
+
+
+  useEffect(() => {
     const fetchData = async () => {
       setIsCategoryLoading(true);      
       try {
@@ -313,3 +329,4 @@ const Question = ({ roomId, userId }) => {
 };
 
 export default Question;
+
