@@ -50,35 +50,46 @@ const shuffleArray = (array) => {
     return shuffled;
   };
 
-export const createRoom = async (req, res) => {
+  const createRoom = async (req, res, roomType) => {
     try {
-            const { roomName, questionCount, categories, creatorId } = req.body;
-            
-            // Realizar consulta para obtener preguntas basadas en las categorías seleccionadas
-            const questions = await Question.find({ category: { $in: categories } });
-            // Seleccionar un número aleatorio de preguntas según questionCount
-            const selectedQuestions = shuffleArray(questions).slice(0, questionCount);
+        const { roomName, questionCount, categories, creatorId } = req.body;
+        
+        // Realizar consulta para obtener preguntas basadas en las categorías seleccionadas
+        const questions = await Question.find({ category: { $in: categories } });
+        // Seleccionar un número aleatorio de preguntas según questionCount
+        const selectedQuestions = shuffleArray(questions).slice(0, questionCount);
 
-            const newRoom = new Room({ 
-                roomName, 
-                questionCount,
-                categories, 
-                questions: selectedQuestions.map(question => question._id), // Asociar IDs de preguntas
-                users: [creatorId] });
-            
-            await newRoom.save();
-            res.status(201).json({
-                _id: newRoom.id,
-                roomName: newRoom.roomName,
-                questionCount: newRoom.questionCount,
-                categories: newRoom.categories,
-                users: newRoom.users,
-                questions: selectedQuestions // Opcional: enviar las preguntas seleccionadas en la respuesta, es para testear
-            });
+        const newRoom = new Room({ 
+            roomName, 
+            questionCount,
+            categories, 
+            questions: selectedQuestions.map(question => question._id), // Asociar IDs de preguntas
+            users: [creatorId], // Incluir al creador de la sala como usuario con puntaje inicial 0
+            roomType: roomType // Indicar el tipo de sala
+        });
+        
+        await newRoom.save();
+        res.status(201).json({
+            _id: newRoom.id,
+            roomName: newRoom.roomName,
+            questionCount: newRoom.questionCount,
+            categories: newRoom.categories,
+            users: newRoom.users,
+            roomType: newRoom.roomType,
+            questions: selectedQuestions // Opcional: enviar las preguntas seleccionadas en la respuesta, es para testear
+        });
     } catch (error) {
-        console.log("Error en createRoom ",error.message);
-        res.status(500).json({error: error.message});
+        console.log(`Error en create${roomType}Room`, error.message);
+        res.status(500).json({ error: error.message });
     }
+};
+
+export const createNormalRoom = async (req, res) => {
+    await createRoom(req, res, 'normal');
+};
+
+export const createSuperRoom = async (req, res) => {
+    await createRoom(req, res, 'super');
 };
 
 export const getRoomCreator = async (req, res) => {

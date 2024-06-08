@@ -9,9 +9,10 @@ const RoomSchema = new Schema({
     status: { type: String, enum: ['waiting', 'in-progress', 'finished'], default: 'waiting' },
     users: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     startTime: { type: Date, default: Date.now },
-    duration: { type: Number, default: 86400000 } // 24 horas en milisegundos
+    duration: { type: Number, default: 86400000 }, // 24 horas en milisegundos
+    roomType: { type: String, enum: ['normal', 'super'], default: 'normal' }, // Campo para indicar el tipo de sala
 }, {timestamps: true});
 
 const Room = mongoose.model('Room', RoomSchema);
 
-export default Room
+export default Room;

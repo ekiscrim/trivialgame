@@ -14,7 +14,11 @@ const CreateRoom = () => {
   const [questionCount, setQuestionCount] = useState(5);
   const [categories, setCategories] = useState([]);
   const [createdRoomId, setCreatedRoomId] = useState(null);
+  const [isSuperRoom, setIsSuperRoom] = useState(false);
+
   const { data: authUserData } = useQuery({ queryKey: ["authUser"] });
+  const isAdmin = authUserData && authUserData.role === 'admin';
+
   const { data: listCategoriesQuery, isLoading, error } = useQuery({
     queryKey: ['listCategories'],
     queryFn: async () => {
@@ -29,6 +33,10 @@ const CreateRoom = () => {
     },
   });
 
+  const handleSuperRoomChange = (e) => {
+    setIsSuperRoom(e.target.checked);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -40,6 +48,7 @@ const CreateRoom = () => {
       toast.error('El nombre de la sala es obligatorio');
       return;
     }    
+    const endpoint = isSuperRoom ? '/api/rooms/createSuper' : '/api/rooms/createNormal'; // Determina el endpoint según si es una Super Sala
     const formData = {
       roomName,
       questionCount,
@@ -47,11 +56,12 @@ const CreateRoom = () => {
       creatorId: authUserData?._id,
       users: authUserData._id,
       startTime: Date.now(),
-      duration: 86400000
+      duration: 86400000,
+      roomType: isSuperRoom ? 'super' : 'normal' // Indica si es una Super Sala o no
     };
 
     try {
-      const res = await fetch('/api/rooms/create', {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -136,6 +146,20 @@ const CreateRoom = () => {
                 <option value="15">15</option>
               </select>
             </div>
+
+            {isAdmin && (
+              <div className="form-control">
+                <label htmlFor="isSuperRoom">Super Sala</label>
+                <input
+                  name="isSuperRoom"
+                  type="checkbox"
+                  checked={isSuperRoom}
+                  onChange={handleSuperRoomChange}
+                />
+              </div>
+            )}
+
+
             <div className="form-control">
               <MultiSelectDropdown
                 formFieldName="categories"

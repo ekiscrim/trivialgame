@@ -24,7 +24,7 @@ const Question = ({ roomId, userId }) => {
   const [timeLeft, setTimeLeft] = useState(TIME_FOR_QUESTION);
   const [currentCategory, setCurrentCategory] = useState('');
   const [isCategoryLoading, setIsCategoryLoading] = useState(false);
-
+  const [roomType, setRoomType] = useState('normal'); // Initialize as 'normal' by default
 
   const fetchCategoryName = async (questionId) => {
     try {
@@ -58,7 +58,6 @@ const Question = ({ roomId, userId }) => {
     }
   };
 
-
   useEffect(() => {
     const fetchData = async () => {
       setIsCategoryLoading(true);      
@@ -74,12 +73,29 @@ const Question = ({ roomId, userId }) => {
       } catch (error) {
         console.error(error);
         setIsLoadingQuestion(false);
-      }finally {
-        setIsCategoryLoading(false); // Establece isLoading a false después de la solicitud, independientemente del resultado
+      } finally {
+        setIsCategoryLoading(false);
       }
     };
 
     fetchData();
+  }, [roomId]);
+
+  useEffect(() => {
+    const fetchRoomDetails = async () => {
+      try {
+        const res = await fetch(`/api/rooms/${roomId}`);
+        if (!res.ok) {
+          throw new Error('Failed to fetch room details');
+        }
+        const roomData = await res.json();
+        setRoomType(roomData.room.roomType); // Set roomType based on data from the API
+      } catch (error) {
+        console.error('Error fetching room details:', error);
+      }
+    };
+
+    fetchRoomDetails();
   }, [roomId]);
 
   useEffect(() => {
@@ -114,15 +130,13 @@ const Question = ({ roomId, userId }) => {
     setTimeout(() => {
       setSelectedOption(null);
       setAnswerStatus(null);
-      //setCurrentQuestionIndex((prevIndex) => prevIndex + 1); // Always increment currentQuestionIndex
       setIsTimeUp(false);
     }, 1000); // Wait 1 second before showing the next question
   };
 
   const handleAnswer = async (questionId, option) => {
-
-    //if (selectedOption || isTimeUp) setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     if (selectedOption || isTimeUp) return;
+
     const res = await fetch('/api/validate/answer', {
       method: 'POST',
       headers: {
@@ -144,7 +158,11 @@ const Question = ({ roomId, userId }) => {
     let scoreToSend = 0;
 
     if (data.isCorrect) {
-      const basePoints = 10;
+      let basePoints = 10;
+      if (roomType === 'super') {
+        basePoints = 20; // Si es una sala "super", los puntos base son 20
+      }
+
       const timeBonus = Math.max(0, timeLeft);
       scoreToSend = basePoints + timeBonus;
       setScore((prevScore) => prevScore + basePoints + timeBonus);
@@ -152,12 +170,20 @@ const Question = ({ roomId, userId }) => {
 
     await updateStatistics(userId, currentCategory, data.isCorrect, scoreToSend);
 
-    if (data.hasCompleted) {
+    if (roomType === 'super' && !data.isCorrect) {
+      setFinalScoreExists(true);
+      submitScore(data.participant.score);
+      window.location.href = `/rooms/${roomId}`;
+      return; // Terminar la ejecución de la función después de redirigir
+
+    } else if (data.hasCompleted) {
+      // If all questions are completed and the answer is correct, submit the score
       setTimeout(() => {
          setScore(data.participant.score);
-         submitScore(data.participant.score); // Llama a submitScore() después de mostrar la respuesta de la última pregunta
-      }, 1000); // Espera 1 segundo antes de llamar a submitScore()
+         submitScore(data.participant.score);
+      }, 1000); // Wait 1 second before submitting the score
     } else {
+      // If the answer is correct but there are more questions, proceed to the next question
       setTimeout(() => {
         setSelectedOption(null);
         setAnswerStatus(null);
@@ -175,8 +201,6 @@ const Question = ({ roomId, userId }) => {
 
   const updateStatistics = async (userId, category, isCorrect, score) => {
     try {
-
-
       await fetch('/api/statistic/updateStatistics', {
         method: 'POST',
         headers: {
@@ -188,7 +212,6 @@ const Question = ({ roomId, userId }) => {
       console.error('Failed to update user statistics', error);
     }
   };
-
 
   useEffect(() => {
     const fetchParticipantProgress = async () => {
@@ -214,13 +237,22 @@ const Question = ({ roomId, userId }) => {
     fetchParticipantProgress();
   }, [userId, roomId]);
 
+  useEffect(() => {
+    if (currentQuestionIndex >= questions.length && questions.length > 0 && !finalScoreExists) {
+      // Esperar un segundo antes de redirigir
+      setTimeout(() => {
+        window.location.href = `/rooms/${roomId}`;
+      }, 1000);
+    }
+  }, [currentQuestionIndex, questions.length, finalScoreExists, roomId]);
+
 
   if (isLoadingQuestion) return <SkeletonCard />;
   if (!shuffleComplete && currentQuestionIndex === 0) return <LoadingSpinner />;
   if (currentQuestionIndex >= questions.length && questions.length > 0) {
     window.location.href = `/rooms/${roomId}`;
   }
-
+  
   if (!questions || questions.length === 0) return <p>No questions available</p>;
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -231,12 +263,12 @@ const Question = ({ roomId, userId }) => {
   
   return (
     <div>
-<div className="flex justify-center bg-purple-700 text-cyan-300 text-4xl font-extrabold p-2 w-full relative"> 
-  <div className="flex-grow flex justify-center">{currentQuestionIndex}/{questions.length}</div>
-  <h2 className="top-0 right-0 mt-2 mr-2 text-sm font-light overflow-hidden max-w-[200px]">
-    <span className="block overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[250px]">{currentCategory}</span>
-  </h2>
-</div>
+      <div className="flex justify-center bg-purple-700 text-cyan-300 text-4xl font-extrabold p-2 w-full relative"> 
+        <div className="flex-grow flex justify-center">{currentQuestionIndex}/{questions.length}</div>
+        <h2 className="top-0 right-0 mt-2 mr-2 text-sm font-light overflow-hidden max-w-[200px]">
+          <span className="block overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[250px]">{currentCategory}</span>
+        </h2>
+      </div>
 
       <div className="flex justify-center items-start bg-gray-100 sm:min-w-full sm:min-h-full lg:min-h-min">
         <div className="max-w-4xl w-full shadow-md p-8">

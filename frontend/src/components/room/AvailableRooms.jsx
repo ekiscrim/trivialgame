@@ -5,6 +5,7 @@ import LoadingSpinner from "../common/LoadingSpinner";
 import CreateRoom from "./CreateRoom";
 import RoomCard from "./RoomCard";
 import Logo from "../common/Logo";
+import SuperRoomCard from "./SuperRoomCard";
 
 const AvailableRooms = () => {
   const [loading, setLoading] = useState(false);
@@ -13,7 +14,7 @@ const AvailableRooms = () => {
   const [pageSize] = useState(10);
   const [allRooms, setAllRooms] = useState([]);
   const [hasMore, setHasMore] = useState(true);
-  const [status, setStatus] = useState('waiting'); // Nuevo estado para el filtro
+  const [status, setStatus] = useState('waiting');
 
   const { data: user, isLoading: isUserLoading, error: userError } = useQuery({
     queryKey: ["authUser"],
@@ -56,7 +57,7 @@ const AvailableRooms = () => {
   }, [listRoomsQuery]);
 
   const loadMore = () => {
-    setPage(prevPage => prevPage + 1); // Incrementar la página en 1
+    setPage(prevPage => prevPage + 1);
   };
 
   const handleLoadMoreClick = () => {
@@ -65,37 +66,36 @@ const AvailableRooms = () => {
 
   const handleStatusChange = (event) => {
     setStatus(event.target.value);
-    setPage(1); // Resetear la página a 1 cuando se cambia el filtro
-    setAllRooms([]); // Limpiar las salas cargadas previamente
+    setPage(1);
+    setAllRooms([]);
   };
-
 
   return (
     <>
-      <div className=" flex flex-col items-center justify-center">
-        <div className="flex items-center justify-center -ml-2">
-          <Logo className='w-12 sm:hidden fill-white' />
-          <div className="flex flex-col items-center justify-center text-center">
-            <span className={`text-white text-3xl font-bold sm:hidden`}>VioQUIZ</span>
-            <span className={`text-white text-xs font-bold text-end italic sm:hidden`}>Desafía tu mente, <br/>conquista lo trivial.</span>
-          </div>
-        </div>
-        <div className="mt-4 flex items-center justify-center">
-          <CreateRoom /> {/* Siempre se muestra el botón de creación de sala */}
-          <div className="ml-4">
-            <select onChange={handleStatusChange} value={status} className=" select select-bordered">
-              <option value="waiting">Salas abiertas</option>
-              <option value="finished">Salas cerradas</option>
-            </select>
-          </div>
-        </div>
-      </div>
       {loading || isUserLoading ? (
         <div className="h-screen flex justify-center items-center">
           <LoadingSpinner />
         </div>
       ) : (
         <div>
+          <div className=" flex flex-col items-center justify-center">
+            <div className="flex items-center justify-center -ml-2">
+              <Logo className='w-12 sm:hidden fill-white' />
+              <div className="flex flex-col items-center justify-center text-center">
+                <span className={`text-white text-3xl font-bold sm:hidden`}>VioQUIZ</span>
+                <span className={`text-white text-xs font-bold text-end italic sm:hidden`}>Desafía tu mente, <br/>conquista lo trivial.</span>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center justify-center">
+              <CreateRoom />
+              <div className="ml-4">
+                <select onChange={handleStatusChange} value={status} className=" select select-bordered">
+                  <option value="waiting">Salas abiertas</option>
+                  <option value="finished">Salas cerradas</option>
+                </select>
+              </div>
+            </div>
+          </div>
           {roomsError || (!allRooms || allRooms.length === 0) ? (
             <div className="mt-6 ml-4 grid sm:grid-flow-row md:grid-flow-row md:grid-cols-2 gap-y-5 content-stretch">
               <div role="alert" className="alert">
@@ -107,16 +107,31 @@ const AvailableRooms = () => {
             </div>
           ) : (
             <>
+              <div className="grid col-span-1 relative mb-10">
+                {allRooms.some(room => room.roomType === 'super') && (
+                  <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">{'SALA BOMBA'}</h1>
+                )}
+                {allRooms.map((room, index) => (
+                  <div key={index} className="max-h-96 relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
+                    {room.roomType === 'super' && (
+                      <SuperRoomCard key={index} room={room} userId={userId} />
+                    )}
+                  </div>
+                ))}
+              </div>
+
               <div className="grid col-span-1 relative">
                 <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">{status === 'waiting' ? 'Salas abiertas' : 'Salas cerradas'}</h1>
               </div>
               <div className="flex flex-wrap flex items-stretch justify-center gap-6 xl:mt-6 ml-2 mr-2 animate-scale-in">
-                {allRooms.map((room, index) => (
-                  <div key={index} className="w-80  relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
-                    <RoomCard key={index} room={room} userId={userId} />
-                  </div>
+                {allRooms
+                .filter(room => room.roomType === 'normal')
+                .map((room, index) => (
+                <div key={index} className="w-80  relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
+                  <RoomCard key={index} room={room} userId={userId} />
+                </div>
                 ))}
-              </div>
+                </div>
               {hasMore && (
                 <div className="flex justify-center relative mb-40">
                   <button onClick={handleLoadMoreClick} className="btn btn-primary ">
@@ -135,6 +150,6 @@ const AvailableRooms = () => {
       )}
     </>
   );
- };
+};
 
 export default AvailableRooms;
