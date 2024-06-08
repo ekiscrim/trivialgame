@@ -171,10 +171,9 @@ const Question = ({ roomId, userId }) => {
     await updateStatistics(userId, currentCategory, data.isCorrect, scoreToSend);
 
     if (roomType === 'super' && !data.isCorrect) {
-      setFinalScoreExists(true);
-      submitScore(data.participant.score);
+      await submitScore(score); // Enviar el puntaje final
       window.location.href = `/rooms/${roomId}`;
-      return; // Terminar la ejecución de la función después de redirigir
+      return;
 
     } else if (data.hasCompleted) {
       // If all questions are completed and the answer is correct, submit the score
