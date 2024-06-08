@@ -71,7 +71,7 @@ const SuperRoomCard = ({ room, userId }) => {
     <div className="hero" style={{ backgroundImage: `url(https://i.ytimg.com/vi/Bweua7AVZSY/hq720.jpg?sqp=-oaymwE7CK4FEIIDSFryq4qpAy0IARUAAAAAGAElAADIQj0AgKJD8AEB-AHUBoAC4AOKAgwIABABGH8gOSgUMA8=&rs=AOn4CLDHk9DnQ6qXRL-Jx87swSb7KZbQfA)` }}>
       <div className="hero-overlay bg-opacity-60 "></div>
       <div className="hero-content text-center text-neutral-content ">
-        <div className="max-w-md bg-white bg-opacity-80 p-6 rounded-lg shadow-lg">
+        <div className="max-w-md bg-white bg-opacity-80 p-1 rounded-lg shadow-lg">
           <h1 className=" text-5xl font-bold text-black">{room.roomName}</h1>
           {isLoading ? (
             <p>Loading...</p>
