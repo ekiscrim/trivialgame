@@ -167,7 +167,7 @@ export const validateAnswer = async (req, res) => {
     if (!question) return res.status(404).json({ error: 'Question not found' });
     
     const isCorrect = question.correctAnswer === selectedOption;
-    const basePoints = 10;
+    let basePoints = 10;
     if (room.roomType === 'super') {
       basePoints = 20; // Puntos base aumentados para salas "super"
     }
