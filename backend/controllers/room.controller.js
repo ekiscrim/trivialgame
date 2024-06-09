@@ -76,7 +76,6 @@ const shuffleArray = (array) => {
             categories: newRoom.categories,
             users: newRoom.users,
             roomType: newRoom.roomType,
-            questions: selectedQuestions // Opcional: enviar las preguntas seleccionadas en la respuesta, es para testear
         });
     } catch (error) {
         console.log(`Error en create${roomType}Room`, error.message);
@@ -156,7 +155,7 @@ export const seeRoom = async (req, res) => {
         if (!room) {
             return res.status(404).json({error: "Sala no encontrada"});
         }
-        const users = await User.find({ _id: { $in: room.users } });
+        const users = await User.find({ _id: { $in: room.users } }).select('-email -password -emailConfirmed -deleted -role');;
         res.status(200).json({ room, users });
     } catch (error) {
         console.log("Error en seeRoom ",error.message);

@@ -9,7 +9,7 @@ export const getUserProfile = async (req, res) => {
 
     try {
         // Buscar al usuario por su nombre de usuario
-        const user = await User.findOne({ username }).select("-password");
+        const user = await User.findOne({ username }).select("-password -email -emailConfirmed -role -deleted");
 
         // Verificar si se encontró un usuario
         if (!user) {
@@ -34,7 +34,7 @@ export const getUserNameById = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const user = await User.findOne({"_id": id}).select("-password");
+        const user = await User.findOne({"_id": id}).select("-password -role email emailConfirmed deleted");
 
         if (!user) return res.status(404).json({error: "Usuario no encontrado"});
 
