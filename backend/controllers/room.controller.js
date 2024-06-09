@@ -59,13 +59,18 @@ const shuffleArray = (array) => {
         // Seleccionar un número aleatorio de preguntas según questionCount
         const selectedQuestions = shuffleArray(questions).slice(0, questionCount);
 
+        let duration = 86400000; // Valor predeterminado de duración (24 horas en milisegundos)
+        if (roomType === 'super')  {
+            duration = 21600000; // Duración de 6 horas para salas super
+        }
         const newRoom = new Room({ 
             roomName, 
             questionCount,
             categories, 
             questions: selectedQuestions.map(question => question._id), // Asociar IDs de preguntas
             users: [creatorId], // Incluir al creador de la sala como usuario con puntaje inicial 0
-            roomType: roomType // Indicar el tipo de sala
+            roomType: roomType, // Indicar el tipo de sala
+            duration
         });
         
         await newRoom.save();
@@ -76,6 +81,7 @@ const shuffleArray = (array) => {
             categories: newRoom.categories,
             users: newRoom.users,
             roomType: newRoom.roomType,
+            duration
         });
     } catch (error) {
         console.log(`Error en create${roomType}Room`, error.message);
