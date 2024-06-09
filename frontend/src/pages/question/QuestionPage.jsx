@@ -35,7 +35,22 @@ const QuestionPage = () => {
     },
   });
 
+  const { data: userScoreData, isLoading: isLoadingScore } = useQuery({
+    queryKey: ["userScoreData", roomId, userId._id],
+    queryFn: async () => {
+      if (!roomId || !userId._id) throw new Error('Room ID or User ID is undefined');
+      const res = await fetch(`/api/scores/${roomId}/${userId._id}`);
+      if (!res.ok) throw new Error('Error fetching user score data');
+      return res.json();
+    },
+    enabled: !!userId,
+  });
+
   if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isLoadingScore) {
     return <div>Loading...</div>;
   }
 
@@ -45,6 +60,10 @@ const QuestionPage = () => {
 
   if (!roomData) {
     return <div>No room data available</div>;
+  }
+
+  if (roomData.room.roomType === 'super' && userScoreData.hasScore) {
+    window.location.href = '/';
   }
 
   // Aquí asumimos que roomData.room.categories es un array de IDs de categorías

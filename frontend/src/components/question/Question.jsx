@@ -188,6 +188,7 @@ const Question = ({ roomId, userId }) => {
 
     if (roomType === 'super' && !data.isCorrect) {
       await submitScore(score); // Enviar el puntaje final
+      setFinalScoreExists(true);
       window.location.href = `/rooms/${roomId}`;
       return;
 
