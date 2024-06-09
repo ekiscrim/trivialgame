@@ -29,7 +29,7 @@ const EditRoomModal = ({ isOpen, room, onClose, onUpdateRoom }) => {
   }
 
   return (
-    <div className="fixed z-10 inset-0 overflow-y-auto">
+    <div className="fixed z-10 inset-0 overflow-y-auto pb-52">
       <div className="flex items-center justify-center min-h-screen">
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
         <div className="relative bg-white rounded-lg p-8">

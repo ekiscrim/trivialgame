@@ -165,7 +165,7 @@ const QuestionTab = () => {
       <div className="w-full max-w-md">
         <h2 className="text-xl font-semibold mb-4">Preguntas</h2>
         <QuestionForm categories={categories} onSubmit={handleAddQuestion} />
-        <div className="mb-4">
+        <div className="mb-12">
           <label htmlFor="category" className="block font-medium text-gray-700">Filtrar por categoría:</label>
           <select
             id="category"

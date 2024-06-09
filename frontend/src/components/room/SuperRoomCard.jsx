@@ -114,7 +114,7 @@ const SuperRoomCard = ({ room, userId }) => {
             alt="Questions"
           />
           <div className="absolute inset-0 flex justify-start items-end">
-            <div className="bg-black bg-opacity-50 px-2 py-1 rounded text-white">
+            <div className="bg-black bg-opacity-50 px-2 py-1 rounded-t text-white">
               <h1 className="text-lg uppercase font-black">{room.roomName}</h1>
             </div>
           </div>
@@ -122,22 +122,13 @@ const SuperRoomCard = ({ room, userId }) => {
             💣
           </div>
         </figure>
-        <div className="card-body flex flex-col justify-between h-full">
+        <div className="card-body flex flex-col justify-between">
           <div className="items-center text-center ">
             <div className="flex items-center mb-2 text-white">
-              {timeLeft > 0 && <><HiClock className="w-5 h-5 mr-1 text-red-950" /><span className="mr-2">Tiempo restante:</span></>}
+              {timeLeft > 0 && <><span className="mr-2"><HiClock className="w-5 h-5" /></span></>}
               {timeLeft > 0 && <strong>{formatTimeLeft(timeLeft)}</strong>}
               {timeLeft < 0 && <><HiLockClosed className="w-5 h-5 mr-1 text-red-950" /><span className="ml-2">Sala cerrada</span></>}
             </div>
-          </div>
-          <div className="flex items-center mb-2 text-white">
-            <UserIcon className="w-5 h-5 mr-1 text-red-950" /> <span className="mr-2">Creador de la sala:</span> <strong>{creatorData.creatorUsername}</strong>
-          </div>
-          <div className="flex items-center mb-2 text-white">
-            <HiMiniTableCells className="w-5 h-5 mr-1 text-red-950" /> <span className="mr-2">Número de preguntas:</span> <strong>{room.questions.length}</strong>
-          </div>
-          <div className="flex items-center mb-2 text-white">
-            <HiMiniUserGroup className="w-5 h-5 mr-1 text-red-950" /> <span className="mr-2">Participantes:</span> <strong>{room.users.length}</strong>
           </div>
           <div className="mb-2">
             {categories.map((category, index) => (

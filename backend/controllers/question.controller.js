@@ -167,11 +167,14 @@ export const validateAnswer = async (req, res) => {
     if (!question) return res.status(404).json({ error: 'Question not found' });
     
     const isCorrect = question.correctAnswer === selectedOption;
+    const basePoints = 10;
+    if (room.roomType === 'super') {
+      basePoints = 20; // Puntos base aumentados para salas "super"
+    }
+
     let updatedScore = 0;
     if (isCorrect) {
-      const basePoints = 10;
-      const timeBonus = Math.max(0, timeLeft); // Assuming timeLeft is sent from the client
-      updatedScore = basePoints + timeBonus;
+      updatedScore = basePoints + timeLeft;
     }
 
     // Actualizar el índice de la última pregunta respondida y el score del participante

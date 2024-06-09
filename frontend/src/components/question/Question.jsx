@@ -6,7 +6,7 @@ import CountdownTimer from '../question/CountdownTimer';
 
 const Question = ({ roomId, userId }) => {
 
-  const TIME_FOR_QUESTION = 15;
+  let TIME_FOR_QUESTION = 15;
   const TIME_FOR_SHOW_OPTIONS = 5;
 
   const [questions, setQuestions] = useState([]);

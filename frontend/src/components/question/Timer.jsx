@@ -24,6 +24,10 @@ const Timer = ({ time_for_answer, initialTime, onTimeUp, setTimeLeft }) => {
     return () => clearInterval(timerId);
   }, [timeLeft, onTimeUp]);
 
+  useEffect(() => {
+    setTimeLeft(timeLeft);
+  }, [timeLeft, setTimeLeft]);
+
   const progressBarStyle = {
     width: `${(timeLeft / time_for_answer) * 100}%`,
     height: '20px',
