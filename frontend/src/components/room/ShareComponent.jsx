@@ -1,14 +1,14 @@
 import { WhatsappIcon, WhatsappShareButton } from "react-share";
 
-const ShareComponent = ({ score, roomUrl, progress }) => {
+const ShareComponent = ({ score, roomName, roomUrl, progress }) => {
   // Filtrar filas sin questionId o selectedOption
   const filteredProgress = progress.filter(step => step.questionId && step.selectedOption);
   
-  let shareText = `¡He obtenido ${score} puntos! ¿Puedes superarlo?\n`;
+  let shareText = `¡He obtenido *${score} puntos* en la sala *${roomName}*! ¿Puedes superarlo?\n`;
 
   for (let i = 0; i < filteredProgress.length; i += 5) {
     const row = filteredProgress.slice(i, i + 5).map(step => (step.isCorrect ? '🟩' : '🟥')).join('');
-    shareText += row + '\n';
+    shareText += `\`\`\`${row}\`\`\`\n`;
   }
 
   return (
