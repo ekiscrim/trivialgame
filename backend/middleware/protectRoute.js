@@ -32,7 +32,6 @@ export const protectRoute = async(req, res, next) => {
         next(); //execute getMe after the request from auth.routes.js
 
     } catch (error) {
-        console.log("Error en protectRoute middleware ",error.message);
         return res.status(500).json({error: "Internal server error"});
     }
 };
