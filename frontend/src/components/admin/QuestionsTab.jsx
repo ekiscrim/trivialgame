@@ -11,24 +11,46 @@ const QuestionTab = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editFormData, setEditFormData] = useState(null);
   const [isDirty, setIsDirty] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredQuestions = questions.filter((question) => {
+    const matchesCategory = selectedCategory ? question.category === selectedCategory : true;
+    const matchesSearchTerm = question.question.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearchTerm;
+  });
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        if (selectedCategory) {
-          const response = await fetch(`/api/admin/questions?category=${selectedCategory}`);
-          if (!response.ok) {
-            throw new Error('Error fetching questions by category');
-          }
-          const data = await response.json();
-          setQuestions(data);
+        if (!selectedCategory && !searchTerm) {
+          setQuestions([]); // Clear questions if no category or search term is provided
+          return;
         }
+        if (searchTerm === '') {
+          setQuestions([])
+          return;
+        }
+
+        let url = `/api/admin/questions`;
+        if (selectedCategory) {
+          url += `?category=${selectedCategory}`;
+        }
+        if (searchTerm) {
+          url += selectedCategory ? `&search=${searchTerm}` : `?search=${searchTerm}`;
+        }
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Error fetching questions');
+        }
+        const data = await response.json();
+        setQuestions(data);
       } catch (error) {
-        console.error('Error fetching questions by category:', error);
+        console.error('Error fetching questions:', error);
       }
     };
-    fetchQuestions();
-  }, [selectedCategory, isDirty]);
+      fetchQuestions();
+  },[searchTerm, selectedCategory, isDirty]);
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -165,7 +187,7 @@ const QuestionTab = () => {
       <div className="w-full max-w-md">
         <h2 className="text-xl font-semibold mb-4">Preguntas</h2>
         <QuestionForm categories={categories} onSubmit={handleAddQuestion} />
-        <div className="mb-12">
+        <div className="mb-4">
           <label htmlFor="category" className="block font-medium text-gray-700">Filtrar por categoría:</label>
           <select
             id="category"
@@ -183,7 +205,20 @@ const QuestionTab = () => {
             })}
           </select>
         </div>
-        <QuestionList questions={questions} onEdit={handleEditQuestion} onDelete={handleDeleteQuestion} />
+        <div className="mb-12">
+          <label htmlFor="search" className="block font-medium text-gray-700">Buscar preguntas:</label>
+          <input
+            id="search"
+            name="search"
+            type="text"
+            className="input input-bordered w-full"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar pregunta"
+          />
+        </div>
+
+        <QuestionList questions={filteredQuestions} onEdit={handleEditQuestion} onDelete={handleDeleteQuestion} />
         <EditQuestionModal
           isOpen={editModalOpen}
           onRequestClose={handleCloseModal}
