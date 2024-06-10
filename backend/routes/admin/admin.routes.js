@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import { protectRoute, adminRoute } from '../../middleware/protectRoute.js';
-import { createCategory, listCategories, deleteCategory } from '../../controllers/category.controller.js';
+import { createCategory, listCategories, deleteCategory, updateCategory } from '../../controllers/category.controller.js';
 import { listQuestions, createQuestion,deleteQuestion,editQuestion } from '../../controllers/question.controller.js';
 import { listUsers, editUser, deleteUser, impersonateUser } from '../../controllers/user.controller.js';
 import { listRoomsAdmin, editRoom } from '../../controllers/room.controller.js';
@@ -11,7 +11,7 @@ import multer from "multer"
 
 // Rutas para categorías
 router.post('/categories', protectRoute, adminRoute, createCategory);
-//router.put('/categories/:id', protectRoute, adminRoute, updateCategory);
+router.put('/categories/:id', protectRoute, adminRoute, updateCategory);
 router.delete('/categories/:id', protectRoute, adminRoute, deleteCategory);
 router.get('/categories', protectRoute, adminRoute, listCategories);
 //router.get('/categories/:id', protectRoute, adminRoute, getCategoryById);

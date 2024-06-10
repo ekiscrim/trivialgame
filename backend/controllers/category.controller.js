@@ -17,6 +17,26 @@ export const getCategory = async (req, res) => {
   }
 };
 
+export const updateCategory = async (req, res) => {
+    const { id } = req.params;
+    const { title } = req.body;
+    try {
+        const category = await Category.findById(id);
+        if (!category) {
+            return res.status(404).json({ error: 'Categoría no encontrada' });
+        }
+
+        if (title) {
+            category.title = title;
+        }
+
+        await category.save();
+
+        res.status(200).json({ message: 'Categoría actualizada', category });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al actualizar la categoría' });
+    }
+};
 
 
 export const createCategory = async (req, res) => {

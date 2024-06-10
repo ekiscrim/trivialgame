@@ -9,10 +9,10 @@ const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('categories');
 
   const tabs = [
-    { title: 'Categories', key: 'categories' },
-    { title: 'Questions', key: 'questions' },
-    { title: 'Users', key: 'users' },
-    { title: 'Rooms', key: 'rooms' },
+    { title: 'Categorías', key: 'categories' },
+    { title: 'Preguntas', key: 'questions' },
+    { title: 'Usuarios', key: 'users' },
+    { title: 'Salas', key: 'rooms' },
   ];
 
   const renderTab = () => {
