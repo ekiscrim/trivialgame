@@ -3,7 +3,7 @@ const PrivacyPolicy = () => {
     <div>
       <h1>Política de Privacidad de VioQUIZ</h1>
       <p>
-        Esta Política de Privacidad describe cómo [Nombre de tu Aplicación] ("nosotros", "nos" o "nuestra") recopila, utiliza y comparte la información personal de los usuarios ("usuarios" o "tú") de nuestra aplicación.
+        Esta Política de Privacidad describe cómo VioQUIZ ("nosotros", "nos" o "nuestra") recopila, utiliza y comparte la información personal de los usuarios ("usuarios" o "tú") de nuestra aplicación.
       </p>
       <h2>Información Recopilada</h2>
       <h3>Cookies</h3>

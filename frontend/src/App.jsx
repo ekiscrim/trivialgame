@@ -89,7 +89,7 @@ function App() {
         }}
       >
         <ConsentBanner
-          settings={{ hidden: false, label: 'Mostrar más', modal: { title: 'Cookie Consent' } }}
+          settings={{ hidden: false, label: 'Mostrar más', modal: { title: 'Consentimientos de Cookies', description: 'En este sitio web utilizamos cookies. Algunos de ellos son esenciales, otros nos ayudan a mejorar su experiencia de navegación como proveer imágenes. Para una mejor experiencia, marque las opciones,' } }}
           decline={{ hidden: false, label: 'No' }}
           approve={{ label: 'Sí' }}
         >
