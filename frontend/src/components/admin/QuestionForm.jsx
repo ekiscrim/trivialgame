@@ -20,7 +20,10 @@ const QuestionForm = ({ categories, onSubmit }) => {
           'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          inputs: `Genera una lista numerada del 1 al 4 con respuestas. Una de estas respuestas es la correcta, las otras tres serán incorrectas para la siguiente pregunta: ${question}`,
+          inputs: `Genera una lista de 4 respuestas ordenadas numéricamente para la siguiente pregunta de trivia: ${question}
+          Asegúrate de que las respuestas sigan el formato númerico
+          Añade las respuestas según corresponda y evita cualquier error de formato.
+          `,
           options: {
             num_return_sequences: 1, // Generar 1 conjunto de respuestas
             do_sample: true, // Muestrear respuestas
