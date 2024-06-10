@@ -6,7 +6,6 @@ export const getResults = async (req, res) => {
         const scores = await Score.find({ roomId: req.params.roomId }).populate('user', 'username profileImg').sort({ score: -1 });
         res.status(200).json(scores);
       } catch (error) {
-        console.log(error)
         res.status(500).json({ error: 'Error fetching results', });
       }
 }  
@@ -21,7 +20,6 @@ export const sendResults = async (req, res) => {
         roomId: roomId,
         score,
       });
-      console.log("PRESAVE: ",newScore)
       await newScore.save();
 
       res.status(201).json(newScore);
