@@ -194,3 +194,35 @@ body {
 .super-room-banner button {
   margin-top: 1rem;
 }
+
+
+/*ANIMACION TIME BONUS */
+
+/* Añadir la animación para la bonificación de tiempo */
+@keyframes bonusAnimation {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-30px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) scale(1.4);
+  }
+}
+
+.bonus-time {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  color: rgb(255, 101, 242);
+  background-color: #a0ff61; /* Coral color */
+  padding: 10px 20px;
+  border-radius: 50px; /* Circular shape */
+  animation: bonusAnimation 1s ease-out;
+  box-shadow: 0 0 10px rgba(255, 111, 97, 0.7); /* Soft shadow effect */
+}

@@ -5,7 +5,6 @@ import SkeletonCard from '../common/SkeletonCard';
 import CountdownTimer from '../question/CountdownTimer';
 
 const Question = ({ roomId, userId }) => {
-
   let TIME_FOR_QUESTION = 15;
   const TIME_FOR_SHOW_OPTIONS = 5;
 
@@ -24,7 +23,8 @@ const Question = ({ roomId, userId }) => {
   const [timeLeft, setTimeLeft] = useState(TIME_FOR_QUESTION);
   const [currentCategory, setCurrentCategory] = useState('');
   const [isCategoryLoading, setIsCategoryLoading] = useState(false);
-  const [roomType, setRoomType] = useState('normal'); // Initialize as 'normal' by default
+  const [roomType, setRoomType] = useState('normal');
+  const [timeBonus, setTimeBonus] = useState(0); // Nuevo estado para la animación del tiempo sobrante
 
   const fetchCategoryName = async (questionId) => {
     try {
@@ -61,18 +61,16 @@ const Question = ({ roomId, userId }) => {
   useEffect(() => {
     const handleBackNavigation = (event) => {
       event.preventDefault();
-      window.history.forward(); // Avanzar una página para mantener al usuario en la página actual
+      window.history.forward();
     };
 
-    window.history.pushState(null, null, window.location.pathname); // Agregar una nueva entrada al historial
+    window.history.pushState(null, null, window.location.pathname);
     window.addEventListener('popstate', handleBackNavigation);
 
     return () => {
       window.removeEventListener('popstate', handleBackNavigation);
     };
   }, []);
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,7 +103,7 @@ const Question = ({ roomId, userId }) => {
           throw new Error('Failed to fetch room details');
         }
         const roomData = await res.json();
-        setRoomType(roomData.room.roomType); // Set roomType based on data from the API
+        setRoomType(roomData.room.roomType);
       } catch (error) {
         console.error('Error fetching room details:', error);
       }
@@ -138,7 +136,7 @@ const Question = ({ roomId, userId }) => {
   }, [questions, currentQuestionIndex]);
 
   const handleTimeUp = async () => {
-    if (selectedOption) return; // Prevent marking as incorrect if already answered
+    if (selectedOption) return;
     setIsTimeUp(true);
     setAnswerStatus('incorrect');
     await handleAnswer(currentQuestion._id, 'no-time');
@@ -147,7 +145,7 @@ const Question = ({ roomId, userId }) => {
       setSelectedOption(null);
       setAnswerStatus(null);
       setIsTimeUp(false);
-    }, 1000); // Wait 1 second before showing the next question
+    }, 1000);
   };
 
   const handleAnswer = async (questionId, option) => {
@@ -168,38 +166,40 @@ const Question = ({ roomId, userId }) => {
     const data = await res.json();
     setSelectedOption(option);
     setAnswerStatus(data.isCorrect ? 'correct' : 'incorrect');
-    
-    setShowCountdown(true); // Reset the countdown for the next question
+    setShowCountdown(true);
 
     let scoreToSend = 0;
 
     if (data.isCorrect) {
       let basePoints = 10;
       if (roomType === 'super') {
-        basePoints = 20; // Si es una sala "super", los puntos base son 20
+        basePoints = 20;
       }
 
       const timeBonus = Math.max(0, timeLeft);
       scoreToSend = basePoints + timeBonus;
       setScore((prevScore) => prevScore + basePoints + timeBonus);
+
+      setTimeBonus(timeBonus); // Configurar el tiempo sobrante para la animación
+
+      setTimeout(() => {
+        setTimeBonus(0); // Limpiar la animación después de mostrarla
+      }, 1000);
     }
 
     await updateStatistics(userId, currentCategory, data.isCorrect, scoreToSend);
 
     if (roomType === 'super' && !data.isCorrect) {
-      await submitScore(score); // Enviar el puntaje final
+      await submitScore(score);
       setFinalScoreExists(true);
       window.location.href = `/rooms/${roomId}`;
       return;
-
     } else if (data.hasCompleted) {
-      // If all questions are completed and the answer is correct, submit the score
       setTimeout(() => {
-         setScore(data.participant.score);
-         submitScore(data.participant.score);
-      }, 1000); // Wait 1 second before submitting the score
+        setScore(data.participant.score);
+        submitScore(data.participant.score);
+      }, 1000);
     } else {
-      // If the answer is correct but there are more questions, proceed to the next question
       setTimeout(() => {
         setSelectedOption(null);
         setAnswerStatus(null);
@@ -255,13 +255,11 @@ const Question = ({ roomId, userId }) => {
 
   useEffect(() => {
     if (currentQuestionIndex >= questions.length && questions.length > 0 && !finalScoreExists) {
-      // Esperar un segundo antes de redirigir
       setTimeout(() => {
         window.location.href = `/rooms/${roomId}`;
       }, 1000);
     }
   }, [currentQuestionIndex, questions.length, finalScoreExists, roomId]);
-
 
   if (isLoadingQuestion) return <SkeletonCard />;
   if (!shuffleComplete && currentQuestionIndex === 0) return <LoadingSpinner />;
@@ -275,7 +273,7 @@ const Question = ({ roomId, userId }) => {
 
   if (!currentQuestion) return <p>No question data available</p>;
 
-  if(isCategoryLoading) return <LoadingSpinner />;
+  if (isCategoryLoading) return <LoadingSpinner />;
   
   return (
     <div>
@@ -312,7 +310,7 @@ const Question = ({ roomId, userId }) => {
                         ? 'bg-gray-300 hover:bg-gray-400 text-gray-800 cursor-not-allowed'
                         : 'bg-blue-500 hover:bg-blue-600 text-white'
                   }`}
-                  disabled={!!selectedOption || isTimeUp} // Disable button if answered or time is up
+                  disabled={!!selectedOption || isTimeUp}
                 >
                   {option}
                 </button>
@@ -323,6 +321,11 @@ const Question = ({ roomId, userId }) => {
           {selectedOption && answerStatus !== null && (
             <p className="mt-4">{answerStatus === 'correct' ? "¡Correcto!" : "Incorrecto"}</p>
           )}
+          {timeBonus > 0 && (
+            <div className="bonus-time">
+              +{timeBonus}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -330,4 +333,3 @@ const Question = ({ roomId, userId }) => {
 };
 
 export default Question;
-
