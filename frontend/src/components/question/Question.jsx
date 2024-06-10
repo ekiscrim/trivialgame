@@ -28,7 +28,6 @@ const Question = ({ roomId, userId }) => {
 
   const fetchCategoryName = async (questionId) => {
     try {
-      console.log("Question ID:", questionId);
       const res = await fetch(`/api/question/${questionId}/getCategory`);
       if (!res.ok) {
         throw new Error('Failed to fetch category');
@@ -42,7 +41,6 @@ const Question = ({ roomId, userId }) => {
 
   const submitScore = async (scoreParam) => {
     try {
-      console.log("Score being submitted:", score); // Log para verificar el puntaje
       await fetch(`/api/room/${roomId}/score`, {
         method: 'POST',
         headers: {

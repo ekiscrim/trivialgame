@@ -20,9 +20,6 @@ export const listRooms = async (req, res) => {
         if (!rooms || rooms.length === 0) return res.status(404).json({ error: "No hay Salas que listar. Crea una sala y diviértete" });
         const hasMore = page < totalPages;
         
-        //console.log("Datos enviados:", { rooms, totalPages, currentPage: page, pageSize, totalCount, hasMore }); // Agregar el log aquí
-
-
         res.status(200).json({
             rooms: rooms,
             totalPages,
@@ -34,7 +31,6 @@ export const listRooms = async (req, res) => {
 
         
     } catch (error) {
-        console.log("Error en listRooms ", error.message);
         res.status(500).json({ error: error.message });
     }
 };
@@ -84,7 +80,6 @@ const shuffleArray = (array) => {
             duration
         });
     } catch (error) {
-        console.log(`Error en create${roomType}Room`, error.message);
         res.status(500).json({ error: error.message });
     }
 };
@@ -127,7 +122,6 @@ export const getRoomQuestions = async (req, res) => {
   
       res.status(200).json({ questions: room.questions });
     } catch (error) {
-      console.error('Error fetching room questions:', error);
       res.status(500).json({ message: 'Server error' });
     }
 };
@@ -147,7 +141,6 @@ export const getRoomCategories = async (req, res) => {
 
       res.status(200).json({ categories: categoryNames });
     } catch (error) {
-      console.error('Error fetching room categories:', error);
       res.status(500).json({ message: 'Server error' });
     }
 };
@@ -164,7 +157,6 @@ export const seeRoom = async (req, res) => {
         const users = await User.find({ _id: { $in: room.users } }).select('-email -password -emailConfirmed -deleted -role');;
         res.status(200).json({ room, users });
     } catch (error) {
-        console.log("Error en seeRoom ",error.message);
         res.status(500).json({error: error.message});
     }
 };
@@ -190,7 +182,6 @@ export const joinRoom = async (req, res) => {
         res.status(200).json(room);
     
   } catch (error) {
-        console.log("Error en joinRoom ",error.message);
         res.status(500).json({error: error.message});
   }
 };
@@ -211,7 +202,6 @@ export const startRoom = async (req, res) => {
                 res.status(400).json({error: 'No hay suficientes jugadores'});
             }
     } catch (error) {
-        console.log("Error en startRoom ",error.message);
         res.status(500).json({error: error.message});
     }
 };
@@ -250,7 +240,6 @@ export const listRoomsAdmin = async (req, res) => {
       
       res.json(rooms);
     } catch (error) {
-      console.error('Error fetching rooms:', error);
       res.status(500).json({ message: 'Server error' });
     }
   };

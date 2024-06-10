@@ -51,7 +51,6 @@ const LoginPage = () => {
       verifiedOnceRef.current = true;
       setTimeout(() => {
         toast.success("Tu correo electrónico ha sido verificado. Ahora puedes iniciar sesión.");
-        console.log('i fire once');
       }, 1000); 
     }
   }, [location.search]);

@@ -139,7 +139,6 @@ export const editQuestion = async (req, res) => {
 export const deleteQuestion = async (req, res) => {
   try {
       const deletedQuestion = await Question.findByIdAndDelete(req.params.id);
-      console.log("Question deleted successfully:", deletedQuestion);
       res.send({ message: 'Question deleted successfully' });
     } catch (err) {
       res.status(500).send({ error: err.message });
@@ -260,7 +259,6 @@ export const getCategoryFromQuestion = async (req, res) => {
     }
 
     res.status(200).json({ category: category.title });
-    console.log(category.title);
   } catch (error) {
     console.error('Error fetching category:', error);
     res.status(500).json({ message: 'Server error' });

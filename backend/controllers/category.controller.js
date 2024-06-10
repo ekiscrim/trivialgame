@@ -12,7 +12,6 @@ export const getCategory = async (req, res) => {
         req.status(200).json(category);
     
   } catch (error) {
-        console.log("Error en getCategory ",error.message);
         res.status(500).json({error: error.message});
   }
 };
@@ -66,7 +65,6 @@ export const createCategory = async (req, res) => {
         }
 
     } catch (error) {
-        console.log("Error en el controlador de Categoría ", error.message);
         res.status(500).json({error: 'Error interno desde el controller'});
     }
 };
