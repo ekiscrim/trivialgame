@@ -160,7 +160,7 @@ const QuestionTab = () => {
         throw new Error('Error updating question');
       }
       const updatedQuestion = await response.json();
-      setQuestions(questions.map(q => (q._id === updatedQuestion._id ? updatedQuestion : q)));
+      setQuestions(prevQuestions => prevQuestions.map(q => (q._id === updatedQuestion._id ? updatedQuestion : q)));
       setEditModalOpen(false);
       setIsDirty(false);
     } catch (error) {
