@@ -98,7 +98,7 @@ const LoginPage = () => {
         <div className='flex flex-col gap-2 mt-4'>
           <p className='text-primary text-lg'>{"¿No"} tienes cuenta?</p>
           <Link to='/register'>
-            <button className='btn rounded-full btn-primary text-white btn-outline w-full'>Ir a registrarte</button>
+            <button className='btn rounded-full btn-primary text-white btn-outline w-full'>Crear cuenta</button>
           </Link>
         </div>
       </div>

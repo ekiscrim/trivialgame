@@ -226,3 +226,14 @@ body {
   animation: bonusAnimation 1s ease-out;
   box-shadow: 0 0 10px rgba(255, 111, 97, 0.7); /* Soft shadow effect */
 }
+
+
+.error-message {
+  color: #ff0000; /* Color rojo para el texto */
+  background-color: #ffe6e6; /* Fondo claro para resaltar */
+  border: 1px solid #ff0000; /* Borde rojo */
+  padding: 10px; /* Espaciado interno */
+  border-radius: 5px; /* Bordes redondeados */
+  margin-top: 5px; /* Margen superior */
+  font-size: 0.9rem; /* Tamaño de fuente */
+}

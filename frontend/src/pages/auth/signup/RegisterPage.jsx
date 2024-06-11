@@ -55,12 +55,12 @@ const RegisterPage = () => {
                 className='grow'
                 placeholder='Nombre de usuario'
                 {...register("username", { 
-                  required: "El nombre de usuario es requerido",
+                  required: "El nombre de usuario es obligatorio",
                   validate: value => !value.includes(" ") || "El nombre de usuario no puede contener espacios" 
                 })}
               />
             </label>
-            {errors.username && <p className='text-red-500'>{errors.username.message}</p>}
+            {errors.username && <p className='error-message'>{errors.username.message}</p>}
           </div>
           <label className='input input-bordered rounded flex items-center gap-2'>
             <MdOutlineMail />
@@ -68,10 +68,10 @@ const RegisterPage = () => {
               type='email'
               className='grow'
               placeholder='Email'
-              {...register("email", { required: "El email es requerido" })}
+              {...register("email", { required: "El email es obligatorio" })}
             />
           </label>
-          {errors.email && <p className='text-red-500'>{errors.email.message}</p>}
+          {errors.email && <p className='error-message'>{errors.email.message}</p>}
           <label className='input input-bordered rounded flex items-center gap-2'>
             <MdPassword />
             <input
@@ -87,7 +87,15 @@ const RegisterPage = () => {
               })}
             />
           </label>
-          {errors.password && <p className='text-red-500'>{errors.password.message}</p>}
+          {errors.password && (<div className='error-message'>
+                La contraseña debe cumplir con los siguientes requisitos:
+                <ul>
+                  <li>Al menos 8 caracteres de longitud</li>
+                  <li>Al menos 2 números</li>
+                  <li>Al menos 1 carácter especial (por ejemplo, !@#$%^&*)</li>
+                </ul>
+              </div>
+            )}
           <button className='btn rounded-full btn-primary text-white' disabled={isSubmitting}>
             {isSubmitting ? "Cargando..." : "Registrarse"}
           </button>
@@ -95,7 +103,7 @@ const RegisterPage = () => {
         <div className='flex flex-col lg:w-2/3 gap-2 mt-4'>
           <p className='text-primary text-lg'>¿Ya tienes una cuenta?</p>
           <Link to='/login'>
-            <button className='btn rounded-full btn-primary text-white btn-outline w-full'>Acceder</button>
+            <button className='btn rounded-full btn-primary text-white btn-outline w-full'>Iniciar sesión</button>
           </Link>
         </div>
       </div>
