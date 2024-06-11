@@ -5,9 +5,12 @@ import { FaUser } from "react-icons/fa";
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useState } from "react";
 
 const RegisterPage = () => {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [email, setEmail] = useState(""); // Agrega el estado para almacenar el correo electrónico
 
   const { mutate } = useMutation({
     mutationFn: async ({ username, password, email }) => {
@@ -28,9 +31,35 @@ const RegisterPage = () => {
       }
     },
     onSuccess: () => {
-      toast.success("Revisa tu correo electrónico para verificar la cuenta", { duration: 4000 });
+      toast.success("Revisa tu correo electrónico para verificar la cuenta", { duration: 6000 });
+      setFormSubmitted(true);
     }
   });
+
+  const handleResendVerification = async () => {
+    try {
+      const res = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }), // Utiliza el estado del correo electrónico
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Algo salió mal');
+      }
+
+      toast.success(data.message, { duration: 4000 });
+    } catch (error) {
+      console.error('Error al reenviar el correo electrónico de verificación:', error);
+      toast.error('Error al reenviar el correo electrónico de verificación. Por favor, inténtelo de nuevo más tarde.');
+    } finally {
+      setFormSubmitted(false); // Restablece el estado de envío del formulario
+    }
+  };
 
   const onSubmit = (data) => {
     mutate(data);
@@ -71,6 +100,8 @@ const RegisterPage = () => {
               className='grow'
               placeholder='Email'
               {...register("email", { required: "El email es obligatorio" })}
+              value={email} // Agrega el valor del estado del correo electrónico
+              onChange={(e) => setEmail(e.target.value)} // Maneja el cambio en el estado del correo electrónico
             />
           </label>
           {errors.email && <p className='error-message'>{errors.email.message}</p>}
@@ -98,6 +129,19 @@ const RegisterPage = () => {
                 </ul>
               </div>
             )}
+
+          {/* Mostrar el botón de reenvío de verificación solo si el formulario se ha enviado con éxito */}
+          {formSubmitted && (
+            <button
+              type='button' // Cambia el tipo de botón a 'button'
+              className='btn rounded-full btn-primary text-white'
+              disabled={isSubmitting}
+              onClick={handleResendVerification} // Maneja el clic para reenviar la verificación
+            >
+              {isSubmitting ? "Cargando..." : "Reenviar verificación"}
+            </button>
+          )}
+
           <button className='btn rounded-full btn-primary text-white' disabled={isSubmitting}>
             {isSubmitting ? "Cargando..." : "Registrarse"}
           </button>
@@ -111,6 +155,7 @@ const RegisterPage = () => {
       </div>
     </div>
   );
+
 };
 
 export default RegisterPage;

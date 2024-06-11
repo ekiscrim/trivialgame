@@ -50,8 +50,8 @@ const LoginPage = () => {
     if (verified === "true" && !verifiedOnceRef.current) {
       verifiedOnceRef.current = true;
       setTimeout(() => {
-        toast.success("Tu correo electrónico ha sido verificado. Ahora puedes iniciar sesión.");
-      }, 1000); 
+        toast.success("Tu correo electrónico ha sido verificado. Ahora puedes iniciar sesión.", { duration: 4000 });
+      }, 4000); 
     }
   }, [location.search]);
 

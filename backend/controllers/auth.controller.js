@@ -157,3 +157,47 @@ export const verifyUser = async (req, res) => {
     }
 
 };
+
+
+export const resendVerificationEmail = async (req, res) => {
+    try {
+      const { email } = req.body;
+  
+      // Buscar al usuario por su correo electrónico en la base de datos
+      const existingUser = await User.findOne({ email });
+  
+      // Verificar si existe un usuario con el correo electrónico proporcionado
+      // y si la cuenta no está verificada
+      if (!existingUser || existingUser.emailConfirmed) {
+        return res.status(400).json({ error: "No se puede reenviar la verificación. Verifique el correo electrónico proporcionado." });
+      }
+  
+      // Generar un nuevo token de verificación
+      const confirmationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1d' });
+  
+      // Configurar el transporte de correo electrónico
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_SENDER,
+          pass: process.env.EMAIL_PASSWORD, // Aquí debes usar tu contraseña de aplicación generada
+        },
+      });
+  
+      // Definir el contenido del correo electrónico
+      const mailOptions = {
+        from: process.env.EMAIL_SENDER,
+        to: email,
+        subject: 'Reenvío de confirmación de correo electrónico',
+        html: `<p>Hola,</p><p>Por favor haz clic en el siguiente enlace para confirmar tu correo electrónico:</p><p><a href="${process.env.EMAIL_URL_APP}/api/verify/confirm/${confirmationToken}">Confirmar correo electrónico</a></p>`,
+      };
+  
+      // Enviar el correo electrónico
+      await transporter.sendMail(mailOptions);
+  
+      res.status(200).json({ message: "Se ha enviado un nuevo correo electrónico de verificación. Por favor, revise su bandeja de entrada." });
+    } catch (error) {
+      console.error('Error al reenviar el correo electrónico de verificación:', error);
+      res.status(500).json({ error: 'Error interno' });
+    }
+  };
