@@ -152,7 +152,7 @@ const RoomCard = ({ room, userId }) => {
                   </>
                 )}
        {/* to-pink-500 */}  
-      <div className="card w-96 bg-gradient-to-t from-indigo-500 via-purple-500 to-transparent shadow-xl mb-20" style={{ maxWidth: "100%", }}>
+      <div className="card w-96 bg-gradient-to-t from-indigo-500 via-purple-500 to-transparent shadow-xl mb-5" style={{ maxWidth: "100%", }}>
         <figure className={`items-center relative flex`} style={{ background: backgroundColor}}>
           <img
             className="w-full object-cover"

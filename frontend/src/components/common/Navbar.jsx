@@ -41,7 +41,7 @@ const Navbar = ({ authUser, device }) => {
 
   return (
     <nav
-      className={`w-full p-3 bottom-0 z-50 fixed ${device === "Mobile" ? "bg-purple-700 bg-opacity-60 backdrop-blur-md" : "bg-purple-700 top-0 max-h-16"}`}
+      className={`w-full p-3 bottom-0 z-50  ${device === "Mobile" ? "sticky bg-purple-700 bg-opacity-60 backdrop-blur-md" : "fixed bg-purple-700 top-0 max-h-16"}`}
     >
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         <div className={`flex items-center gap-4 ${device === "Mobile" ? "sm:gap-2" : ""}`}>
