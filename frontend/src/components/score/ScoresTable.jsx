@@ -63,6 +63,8 @@ const ScoresTable = ({ currentUser }) => {
   // Resto de los usuarios
   const restOfUsers = scores.slice(3);
 
+  
+
   return (
     <>
       {isInPodium && <Confetti width={width} height={height} wind={0} />}
@@ -79,7 +81,9 @@ const ScoresTable = ({ currentUser }) => {
             const textColor = isFirst ? 'text-yellow-500' : isSecond ? 'text-gray-400' : 'text-yellow-700';
             const emojiSize = isFirst ? 'text-5xl' : isSecond ? 'text-4xl' : 'text-3xl';
             const scoreSize = isFirst ? 'text-6xl' : 'text-4xl';
-
+            const usernames = scores.map(score => score.user.username); // Obtenemos todos los nombres de usuario
+            const longestUsername = usernames.reduce((a, b) => a.length > b.length ? a : b); // Encontramos el nombre de usuario más largo
+            const fontSize = `calc(max(1rem, 1rem - 0.2rem * max(0, min(1, calc((${longestUsername.length} - 10) / 5)))))`;
             return (
               <div key={index} className={`flex flex-col items-center ${isFirst ? 'order-2 podium-item-2-margin' : isSecond ? 'order-1 podium-item-1-margin' : 'order-3 podium-item-3-margin pr-2'}`}>
                 <Link to={`/profile/${scoreEntry.user.username}`}>
@@ -87,9 +91,9 @@ const ScoresTable = ({ currentUser }) => {
                     <img src={scoreEntry.user.profileImg || "/avatar-placeholder.png"} alt="Profile" className={`rounded-full  ${size}`} />
                   </div>
                 </Link>
-                <div className={`mt-2 text-2xl font-bold ${textColor}`}>
-                  {scoreEntry.user.username}
-                </div>
+                <div className={`mt-2 text-2xl font-bold ${textColor}`} style={{ fontSize: scoreEntry.user.username === longestUsername ? fontSize : '' }}>
+                {scoreEntry.user.username}
+    </div>
                 <div className={`${scoreSize} font-bold ${textColor}`}>{scoreEntry.score}</div>
                 {isFirst && <div className={`${emojiSize}`}>🥇</div>}
                 {isSecond && <div className={`${emojiSize}`}>🥈</div>}

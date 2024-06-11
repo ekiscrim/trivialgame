@@ -237,3 +237,7 @@ body {
   margin-top: 5px; /* Margen superior */
   font-size: 0.9rem; /* Tamaño de fuente */
 }
+
+.username {
+  font-size: calc(1rem - 0.2rem * max(0, min(1, calc((var(--username-length) - 10) / 5))));
+}
