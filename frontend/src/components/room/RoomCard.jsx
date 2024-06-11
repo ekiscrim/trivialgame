@@ -171,7 +171,7 @@ const RoomCard = ({ room, userId }) => {
         <div className="card-body flex flex-col justify-between h-full">
           <div className="items-center text-center ">  
             <div className="flex items-center mb-2 text-white">
-                {timeLeft > 0 && <><HiClock className="w-5 h-5 mr-1 text-purple-950" /><span className="mr-2">Tiempo restante:</span></> }
+                {timeLeft > 0 && <><HiClock className="w-5 h-5 mr-1 text-purple-950" /><span className="mr-2">Se cierra en:</span></> }
                 {timeLeft > 0 &&  <strong>{formatTimeLeft(timeLeft)}</strong>}
                 {timeLeft < 0 && <><HiLockClosed className="w-5 h-5 mr-1 text-purple-950" /><span className="ml-2">Sala cerrada</span></>}
             </div>
