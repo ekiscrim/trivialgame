@@ -9,6 +9,8 @@ import { HiArrowRightStartOnRectangle, HiMiniTableCells, HiMiniUserGroup } from 
 import { UserIcon } from "@heroicons/react/solid";
 import EmojiGrid from "../categories/EmojiGrid"
 import { HiLockClosed } from "react-icons/hi2";
+import { HiQuestionMarkCircle } from "react-icons/hi2";
+
 
 const fetchUserScore = async (roomId, userId) => {
   const res = await fetch(`/api/scores/${roomId}/${userId}`);
@@ -175,10 +177,10 @@ const RoomCard = ({ room, userId }) => {
             </div>
           </div>
           <div className="flex items-center mb-2 text-white">
-            <UserIcon className="w-5 h-5 mr-1 text-purple-950" /> <span className="mr-2">Creador de la sala:</span> <strong>{creatorData.creatorUsername}</strong>
+            <UserIcon className="w-5 h-5 mr-1 text-purple-950" /> <span className="mr-2">Creada por:</span> <strong>{creatorData.creatorUsername}</strong>
           </div>
           <div className="flex items-center mb-2 text-white">
-            <HiMiniTableCells className="w-5 h-5 mr-1 text-purple-950" /> <span className="mr-2">Número de preguntas:</span> <strong>{room.questions.length}</strong>
+            <HiQuestionMarkCircle className="w-5 h-5 mr-1 text-purple-950" /> <span className="mr-2">Preguntas:</span> <strong>{room.questions.length}</strong>
           </div>
           <div className="flex items-center mb-2 text-white">
             <HiMiniUserGroup className="w-5 h-5 mr-1 text-purple-950" /> <span className="mr-2">Participantes:</span> <strong>{room.users.length}</strong>

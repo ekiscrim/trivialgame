@@ -56,7 +56,9 @@ const RegisterPage = () => {
                 placeholder='Nombre de usuario'
                 {...register("username", { 
                   required: "El nombre de usuario es obligatorio",
-                  validate: value => !value.includes(" ") || "El nombre de usuario no puede contener espacios" 
+                  validate: value => !value.includes(" ") || "El nombre de usuario no puede contener espacios",
+                  minLength: { value: 3, message: "El nombre de usuario debe tener al menos 3 caracteres" },
+                  maxLength: { value: 15, message: "El nombre de usuario no puede tener más de 15 caracteres" }
                 })}
               />
             </label>
