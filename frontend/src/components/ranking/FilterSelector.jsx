@@ -2,8 +2,8 @@ const FilterSelector = ({ selectedFilter, onSelectFilter }) => {
     return (
 <div className="flex justify-center my-4 space-x-4">
             <button
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                    selectedFilter === 'alltime' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
+                className={`px-4 py-2 rounded-lg transition-colors btn-primary ${
+                    selectedFilter === 'alltime' ? 'bg-purple-500 text-white font-bold' : 'bg-gray-200 hover:bg-gray-300'
                 }`}
                 onClick={() => onSelectFilter('alltime')}
             >
@@ -11,7 +11,7 @@ const FilterSelector = ({ selectedFilter, onSelectFilter }) => {
             </button>
             <button
                 className={`px-4 py-2 rounded-lg transition-colors ${
-                    selectedFilter === 'monthly' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
+                    selectedFilter === 'monthly' ? 'bg-purple-500 text-white font-bold' : 'bg-gray-200 hover:bg-gray-300'
                 }`}
                 onClick={() => onSelectFilter('monthly')}
             >
@@ -19,7 +19,7 @@ const FilterSelector = ({ selectedFilter, onSelectFilter }) => {
             </button>
             <button
                 className={`px-4 py-2 rounded-lg transition-colors ${
-                    selectedFilter === 'weekly' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
+                    selectedFilter === 'weekly' ? 'bg-purple-500 text-white font-bold' : 'bg-gray-200 hover:bg-gray-300'
                 }`}
                 onClick={() => onSelectFilter('weekly')}
             >
