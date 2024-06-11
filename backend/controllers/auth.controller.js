@@ -43,10 +43,82 @@ export const register = async (req, res) => {
 
         // Definir el contenido del correo electrónico
         const mailOptions = {
-            from: process.env.EMAIL_SENDER,
+            from: 'no-reply@vioquiz.me',
             to: email,
             subject: 'Confirmación de correo electrónico',
-            html: `<p>Hola ${username},</p><p>Por favor haz clic en el siguiente enlace para confirmar tu correo electrónico:</p><p><a href="${process.env.EMAIL_URL_APP}/api/verify/confirm/${confirmationToken}">Confirmar correo electrónico</a></p>`,
+            html:  `
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Confirmación de cuenta</title>
+              <style>
+                body {
+                  font-family: Arial, sans-serif;
+                  background-color: #f7f7f7;
+                  margin: 0;
+                  padding: 0;
+                }
+                .container {
+                  width: 100%;
+                  max-width: 600px;
+                  margin: 0 auto;
+                  background-color: #ffffff;
+                  padding: 20px;
+                  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                  border-radius: 8px;
+                }
+                .header {
+                  text-align: center;
+                  padding: 20px;
+                }
+                .header img {
+                  max-width: 150px;
+                }
+                .content {
+                  text-align: center;
+                  color: #333333;
+                }
+                .content p {
+                  font-size: 16px;
+                  line-height: 1.5;
+                }
+                .content a {
+                  display: inline-block;
+                  margin: 20px 0;
+                  padding: 10px 20px;
+                  background-color: #6a1b9a;
+                  color: #ffffff;
+                  text-decoration: none;
+                  border-radius: 5px;
+                }
+                .footer {
+                  text-align: center;
+                  padding: 10px;
+                  color: #777777;
+                  font-size: 12px;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <img src="https://vioquiz.me/logoquiz.png" alt="VioQUIZ Logo">
+                </div>
+                <div class="content">
+                  <p>Hola, ${username}</p>
+                  <p>Por favor haz clic en el siguiente enlace para confirmar tu correo electrónico:</p>
+                  <p><a href="${process.env.EMAIL_URL_APP}/api/verify/confirm/${confirmationToken}">Confirmar correo electrónico</a></p>
+                </div>
+                <div class="footer">
+                  <p>Si no solicitaste esta acción, puedes ignorar este correo electrónico.</p>
+                  <p>&copy; 2024 VioQUIZ. Todos los derechos reservados.</p>
+                </div>
+              </div>
+            </body>
+            </html>
+          `,
         };
 
         // Enviar el correo electrónico
@@ -186,10 +258,82 @@ export const resendVerificationEmail = async (req, res) => {
   
       // Definir el contenido del correo electrónico
       const mailOptions = {
-        from: process.env.EMAIL_SENDER,
+        from: 'no-reply@vioquiz.me',
         to: email,
         subject: 'Reenvío de confirmación de correo electrónico',
-        html: `<p>Hola,</p><p>Por favor haz clic en el siguiente enlace para confirmar tu correo electrónico:</p><p><a href="${process.env.EMAIL_URL_APP}/api/verify/confirm/${confirmationToken}">Confirmar correo electrónico</a></p>`,
+        html:  `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Confirmación de cuenta</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #f7f7f7;
+              margin: 0;
+              padding: 0;
+            }
+            .container {
+              width: 100%;
+              max-width: 600px;
+              margin: 0 auto;
+              background-color: #ffffff;
+              padding: 20px;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+              border-radius: 8px;
+            }
+            .header {
+              text-align: center;
+              padding: 20px;
+            }
+            .header img {
+              max-width: 150px;
+            }
+            .content {
+              text-align: center;
+              color: #333333;
+            }
+            .content p {
+              font-size: 16px;
+              line-height: 1.5;
+            }
+            .content a {
+              display: inline-block;
+              margin: 20px 0;
+              padding: 10px 20px;
+              background-color: #6a1b9a;
+              color: #ffffff;
+              text-decoration: none;
+              border-radius: 5px;
+            }
+            .footer {
+              text-align: center;
+              padding: 10px;
+              color: #777777;
+              font-size: 12px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <img src="https://vioquiz.me/logoquiz.png" alt="VioQUIZ Logo">
+            </div>
+            <div class="content">
+              <p>Hola, ${username}</p>
+              <p>Por favor haz clic en el siguiente enlace para confirmar tu correo electrónico:</p>
+              <p><a href="${process.env.EMAIL_URL_APP}/api/verify/confirm/${confirmationToken}">Confirmar correo electrónico</a></p>
+            </div>
+            <div class="footer">
+              <p>Si no solicitaste esta acción, puedes ignorar este correo electrónico.</p>
+              <p>&copy; 2024 VioQUIZ. Todos los derechos reservados.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
       };
   
       // Enviar el correo electrónico
