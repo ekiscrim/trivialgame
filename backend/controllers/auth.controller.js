@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { generateTokenAndSetCookie } from "../lib/utils/generateToken.js";
 import nodemailer from 'nodemailer';
 import jwt from "jsonwebtoken";
+import { getRandomAvatar } from "../lib/utils/generateAvatar.js";
 
 export const register = async (req, res) => {
     try {
@@ -124,12 +125,16 @@ export const register = async (req, res) => {
         // Enviar el correo electrónico
         await transporter.sendMail(mailOptions);
 
+        // Genera un avatar aleatorio
+        const profileImg = getRandomAvatar();
+
         // Crear un nuevo usuario
         const newUser = new User({
             username,
             password: hashedPassword,
             role,
             email,
+            profileImg
         });
 
         // Guardar el nuevo usuario en la base de datos
@@ -140,18 +145,6 @@ export const register = async (req, res) => {
             username: newUser.username,
             email: newUser.email,
         });
-
-        /*if (newUser) {
-            generateTokenAndSetCookie(newUser._id, res);
-            await newUser.save();
-
-            res.status(201).json({
-                _id: newUser.id,
-                username: newUser.username
-            });
-        } else {
-            res.status(400).json({error: 'Datos de usuario no válidos'});
-        }*/
 
     } catch (error) {
         res.status(500).json({error: 'Error interno'});
