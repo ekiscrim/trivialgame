@@ -18,7 +18,6 @@ const ShareComponent = ({ score, roomName, roomUrl, progress }) => {
   }
 
   // URL de la imagen generada dinámicamente
-  const imageSrc = "https://vioquiz.me/logoquiz.svg";
 
   return (
     <div className="w-full flex justify-center items-center mt-10">
@@ -26,8 +25,6 @@ const ShareComponent = ({ score, roomName, roomUrl, progress }) => {
         <WhatsappShareButton
           url={roomUrl}
           title={shareText}
-          separator=" - "
-          imageUrl={imageSrc}
         >
           <div className="flex items-center">
             <WhatsappIcon size={32} round={true} />

@@ -234,7 +234,7 @@ export const getParticipantProgress = async (req, res) => {
 export const getParticipantProgressAll = async (req, res) => {
   const { roomId, userId } = req.params;
   try {
-    const participants = await Participant.find({ roomId, userId  }).sort("lastQuestionIndex");
+    const participants = await Participant.find({ roomId, userId  }).populate('questionId', 'question').sort("lastQuestionIndex");
     res.json(participants);
     if (!participants) return res.status(404).json({ error: 'Participants not found' });
   }catch (error) {
