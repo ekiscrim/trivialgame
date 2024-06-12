@@ -74,7 +74,7 @@ const ProgressComponent = ({ roomId, userId, onClose }) => {
       </ul>
       {selectedStep !== null && authUserData._id === progress[selectedStep].userId && (
         <div className="mt-6 bg-purple-200 p-4 rounded shadow-lg">
-          <h3 className="text-xl font-semibold mb-2">Pregunta {selectedStep}: </h3>
+          <h3 className="text-xl font-semibold mb-2">Pregunta {selectedStep+1}: </h3>
           <p className="bg-white rounded-xl p-2 shadow-xl font-bold">{progress[selectedStep].questionId.question}</p>
           <h4 className="text-lg font-medium mt-4">Tu respuesta:</h4>
           <p className={`step text-white p-4 text-center flex-2 shadow-xl font-bold ${progress[selectedStep].isCorrect ? "badge-success" : "badge-error"}`}>
