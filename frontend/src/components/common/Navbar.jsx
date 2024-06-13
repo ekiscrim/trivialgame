@@ -1,6 +1,5 @@
 import { MdHomeFilled } from "react-icons/md";
-import { IoNotifications } from "react-icons/io5";
-import { FaUser } from "react-icons/fa";
+import { HiBell } from "react-icons/hi2";
 import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { HiMiniTrophy } from "react-icons/hi2";
@@ -8,9 +7,34 @@ import { HiMiniMinusCircle } from "react-icons/hi2";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import Logo from "../common/Logo";
+import LoadingSpinner from "./LoadingSpinner";
 
 const Navbar = ({ authUser, device }) => {
   const queryClient = useQueryClient();
+
+
+  const { data: notificationsData, isLoading, isError } = useQuery({
+    queryKey: ['notifications'],
+    queryFn: async () => {
+      const response = await fetch('/api/notifications');
+      if (!response.ok) {
+        throw new Error('No se pudo obtener las notificaciones');
+      }
+      const data = await response.json();
+      return data;
+    },
+  });
+
+
+  const unreadCount = notificationsData?.unreadCount || 0;
+
+  if (isLoading) {
+    <LoadingSpinner />
+  }
+  
+  if (isError) {
+    toast.error('Hubo un error al obtener las notificaciones');
+  }
 
   const { mutate: logoutMutate } = useMutation({
     mutationFn: async () => {
@@ -37,11 +61,13 @@ const Navbar = ({ authUser, device }) => {
     },
   });
 
-  const { data: authUserData } = useQuery({ queryKey: ["authUser"] });
+  const { data: authUserData } = useQuery({
+    queryKey: ["authUser"],
+  });
 
   return (
     <nav
-      className={`w-full p-3 bottom-0 z-50  ${device === "Mobile" ? "sticky bg-purple-700 bg-opacity-60 backdrop-blur-md" : "fixed bg-purple-700 top-0 max-h-16"}`}
+      className={`w-full p-3 bottom-0 z-40 ${device === "Mobile" ? "fixed bg-purple-700 bg-opacity-60 backdrop-blur-md" : "fixed bg-purple-700 top-0 max-h-16"}`}
     >
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         <div className={`flex items-center gap-4 ${device === "Mobile" ? "sm:gap-2" : ""}`}>
@@ -81,25 +107,27 @@ const Navbar = ({ authUser, device }) => {
               </div>
             </li>
             <li>
-              <div>
-                <Link
-                  to={`/profile/${authUserData?.username}`}
-                  className={`${device === "Mobile" ? "" : "sm:flex sm:flex-col sm:text-center sm:items-center gap-2"} text-white hover:text-violet-200 transition-all`}
-                >
+              <div className="relative">
+                <Link to={`/notifications`} className={`text-white hover:text-violet-200 transition-all ${device === "Mobile" ? "sm:flex sm:flex-col sm:text-center sm:items-center gap-2" : "sm:flex sm:flex-col sm:text-center sm:items-center gap-2"}`}>
                   <div className="flex items-center justify-center">
-                    <FaUser className={`${device === "Mobile" ? "w-8 h-8" : "w-6 h-6"}`} />
-                    <span className="hidden md:block ml-2">Perfil</span>
+                    <HiBell className={`${device === "Mobile" ? "w-8 h-8" : "w-7 h-7"}`} />
+                    <span className="hidden md:block ml-2">Notificaciones</span>
                   </div>
-                  <span className="block md:hidden text-xs">Perfil</span>
+                  <span className="block md:hidden text-xs">Notif.</span>
+                  {unreadCount > 0 && (
+                    <div className="absolute top-0 right-0 left-1 mt-0 ml-4 bg-red-600 text-white rounded-full h-4 w-4 flex items-center justify-center text-xs">
+                      {unreadCount}
+                    </div>
+                  )}
                 </Link>
               </div>
             </li>
             <li>
               <div>
-                {authUserData.role === "admin" && (
+                {authUserData && authUserData.role === "admin" && (
                   <Link
                     to="/admin"
-                    className={`${device === "Mobile" ? "" : "sm:flex sm:flex-col sm:text-center sm:items-center gap-2"} text-white hover:text-violet-200 transition-all`}
+                    className={`${device === "Mobile" ? "sm:flex sm:flex-col sm:text-center sm:items-center gap-2" : "sm:flex sm:flex-col sm:text-center sm:items-center gap-2"} text-white hover:text-violet-200 transition-all`}
                   >
                     <div className="flex items-center justify-center">
                       <HiMiniMinusCircle className={`${device === "Mobile" ? "w-8 h-8" : "w-6 h-6"}`} />

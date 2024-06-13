@@ -10,6 +10,7 @@ import questionRoutes from "./routes/question.routes.js";
 import resultsRoutes from "./routes/score.routes.js";
 import statisticsRoutes from "./routes/user.statistic.routes.js"; 
 import rankingRoutes from "./routes/ranking.routes.js";
+import notificationRoutes from './routes/notification.routes.js';
 
 import adminRoutes from "./routes/admin/admin.routes.js"
 
@@ -21,8 +22,9 @@ import multer from "multer"
 //crons
 import './tasks/update.room.status.cron.js';
 import './tasks/reset.scores.cron.js';
-import './tasks/remove.room.old.cron.js'; // Cron job que elimina las salas antiguas
-import { deleteOldRoomsAndParticipants } from './tasks/remove.room.old.cron.js';
+import './tasks/remove.room.old.cron.js';
+import './tasks/remove.old.notifications.cron.js';
+
 dotenv.config();
 
 cloudinary.config({
@@ -64,6 +66,7 @@ app.use("/api/room", resultsRoutes);  // Operaciones relacionadas con salas de r
 app.use("/api/scores", resultsRoutes);  // Puntuaciones generales
 app.use("/api/statistic", statisticsRoutes) //Estadisticas de usuario
 app.use("/api/rankings", rankingRoutes); //Ranking de usuarios
+app.use('/api/notifications', notificationRoutes); // Notificaciones
 
 //admin
 app.use('/api/admin', adminRoutes);

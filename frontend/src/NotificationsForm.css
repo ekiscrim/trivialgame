@@ -1,0 +1,38 @@
+/* NotificationsForm.css */
+.notifications-form {
+    max-width: 100%;
+    padding: 16px;
+  }
+  
+  .notifications-form form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .notifications-form label {
+    margin-bottom: 8px;
+  }
+  
+  .notifications-form input,
+  .notifications-form .fr-wrapper {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+  }
+  
+  .notifications-form .fr-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+  }
+  
+  .notifications-form .fr-box {
+    overflow: hidden;
+  }
+  
+  .notifications-form button {
+    align-self: flex-end;
+    padding: 8px 16px;
+  }
+  

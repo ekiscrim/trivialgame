@@ -241,3 +241,11 @@ body {
 .username {
   font-size: calc(1rem - 0.2rem * max(0, min(1, calc((var(--username-length) - 10) / 5))));
 }
+
+.custom-height {
+  height: 500px;
+}
+
+.custom-width {
+  width: 500px; 
+}

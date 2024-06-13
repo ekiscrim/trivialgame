@@ -21,6 +21,7 @@ import { useLocation } from 'react-router-dom';
 import { ConsentBanner, ConsentProvider } from 'react-hook-consent';
 import PrivacyPolicy from './components/common/PrivacyPolicy';
 import 'react-hook-consent/dist/styles/style.css'
+import NotificationsPage from './pages/notifications/NotificationsPage';
 // Establecer el elemento raíz para Modal
 Modal.setAppElement('#root');
 
@@ -61,7 +62,7 @@ function App() {
   }
 
   return (
-    <div className={`grid place-items-center min-h-screen  ${device === 'Mobile' ? '' : 'pt-20'}`}>
+    <div className={`grid place-items-center min-h-screen  ${device === 'Mobile' ? 'pb-40' : 'pt-20'}`}>
       <ConsentProvider
         options={{
           services: [
@@ -108,6 +109,7 @@ function App() {
           <Route path='/room/:roomId/questions/:categoryId' element={authUserQuery ? <QuestionPage /> : <Navigate to="/login" />} />
           <Route path="/room/:roomId/results" element={authUserQuery ? <ResultsPage /> : <Navigate to="/login" />} />
           <Route path="/rankings" element={authUserQuery ? <RankingsPage /> : <Navigate to="/login" />} />
+          <Route path='/notifications' element={authUserQuery ? <NotificationsPage /> : <Navigate to="/login" />} />
           <Route path='/admin' element={<ProtectedRoute element={AdminPage} authUser={authUserQuery} adminOnly />} />
         </Routes>
         <ScrollToTop style={{ marginBottom: "40px", paddingLeft: "6px", right: "10px" }} smooth />
