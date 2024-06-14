@@ -5,11 +5,18 @@ import nodemailer from 'nodemailer';
 import jwt from "jsonwebtoken";
 import { getRandomAvatar } from "../lib/utils/generateAvatar.js";
 
+const reservedUsernames = ['admin', 'root', 'all', 'system'];
+
 export const register = async (req, res) => {
     try {
         let {username, password, role, email} = req.body;
 
         username = username.toLowerCase();
+
+        if (reservedUsernames.includes(username)) {
+          return res.status(400).json({ error: "Nombre de usuario no permitido" });
+      }
+
 
         const existingUser = await User.findOne({ username });
         const existingEmail = await User.findOne({ email });

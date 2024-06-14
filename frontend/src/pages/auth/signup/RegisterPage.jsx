@@ -7,6 +7,8 @@ import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useState } from "react";
 
+const reservedUsernames = ['admin', 'root', 'all', 'system'];
+
 const RegisterPage = () => {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -85,9 +87,12 @@ const RegisterPage = () => {
                 placeholder='Nombre de usuario'
                 {...register("username", { 
                   required: "El nombre de usuario es obligatorio",
-                  validate: value => !value.includes(" ") || "El nombre de usuario no puede contener espacios",
-                  minLength: { value: 3, message: "El nombre de usuario debe tener al menos 3 caracteres" },
-                  maxLength: { value: 15, message: "El nombre de usuario no puede tener más de 15 caracteres" }
+                  validate: {
+                    noSpaces: value => !value.includes(" ") || "El nombre de usuario no puede contener espacios",
+                    validLength: value => (value.length >= 3 && value.length <= 15) || "El nombre de usuario debe tener entre 3 y 15 caracteres",
+                    noReserved: value => !reservedUsernames.includes(value.toLowerCase()) || "El nombre de usuario no está permitido",
+                    noSpecialChars: value => /^[a-zA-Z0-9áéíóúÁÉÍÓÚüÜ]+$/.test(value) || "El nombre de usuario solo puede contener letras (la ñ no está incluída) o números"
+                  }
                 })}
               />
             </label>
@@ -120,15 +125,16 @@ const RegisterPage = () => {
               })}
             />
           </label>
-          {errors.password && (<div className='error-message'>
-                La contraseña debe cumplir con los siguientes requisitos:
-                <ul>
-                  <li>Al menos 8 caracteres de longitud</li>
-                  <li>Al menos 2 números</li>
-                  <li>Al menos 1 carácter especial (por ejemplo, !@#$%^&*)</li>
-                </ul>
-              </div>
-            )}
+          {errors.password && (
+            <div className='error-message'>
+              La contraseña debe cumplir con los siguientes requisitos:
+              <ul>
+                <li>Al menos 8 caracteres de longitud</li>
+                <li>Al menos 2 números</li>
+                <li>Al menos 1 carácter especial (por ejemplo, !@#$%^&*)</li>
+              </ul>
+            </div>
+          )}
 
           {/* Mostrar el botón de reenvío de verificación solo si el formulario se ha enviado con éxito */}
           {formSubmitted && (
