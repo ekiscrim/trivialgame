@@ -63,8 +63,9 @@ const LoginPage = () => {
       <div className='flex-1 flex flex-col justify-center items-center'>
         <form className='flex gap-4 flex-col' onSubmit={handleSubmit(onSubmit)}>
           <Logo className='w-24 lg:hidden fill-white' />
-          <h1 className="text-purple-500 text-4xl font-bold">VioQUIZ</h1>
-          <h1 className='text-4xl font-extrabold text-primary'>{"Let's"} go.</h1>
+          <h1 className="text-purple-500 text-4xl font-extrabold">VioQUIZ</h1>
+          <h1 className='text-3xl italic text-primary'>{"Desafía"} tu mente</h1>
+          <h1 className='text-2xl italic text-primary -mt-4 ml-7'>{"Conquista"} lo trivial.</h1>
           <label className='input input-bordered rounded flex items-center gap-2'>
             <FaUser />
             <input

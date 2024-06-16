@@ -76,7 +76,7 @@ const RegisterPage = () => {
         <form className='lg:w-2/3  mx-auto md:mx-20 flex gap-4 flex-col' onSubmit={handleSubmit(onSubmit)}>
           <Logo className='w-24 lg:hidden fill-white' />
           <h1 className="text-purple-500 text-4xl font-bold">VioQUIZ</h1>
-          <h1 className='text-4xl font-extrabold text-primary'>Regístrate para participar</h1>
+          <h1 className='text-3xl italic text-primary'>Regístrate para participar.</h1>
 
           <div className='flex gap-4 flex-wrap'>
             <label className='input input-bordered rounded flex items-center gap-2 flex-1'>
