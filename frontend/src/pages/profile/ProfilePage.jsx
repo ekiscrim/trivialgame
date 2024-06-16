@@ -10,17 +10,20 @@ import { formatMemberSinceDate } from "../../utils/date";
 import EditProfileModal from "../profile/EditProfileModal";
 import Statistics from "../../components/profile/Statistics";
 import LoadingSpinner from "../../components/common/LoadingSpinner";
-import { useNavigate  } from "react-router-dom";
-import { BiLogOut } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
+import { BiLogOut, BiDotsVerticalRounded } from "react-icons/bi";
 
 const ProfilePage = () => {
     const [profileImg, setProfileImg] = useState(null);
     const profileImgRef = useRef(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+    const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
+    const [isOptionsOpen, setIsOptionsOpen] = useState(false);
     const editorRef = useRef(null);
     const { username } = useParams();
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const { data: authUser } = useQuery({ queryKey: ['authUser'] });
     const { data: user, isLoading, refetch, isRefetching } = useQuery({
         queryKey: ["userProfile", username],
@@ -66,30 +69,60 @@ const ProfilePage = () => {
 
     const { mutate: logoutMutate } = useMutation({
         mutationFn: async () => {
-          try {
-            const res = await fetch("/api/auth/logout", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-            });
-            const data = await res.json();
-    
-            if (!res.ok) throw new Error(data.message || "Algo fue mal");
-            return data;
-          } catch (error) {
-            throw new Error(error);
-          }
+            try {
+                const res = await fetch("/api/auth/logout", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+                const data = await res.json();
+
+                if (!res.ok) throw new Error(data.message || "Algo fue mal");
+                return data;
+            } catch (error) {
+                throw new Error(error);
+            }
         },
         onSuccess: () => {
-          toast.success("Has salido correctamente");
-          queryClient.invalidateQueries({ queryKey: ["authUser"] });
+            toast.success("Has salido correctamente");
+            queryClient.invalidateQueries({ queryKey: ["authUser"] });
+            navigate('/'); // Redirigir a la página de inicio después del logout
         },
         onError: () => {
-          toast.success("Hubo un error");
+            toast.error("Hubo un error");
         }
-      });
+    });
 
+    const { mutate: deactivateMutate } = useMutation({
+        mutationFn: async () => {
+            try {
+                const res = await fetch("/api/auth/deactivate", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ id: user._id }),
+                });
+                if (!res.ok) throw new Error("Algo salió mal");
+                return res.json();
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
+        onSuccess: () => {
+            toast.success("Cuenta desactivada con éxito", { duration: 6000 });
+            queryClient.invalidateQueries({ queryKey: ["authUser"] });
+            logoutMutate(); // Realizar logout después de desactivar la cuenta
+        },
+        onError: (error) => {
+            toast.error(error.message, { duration: 6000 });
+        }
+    });
+
+    const handleDeactivate = () => {
+        deactivateMutate();
+    };
 
     const isMyProfile = authUser?._id === user?._id;
     const handleImgChange = (e) => {
@@ -104,6 +137,7 @@ const ProfilePage = () => {
             setIsImageModalOpen(true);
         }
     };
+
     const handleProfileUpdate = async (formData) => {
         if (selectedImage) {
             const canvas = editorRef.current.getImageScaledToCanvas();
@@ -117,49 +151,74 @@ const ProfilePage = () => {
             updateProfile(formData);
         }
     };
+
     useEffect(() => {
         refetch();
     }, [username, refetch]);
-
-    let history = useNavigate();
 
     return (
         <>
             <div className='flex flex-col w-full lg:w-1/2 min-h-screen'>
                 {(isLoading || isRefetching) && <LoadingSpinner />}
                 {!isLoading && !isRefetching && !user && <p className='text-center text-lg mt-4'>User not found</p>}
+    
                 <div className='w-full text-primary'>
                     <div className='flex px-4 py-2 items-center'>
-                        <Link onClick={() => history(-1)} >
+                        <Link onClick={() => history.goBack()}>
                             <FaArrowLeft className='w-7 h-7' />
                         </Link>
-                        <div className="flex items-end ml-auto">
-                            <BiLogOut
-                                className='w-8 h-8 text-primary cursor-pointer hover:text-violet-200 transition-all'
-                                onClick={(e) => {
-                                e.preventDefault();
-                                logoutMutate();
-                                }}
-                            />
-                            Salir
-                        </div>
-
-                        <div className='flex flex-col'>
-                            <p className='font-bold text-lg'>{user?.fullName}</p>
-                        </div>
+                        {isMyProfile && (
+                            <div className="relative ml-auto">
+                                <div className="relative">
+                                    <BiDotsVerticalRounded
+                                        className='w-8 h-8 text-primary cursor-pointer hover:text-violet-200 transition-all'
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setIsOptionsOpen(!isOptionsOpen);
+                                        }}
+                                    />
+                                    {isOptionsOpen && (
+                                        <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg z-10">
+                                            <div
+                                                className="cursor-pointer rounded-lg  flex items-center px-4 py-2 hover:bg-gray-100"
+                                                onClick={() => {
+                                                    
+                                                    setIsOptionsOpen(false);
+                                                    setIsDeactivateModalOpen(true)
+                                                }}
+                                            >
+                                                Desactivar Cuenta
+                                            </div>
+                                            <div
+                                                className="cursor-pointer rounded-lg  flex items-center px-4 py-2 hover:bg-gray-100"
+                                                onClick={() => {
+                                                    logoutMutate();
+                                                    setIsOptionsOpen(false);
+                                                }}
+                                            >
+                                                Salir
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className='flex flex-col'>
+                        <p className='font-bold text-lg'>{user?.fullName}</p>
                     </div>
                     <div className='relative'>
                         <div className='avatar left-4'>
                             <div className='w-32 rounded-full relative group/avatar'>
                                 <img src={profileImg || user?.profileImg || "/avatar-placeholder.png"} alt="User avatar" />
-                                <div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
-                                    {isMyProfile && (
+                                {isMyProfile && (
+                                    <div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
                                         <MdEdit
                                             className='w-4 h-4 text-white'
                                             onClick={() => profileImgRef.current.click()}
                                         />
-                                    )}
-                                </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         {isMyProfile && (
@@ -182,7 +241,6 @@ const ProfilePage = () => {
                     </div>
                     <div className='flex flex-col gap-4 px-4'>
                         <div className='flex flex-col'>
-                            <span className='font-bold text-lg text-primary'>{user?.username}</span>
                             <span className='text-sm text-primary'>@{user?.username}</span>
                         </div>
                         <div className='flex gap-2 flex-wrap'>
@@ -195,7 +253,7 @@ const ProfilePage = () => {
                 </div>
                 <div className='flex flex-wrap'>
                     <div className='w-full items-center'>
-						{user?._id ? <Statistics userId={user?._id} /> : <LoadingSpinner /> }
+                        {user?._id ? <Statistics userId={user?._id} /> : <LoadingSpinner />}
                     </div>
                 </div>
             </div>
@@ -239,8 +297,37 @@ const ProfilePage = () => {
                     </div>
                 </div>
             )}
+    
+            {/* Modal para desactivar cuenta */}
+            {isDeactivateModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="modal-content bg-white p-4 rounded-lg shadow-lg">
+                        <h2 className="text-lg font-semibold mb-4">¿Estás seguro de que deseas desactivar tu cuenta?</h2>
+                        <div className="flex justify-between">
+                            <button
+                                onClick={() => {
+                                    handleDeactivate();
+                                    setIsDeactivateModalOpen(false);
+                                }}
+                                className='btn btn-danger mr-2'
+                            >
+                                Sí, desactivar cuenta
+                            </button>
+                            <button
+                                onClick={() => setIsDeactivateModalOpen(false)}
+                                className='btn btn-secondary'
+                            >
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
+    
+    
 };
 
 export default ProfilePage;
+

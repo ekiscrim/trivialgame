@@ -345,3 +345,17 @@ export const resendVerificationEmail = async (req, res) => {
       res.status(500).json({ error: 'Error interno' });
     }
   };
+
+  export const deactivate = async (req, res) => {
+    try {
+        const { id } = req.body;
+        // Buscamos al usuario por su ID y actualizamos el campo `deleted` a `true`
+        const user = await User.findByIdAndUpdate(id, { deleted: true });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting user', error });
+    }
+};
