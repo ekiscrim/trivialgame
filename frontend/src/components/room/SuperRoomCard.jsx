@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner";
 import SkeletonCard from "../common/SkeletonCard";
 import useCountdown from '../../hooks/useCountdown';
-import { HiClock, HiEye, HiOutlineTag, HiOutlineUser, HiOutlineUsers } from "react-icons/hi";
+import { HiClock, HiEye, HiOutlineTag, HiOutlineUser, HiOutlineUsers, HiQuestionMarkCircle } from "react-icons/hi";
 import { HiArrowRightStartOnRectangle, HiMiniTableCells, HiMiniUserGroup } from "react-icons/hi2";
 import { UserIcon } from "@heroicons/react/solid";
 import { HiLockClosed } from "react-icons/hi2";
@@ -125,10 +125,22 @@ const SuperRoomCard = ({ room, userId }) => {
         <div className="card-body flex flex-col justify-between">
           <div className="items-center text-center ">
             <div className="flex items-center mb-2 text-white">
-              {timeLeft > 0 && <><span className="mr-2"><HiClock className="w-5 h-5" /></span></>}
-              {timeLeft > 0 && <strong>{formatTimeLeft(timeLeft)}</strong>}
-              {timeLeft < 0 && <><HiLockClosed className="w-5 h-5 mr-1 text-red-950" /><span className="ml-2">Sala cerrada</span></>}
+            {timeLeft > 0 ? (
+                <>
+                  <HiClock className="w-5 h-5 mr-1 text-red-950" />
+                  <span className="mr-2">Se cierra en:</span>
+                  <strong>{formatTimeLeft(timeLeft)}</strong>
+                </>
+              ) : (
+                <>
+                  <HiLockClosed className="w-5 h-5 mr-1 text-red-950" />
+                  <span className="ml-2">Sala cerrada</span>
+                </>
+              )}
             </div>
+          </div>
+                    <div className="flex items-center mb-2 text-white">
+            <HiQuestionMarkCircle className="w-5 h-5 mr-1 text-red-950" /> <span className="mr-2">Preguntas:</span> <strong>{room.questions.length}</strong>
           </div>
           <div className="mb-2">
             {categories.map((category, index) => (
