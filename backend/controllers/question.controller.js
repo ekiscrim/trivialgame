@@ -195,8 +195,6 @@ export const validateAnswer = async (req, res) => {
     });
     await participantAnswer.save();
 
-    console.log("PARTICIPANT", participant, "PARTICIPANT ANSWER", participantAnswer);
-
     // Verificar si el participante ha respondido todas las preguntas
     const totalQuestions = room.questions.length;
     const hasCompleted = participant.lastQuestionIndex === totalQuestions;

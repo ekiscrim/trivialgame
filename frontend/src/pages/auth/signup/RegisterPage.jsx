@@ -28,8 +28,7 @@ const RegisterPage = () => {
         if (!res.ok) throw new Error(data.error || "Algo fue mal");
         return data;
       } catch (error) {
-        console.log(error);
-        throw error;
+        throw new Error(error || 'Algo salió mal');
       }
     },
     onSuccess: () => {

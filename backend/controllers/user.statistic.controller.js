@@ -51,8 +51,6 @@ export const updateUserStatistics = async (req, res) => {
       }
 
       await userStats.save();
-
-      console.log("UPDATE USER STATISTICS ", userStats);
       res.json(userStats);
   } catch (error) {
       res.status(500).json({ error: 'Failed to update user statistics' });

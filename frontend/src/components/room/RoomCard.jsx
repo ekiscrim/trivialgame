@@ -111,8 +111,8 @@ const RoomCard = ({ room, userId }) => {
     const interval = setInterval(() => {
       if (timeLeft <= 0) {
         updateRoomStatus(room._id, 'finished')
-          .then(response => console.log('Room status updated:', response))
-          .catch(error => console.error('Error updating room status:', error));
+          .then(response => console.log('Super Room status updated:', response))
+          .catch(error => console.error('Error updating Super room status:', error));
       }
     }, 60000); // Verificar cada minuto
 

@@ -24,13 +24,11 @@ export const getUserProfile = async (req, res) => {
         // Devolver el usuario si no está marcado como eliminado
         res.status(200).json(user);
     } catch (error) {
-        console.log("Error en getUserProfile ", error.message);
         res.status(500).json({ error: error.message });
     }
 };
 
 export const getUserNameById = async (req, res) => {
-    console.log("PARAMETROS ", req.params);
     const { id } = req.params;
 
     try {
@@ -41,7 +39,6 @@ export const getUserNameById = async (req, res) => {
         res.status(200).json(user);
     
   } catch (error) {
-        console.log("Error en getUserNameById ",error.message);
         res.status(500).json({error: error.message});
   }
 };
@@ -93,7 +90,6 @@ export const updateUser = async (req, res) => {
 
 		return res.status(200).json(user);
 	} catch (error) {
-		console.log("Error en updateUser: ", error.message);
 		return res.status(500).json({ error: error.message });
 	}
 };
