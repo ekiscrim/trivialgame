@@ -111,7 +111,7 @@ const AvailableRooms = () => {
                 {allRooms.some(room => room.roomType === 'super') && (
                   <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">SALAS BOMBA</h1>
                 )}
-                <div className="flex flex-wrap justify-center gap-6">
+                <div className="flex flex-wrap justify-center gap-6  animate-scale-in">
                   {allRooms.filter(room => room.roomType === 'super').map((room, index) => (
                     <div key={index} className="w-80 relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
                       <SuperRoomCard room={room} userId={userId} />
@@ -124,7 +124,7 @@ const AvailableRooms = () => {
                 <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">
                   {status === 'waiting' ? 'Salas abiertas' : 'Salas cerradas'}
                 </h1>
-                <div className="flex flex-wrap justify-center gap-6">
+                <div className="flex flex-wrap justify-center gap-6  animate-scale-in">
                   {allRooms.filter(room => room.roomType === 'normal').map((room, index) => (
                     <div key={index} className="w-80 relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
                       <RoomCard room={room} userId={userId} />

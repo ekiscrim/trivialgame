@@ -168,7 +168,7 @@ const ProfilePage = () => {
                             <FaArrowLeft className='w-7 h-7' />
                         </Link>
                         {isMyProfile && (
-                            <div className="relative ml-auto">
+                            <div className="relative ml-auto ">
                                 <div className="relative">
                                     <BiDotsVerticalRounded
                                         className='w-8 h-8 text-primary cursor-pointer hover:text-violet-200 transition-all'
@@ -204,9 +204,6 @@ const ProfilePage = () => {
                             </div>
                         )}
                     </div>
-                    <div className='flex flex-col'>
-                        <p className='font-bold text-lg'>{user?.fullName}</p>
-                    </div>
                     <div className='relative'>
                         <div className='avatar left-4'>
                             <div className='w-32 rounded-full relative group/avatar'>
@@ -241,6 +238,9 @@ const ProfilePage = () => {
                     </div>
                     <div className='flex flex-col gap-4 px-4'>
                         <div className='flex flex-col'>
+                            <div className='flex flex-col'>
+                                <p className='font-bold text-lg'>{user?.username}</p>
+                            </div>
                             <span className='text-sm text-primary'>@{user?.username}</span>
                         </div>
                         <div className='flex gap-2 flex-wrap'>
