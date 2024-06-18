@@ -3,11 +3,11 @@ const FilterSelector = ({ selectedFilter, onSelectFilter }) => {
 <div className="flex justify-center my-4 space-x-4">
             <button
                 className={`px-4 py-2 rounded-lg transition-colors btn-primary ${
-                    selectedFilter === 'alltime' ? 'bg-purple-500 text-white font-bold' : 'bg-gray-200 hover:bg-gray-300'
+                    selectedFilter === 'weekly' ? 'bg-purple-500 text-white font-bold' : 'bg-gray-200 hover:bg-gray-300'
                 }`}
-                onClick={() => onSelectFilter('alltime')}
+                onClick={() => onSelectFilter('weekly')}
             >
-                Global
+                Semanal
             </button>
             <button
                 className={`px-4 py-2 rounded-lg transition-colors ${
@@ -19,11 +19,11 @@ const FilterSelector = ({ selectedFilter, onSelectFilter }) => {
             </button>
             <button
                 className={`px-4 py-2 rounded-lg transition-colors ${
-                    selectedFilter === 'weekly' ? 'bg-purple-500 text-white font-bold' : 'bg-gray-200 hover:bg-gray-300'
+                    selectedFilter === 'alltime' ? 'bg-purple-500 text-white font-bold' : 'bg-gray-200 hover:bg-gray-300'
                 }`}
-                onClick={() => onSelectFilter('weekly')}
+                onClick={() => onSelectFilter('alltime')}
             >
-                Semanal
+                Global
             </button>
         </div>
     );

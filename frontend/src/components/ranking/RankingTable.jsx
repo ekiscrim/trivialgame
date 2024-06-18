@@ -1,16 +1,27 @@
 import { Link } from 'react-router-dom';
 
 const RankingTable = ({ rankings, filter, currentUser }) => {
+  // Función para obtener el puntaje basado en el filtro
+  const getScore = (user) => {
+    if (filter === 'alltime') {
+      return user.totalScore || '0';
+    } else if (filter === 'monthly') {
+      return user.monthlyScore || '0';
+    } else {
+      return user.weeklyScore || '0';
+    }
+  };
+
   return (
     <div className='animate-scale-in'>
       <h2 className="text-white text-3xl font-bold mb-4">Clasificación</h2>
       <div className="grid grid-cols-3 gap-4 text-center text-white mb-8">
         {rankings.slice(0, 3).map((user, index) => (
           <Link key={user?.userId?._id || 'Unknown'} to={`/profile/${user?.userId?.username || 'Unknown'}`}>
-            <div key={user?.userId?._id || 'Unknown'} className="bg-white text-black p-4 rounded-lg shadow-md hover:bg-purple-300">
+            <div className="bg-white text-black p-4 rounded-lg shadow-md hover:bg-purple-300">
               <img className="w-20 h-20 rounded-full mx-auto" src={user?.userId?.profileImg || '/avatar-placeholder.png'} alt="Profile" />
               <h3 className="text-xl font-semibold mt-2">{user?.userId?.username || 'Unknown'}</h3>
-              <p className="text-2xl font-bold">{user?.totalScore || 'Unknown'}</p>
+              <p className="text-2xl font-bold">{getScore(user)}</p>
               {index === 0 && <p className="text-yellow-500 text-4xl">🥇</p>}
               {index === 1 && <p className="text-gray-500 text-4xl">🥈</p>}
               {index === 2 && <p className="text-orange-500 text-4xl">🥉</p>}
@@ -40,11 +51,7 @@ const RankingTable = ({ rankings, filter, currentUser }) => {
                   </Link>
                 </td>
                 <td className="px-4 py-4 text-lg font-semibold">
-                  {filter === 'alltime'
-                    ? user.totalScore || 'Unknown'
-                    : filter === 'monthly'
-                    ? user.monthlyScore || 'Unknown'
-                    : user.weeklyScore || 'Unknown'}
+                  {getScore(user)}
                 </td>
               </tr>
             ))}

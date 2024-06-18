@@ -4,7 +4,7 @@ import RankingTable from '../../components/ranking/RankingTable';
 import { useQuery } from '@tanstack/react-query';
 
 const RankingsPage = () => {
-    const [filter, setFilter] = useState('alltime');
+    const [filter, setFilter] = useState('weekly');
     const [rankings, setRankings] = useState([]);
     const { data: authUserData } = useQuery({ queryKey: ["authUser"] });
     useEffect(() => {
