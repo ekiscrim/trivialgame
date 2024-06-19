@@ -17,13 +17,18 @@ async function sendRoomResultsNotifications(roomId) {
     // Construir la URL completa para la sala
     const roomUrl = `${BASE_URL}/rooms/${room._id}`;
 
-    // Obtener los participantes ordenados por puntuación
+    // Obtener los participantes ordenados por puntuación y fecha de creación
     const participants = await Participant.find({ roomId })
-      .sort('-score')
+      .sort({ score: -1, createdAt: 1 })
       .populate('userId');
 
     // Objeto para mantener registro de usuarios notificados
     const notifiedUsers = {};
+
+    // Variables para manejar los empates
+    let lastScore = null;
+    let lastPosition = 0;
+    let sameScoreCount = 0;
 
     // Recorrer participantes y enviar notificación una vez por usuario
     for (let index = 0; index < participants.length; index++) {
@@ -33,21 +38,28 @@ async function sendRoomResultsNotifications(roomId) {
 
       // Verificar si ya se envió una notificación a este usuario
       if (!notifiedUsers[user._id]) {
-        const position = index + 1;
+        // Manejo de posiciones en caso de empate
+        if (points !== lastScore) {
+          lastPosition += sameScoreCount + 1;
+          sameScoreCount = 0;
+          lastScore = points;
+        } else {
+          sameScoreCount++;
+        }
 
         // Determinar el contenido de posición y color
         let positionContent, positionColorClass;
-        if (position === 1) {
+        if (lastPosition === 1) {
           positionContent = `<span class="text-yellow-500">🥇</span>`;
           positionColorClass = 'text-yellow-500';
-        } else if (position === 2) {
+        } else if (lastPosition === 2) {
           positionContent = `<span class="text-gray-400">🥈</span>`;
           positionColorClass = 'text-gray-400';
-        } else if (position === 3) {
+        } else if (lastPosition === 3) {
           positionContent = `<span class="text-yellow-700">🥉</span>`;
           positionColorClass = 'text-yellow-700';
         } else {
-          positionContent = `<span>${position}.</span>`;
+          positionContent = `<span>${lastPosition}.</span>`;
           positionColorClass = 'text-white';
         }
 
