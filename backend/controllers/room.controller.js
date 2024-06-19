@@ -1,7 +1,7 @@
 import Question from "../models/question.model.js";
 import Room from "../models/room.model.js";
 import User from "../models/user.model.js";
-
+import sendRoomResultsNotifications from "../lib/utils/sendResultsNotifications.js";
 
 export const listRooms = async (req, res) => {
     const page = parseInt(req.query.page) || 1; // Obtener el número de página desde la consulta o establecerlo en 1 por defecto
@@ -222,6 +222,10 @@ export const updateRoomStatus = async (req, res) => {
   
       room.status = status;
       await room.save();
+
+      if (room.status === 'finished') {
+        await sendRoomResultsNotifications(room);
+      }
   
       res.status(200).json({ message: 'Estado de la sala actualizado', room });
     } catch (error) {
@@ -264,6 +268,11 @@ export const editRoom = async (req, res) => {
         }
 
         await room.save();
+
+        if (room.status === 'finished') {
+            await sendRoomResultsNotifications(room);
+        }
+
 
         res.status(200).json({ message: 'Sala actualizada', room });
     } catch (error) {

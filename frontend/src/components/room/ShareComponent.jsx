@@ -1,4 +1,3 @@
-import React from "react";
 import { TwitterShareButton, WhatsappShareButton, WhatsappIcon, XIcon } from "react-share";
 
 const ShareComponent = ({ score, roomName, roomUrl, progress }) => {
