@@ -15,7 +15,7 @@ const cleanUsername = (displayName) => {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "/api/auth/google/callback"
+  callbackURL: "https://vioquiz.me/api/auth/google/callback" //por defecto me pilla http, investigar en un futuro como hacerlo de otra manera para no tener que forzarlo asi
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     let user = await User.findOne({ email: profile.emails[0].value });

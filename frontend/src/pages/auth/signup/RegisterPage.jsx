@@ -70,7 +70,7 @@ const RegisterPage = () => {
   const handleGoogleLogin = async () => {
     try {
       // Redirigir a la ruta de autenticación de Google
-      window.location.href = "/api/auth/google";
+      window.location.href = "https://vioquiz.me/api/auth/google";
     } catch (error) {
       console.error("Error al iniciar sesión con Google:", error);
       toast.error("Error al iniciar sesión con Google. Por favor, inténtelo de nuevo.");
