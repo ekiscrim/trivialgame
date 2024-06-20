@@ -51,6 +51,11 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === "production", // Solo enviar cookies a través de HTTPS en producción
+    httpOnly: true, // La cookie solo es accesible a través del protocolo HTTP(S)
+    maxAge: 7 * 24 * 60 * 60 * 1000, // Tiempo de vida de la cookie en milisegundos (opcional)
+  },
 }));
 
 // Inicializar passport
