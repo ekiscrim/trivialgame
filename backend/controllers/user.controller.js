@@ -44,54 +44,72 @@ export const getUserNameById = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-	const { username, currentPassword, newPassword } = req.body;
-	const userId = req.user._id;
+    const { username, currentPassword, newPassword } = req.body;
+    const userId = req.user._id;
 
-	try {
-		let user = await User.findById(userId);
-		if (!user) return res.status(404).json({ error: "User no encontrado" });
+    try {
+        let user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
 
-		if ((!newPassword && currentPassword) || (!currentPassword && newPassword)) {
-			return res.status(400).json({ error: "Por favor facilita ambas contraseñas la antigua y la nueva" });
-		}
+        // Verificar si el usuario fue registrado por Google
+        if (user.googleUser) {
+            user.username = username || user.username; // Permitir actualizar el nombre de usuario
+        } else {
+            // Verificar si se proporcionó la contraseña actual y la nueva contraseña
+            if ((!newPassword && currentPassword) || (!currentPassword && newPassword)) {
+                return res.status(400).json({ error: "Por favor facilita ambas contraseñas, la antigua y la nueva" });
+            }
 
-		if (currentPassword && newPassword) {
-			const isMatch = await bcrypt.compare(currentPassword, user.password);
-			if (!isMatch) return res.status(400).json({ error: "La contraseña no es correcta" });
-			if (newPassword.length < 6) return res.status(400).json({ error: "La contraseña debe tener 6 caracteres como mínimo" });
+            // Verificar y actualizar la contraseña si se proporcionó la actual y la nueva
+            if (currentPassword && newPassword) {
+                const isMatch = await bcrypt.compare(currentPassword, user.password);
+                if (!isMatch) {
+                    return res.status(400).json({ error: "La contraseña actual es incorrecta" });
+                }
+                if (newPassword.length < 6) {
+                    return res.status(400).json({ error: "La contraseña debe tener al menos 6 caracteres" });
+                }
 
-			const salt = await bcrypt.genSalt(10);
-			user.password = await bcrypt.hash(newPassword, salt);
-		}
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(newPassword, salt);
+            }
 
-		if (req.file) {
-			if (user.profileImg) {
-				await cloudinary.uploader.destroy(`profileImg/${user.profileImg.split("/").pop().split(".")[0]}`);
-			}
+            user.username = username || user.username; // Permitir actualizar el nombre de usuario
+        }
 
-			const stream = streamifier.createReadStream(req.file.buffer);
-			const uploadedResponse = await new Promise((resolve, reject) => {
-				const streamLoad = cloudinary.uploader.upload_stream({ folder: "profileImg" }, (error, result) => {
-					if (result) {
-						resolve(result);
-					} else {
-						reject(error);
-					}
-				});
-				stream.pipe(streamLoad);
-			});
+        // Verificar si se ha subido un nuevo archivo de imagen de perfil
+        if (req.file) {
+            if (user.profileImg) {
+                // Eliminar la imagen anterior de Cloudinary si existe
+                await cloudinary.uploader.destroy(`profileImg/${user.profileImg.split("/").pop().split(".")[0]}`);
+            }
 
-			user.profileImg = uploadedResponse.secure_url;
-		}
+            // Subir la nueva imagen de perfil a Cloudinary
+            const stream = streamifier.createReadStream(req.file.buffer);
+            const uploadedResponse = await new Promise((resolve, reject) => {
+                const streamLoad = cloudinary.uploader.upload_stream({ folder: "profileImg" }, (error, result) => {
+                    if (result) {
+                        resolve(result);
+                    } else {
+                        reject(error);
+                    }
+                });
+                stream.pipe(streamLoad);
+            });
 
-		user.username = username || user.username;
-		user = await user.save();
-		user.password = null; // No mostrar la contraseña en la respuesta
+            user.profileImg = uploadedResponse.secure_url; // Asignar la URL de la nueva imagen de perfil
+        }
 
-		return res.status(200).json(user);
-	} catch (error) {
-		return res.status(500).json({ error: error.message });
-	}
+        // Guardar los cambios en la base de datos
+        user = await user.save();
+        user.password = null; // No mostrar la contraseña en la respuesta
+
+        return res.status(200).json(user); // Devolver el usuario actualizado
+    } catch (error) {
+        return res.status(500).json({ error: error.message }); // Manejar errores
+    }
 };
 
 

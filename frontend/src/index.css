@@ -249,3 +249,36 @@ body {
 .custom-width {
   width: 500px; 
 }
+
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-google:hover {
+  background-color: #f1f1f1;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-google:focus {
+  outline: none;
+}
+
+.btn-google .google-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-google .btn-text {
+  color: #4f4f4f;
+  font-size: 16px;
+  font-weight: 500;
+}

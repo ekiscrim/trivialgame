@@ -1,5 +1,5 @@
 import express from "express";
-import { getMe, register, login, logout, verifyUser, resendVerificationEmail, deactivate } from "../controllers/auth.controller.js";
+import { getMe, register, login, logout, verifyUser, resendVerificationEmail, deactivate, googleAuth, googleAuthCallback } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middleware/protectRoute.js";
 
 const router = express.Router();
@@ -13,5 +13,8 @@ router.post("/login", login);
 router.post("/logout", logout);
 router.post("/deactivate", deactivate);
 
+// Rutas de Google OAuth
+router.get('/google', googleAuth);
+router.get('/google/callback', googleAuthCallback);
 
 export default router;

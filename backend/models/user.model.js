@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
         email: {type: String, required: true, unique: true},
         emailConfirmed: {type: Boolean, default: false},
         deleted: {type: Boolean, default: false},
+        googleUser: { type: Boolean, default: false }
     }, {timestamps: true})
 
 const User = mongoose.model("User", userSchema);

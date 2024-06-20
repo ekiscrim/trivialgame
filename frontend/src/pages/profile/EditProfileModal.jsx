@@ -41,7 +41,7 @@ const EditProfileModal = ({ authUser }) => {
     onError: (error) => {
       toast.error(error.message);
     }
-  })
+  });
 
   const onSubmit = async (formData) => {
     try {
@@ -74,21 +74,24 @@ const EditProfileModal = ({ authUser }) => {
               />
               {errors.username && <span className="text-red-500">Este campo es requerido</span>}
             </div>
-            <div className='flex flex-wrap gap-2'>
-              <input
-                type='password'
-                placeholder='Contraseña actual'
-                className='flex-1 input border border-gray-700 rounded p-2 input-md'
-                {...register('currentPassword', { required: true })}
-              />
-              {errors.currentPassword && <span className="text-red-500">Este campo es requerido</span>}
-              <input
-                type='password'
-                placeholder='Nueva contraseña'
-                className='flex-1 input border border-gray-700 rounded p-2 input-md'
-                {...register('newPassword')}
-              />
-            </div>
+            {/* Mostrar campos de contraseña solo si no es un usuario de Google */}
+            {!authUser.googleUser && (
+              <div className='flex flex-wrap gap-2'>
+                <input
+                  type='password'
+                  placeholder='Contraseña actual'
+                  className='flex-1 input border border-gray-700 rounded p-2 input-md'
+                  {...register('currentPassword', { required: true })}
+                />
+                {errors.currentPassword && <span className="text-red-500">Este campo es requerido</span>}
+                <input
+                  type='password'
+                  placeholder='Nueva contraseña'
+                  className='flex-1 input border border-gray-700 rounded p-2 input-md'
+                  {...register('newPassword')}
+                />
+              </div>
+            )}
             <button type="submit" className='btn btn-primary rounded-full btn-sm text-white'>
               {isUpdatingProfile ? "Actualizando perfil..." : "Editar"}
             </button>
@@ -101,4 +104,5 @@ const EditProfileModal = ({ authUser }) => {
     </>
   );
 };
+
 export default EditProfileModal;

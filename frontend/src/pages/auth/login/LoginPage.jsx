@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { FaUser } from "react-icons/fa";
+import { FaGoogle, FaUser } from "react-icons/fa";
 import Logo from "../../../components/common/Logo";
 import { MdPassword } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -40,6 +40,17 @@ const LoginPage = () => {
   const onSubmit = (data) => {
     loginMutation(data);
   };
+
+  const handleGoogleLogin = async () => {
+    try {
+      // Redirigir a la ruta de autenticación de Google
+      window.location.href = "/api/auth/google";
+    } catch (error) {
+      console.error("Error al iniciar sesión con Google:", error);
+      toast.error("Error al iniciar sesión con Google. Por favor, inténtelo de nuevo.");
+    }
+  };
+
 
   const location = useLocation();
   const verifiedOnceRef = useRef(false);
@@ -96,6 +107,16 @@ const LoginPage = () => {
             </div>
           )}
         </form>
+        <div className="mt-6">
+          {/* Botón de acceso con Google - Estilo 1 */}
+          <button
+            className='btn-google'
+            onClick={handleGoogleLogin}
+          >
+            <FaGoogle className="google-icon" />
+            <span className="btn-text">Acceder con Google</span>
+          </button>
+        </div>
         <div className='flex flex-col gap-2 mt-4'>
           <p className='text-primary text-lg'>{"¿No"} tienes cuenta?</p>
           <Link to='/register'>

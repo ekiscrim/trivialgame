@@ -6,13 +6,14 @@ import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { FaGoogle } from 'react-icons/fa';
 
 const reservedUsernames = ['admin', 'root', 'all', 'system'];
 
 const RegisterPage = () => {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [email, setEmail] = useState(""); // Agrega el estado para almacenar el correo electrónico
+  const [email, setEmail] = useState(""); // Estado para el correo electrónico
 
   const { mutate } = useMutation({
     mutationFn: async ({ username, password, email }) => {
@@ -66,6 +67,16 @@ const RegisterPage = () => {
     mutate(data);
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      // Redirigir a la ruta de autenticación de Google
+      window.location.href = "/api/auth/google";
+    } catch (error) {
+      console.error("Error al iniciar sesión con Google:", error);
+      toast.error("Error al iniciar sesión con Google. Por favor, inténtelo de nuevo.");
+    }
+  };
+
   return (
     <div className='max-w-screen-xl mx-auto flex h-screen px-10'>
       <div className='flex-1 hidden lg:flex items-center justify-center'>
@@ -104,7 +115,7 @@ const RegisterPage = () => {
               className='grow'
               placeholder='Email'
               {...register("email", { required: "El email es obligatorio" })}
-              value={email} // Agrega el valor del estado del correo electrónico
+              value={email} // Estado para el correo electrónico
               onChange={(e) => setEmail(e.target.value)} // Maneja el cambio en el estado del correo electrónico
             />
           </label>
@@ -151,6 +162,17 @@ const RegisterPage = () => {
             {isSubmitting ? "Cargando..." : "Registrarse"}
           </button>
         </form>
+        <p className="text-white text-center mt-6">Si lo prefieres, puedes registrarte utilizando tu cuenta de Google</p>
+        <div className="mt-6">
+          {/* Botón de acceso con Google - Estilo 1 */}
+          <button
+            className='btn-google'
+            onClick={handleGoogleLogin}
+          >
+            <FaGoogle className="google-icon" />
+            <span className="btn-text">Registrarse con Google</span>
+          </button>
+        </div>
         <div className='flex flex-col lg:w-2/3 gap-2 mt-4'>
           <p className='text-primary text-lg'>¿Ya tienes una cuenta?</p>
           <Link to='/login'>

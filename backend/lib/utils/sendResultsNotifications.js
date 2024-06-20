@@ -3,7 +3,7 @@ import Participant from '../../models/participant.model.js';
 import Notification from '../../models/notification.model.js';
 import Room from '../../models/room.model.js';
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'; // Ejemplo de URL base
+const BASE_URL = process.env.BASE_URL || 'https://vioquiz.me';
 
 async function sendRoomResultsNotifications(roomId) {
   try {
