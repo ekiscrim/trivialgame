@@ -19,7 +19,6 @@ import connectMongoDB from "./db/connectMongoDB.js";
 import { v2 as cloudinary } from "cloudinary";
 import bodyParser from "body-parser"; // TODO eliminar en el futuro
 import multer from "multer";
-import MongoStore from "connect-mongo";
 
 //crons
 import './tasks/update.room.status.cron.js';
@@ -48,48 +47,52 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }); // 50MB límite
 
 // Inicializar sesión
-(async () => {
-    app.use(session({
-        secret: process.env.SESSION_SECRET,
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            secure: process.env.NODE_ENV === "production",
-            httpOnly: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        },
-        store: await connectMongoDB(), // Usa connectMongoDB para el almacenamiento de sesiones
-    }));
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === "production", // Solo enviar cookies a través de HTTPS en producción
+    httpOnly: true, // La cookie solo es accesible a través del protocolo HTTP(S)
+    maxAge: 7 * 24 * 60 * 60 * 1000, // Tiempo de vida de la cookie en milisegundos (opcional)
+  },
+}));
 
-    // Inicializar passport
-    app.use(passport.initialize());
-    app.use(passport.session());
+// Inicializar passport
+app.use(passport.initialize());
+app.use(passport.session());
 
-    //parse request from cookie
-    app.use(cookieParser());
+//parse request from cookie
+app.use(cookieParser());
 
-    // Rutas de autenticación y otras rutas
-    app.use("/api/auth", authRoutes);
-    app.use("/api/users", upload.single('profileImg'), userRoutes);
-    app.use("/api/category", categoryRoutes);
-    app.use("/api/questions", upload.single('image'), questionRoutes);
-    app.use("/api/rooms", roomRoutes);
-    app.use("/api/scores", resultsRoutes);
-    app.use("/api/statistic", statisticsRoutes);
-    app.use("/api/rankings", rankingRoutes);
-    app.use('/api/notifications', notificationRoutes);
-    app.use('/api/admin', adminRoutes);
+app.use("/api/auth", authRoutes);  // Autenticación de usuario
+app.use("/api/verify", authRoutes); //Verificacion de usuario
+app.use("/api/users", upload.single('profileImg'), userRoutes);  // Gestión de usuarios
+app.use("/api/category", categoryRoutes);  // Operaciones relacionadas con categorías
+app.use("/api/questions", upload.single('image'), questionRoutes);  // Operaciones relacionadas con preguntas
+app.use("/api/question", questionRoutes);  // Operaciones específicas de una pregunta
+app.use("/api/validate", questionRoutes);  // Validación de respuestas
+app.use("/api/rooms/:id", questionRoutes);  // Operaciones específicas de una sala de preguntas
+app.use("/api/rooms", roomRoutes);  // Operaciones relacionadas con salas de preguntas
+app.use("/api/participant", questionRoutes);  // Operaciones relacionadas con participantes
+app.use("/api/room/:roomId", resultsRoutes);  // Resultados específicos de una sala
+app.use("/api/room", resultsRoutes);  // Operaciones relacionadas con salas de resultados
+app.use("/api/scores", resultsRoutes);  // Puntuaciones generales
+app.use("/api/statistic", statisticsRoutes) //Estadisticas de usuario
+app.use("/api/rankings", rankingRoutes); //Ranking de usuarios
+app.use('/api/notifications', notificationRoutes); // Notificaciones
 
-    // Configurar rutas estáticas en producción
-    if (process.env.NODE_ENV === 'production') {
-        app.use(express.static(path.join(__dirname, "/frontend/dist")));
-        app.get("*", (req, res) => {
-            res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
-        });
-    }
+//admin
+app.use('/api/admin', adminRoutes);
 
-    // Iniciar el servidor
-    app.listen(PORT, () => {
-        console.log(`Server is Running in port ${PORT}`);
-    });
-})();
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+  });
+}
+
+app.listen(PORT, () => {
+  console.log(`Server is Running in port ${PORT}`);
+  connectMongoDB();
+});
