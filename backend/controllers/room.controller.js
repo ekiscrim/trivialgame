@@ -223,10 +223,6 @@ export const updateRoomStatus = async (req, res) => {
       room.status = status;
       await room.save();
 
-      if (room.status === 'finished') {
-        await sendRoomResultsNotifications(room);
-      }
-  
       res.status(200).json({ message: 'Estado de la sala actualizado', room });
     } catch (error) {
       res.status(500).json({ error: 'Error actualizando el estado de la sala' });
