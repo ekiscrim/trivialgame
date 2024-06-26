@@ -104,6 +104,29 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+// Función para mantener viva la instancia
+async function pingWebsite(url) {
+  try {
+    const response = await fetch(url);
+    if (response.ok) {
+      console.log(`Successfully pinged ${url}`);
+    } else {
+      console.log(`Failed to ping ${url}. Status code: ${response.status}`);
+    }
+  } catch (error) {
+    console.error(`An error occurred: ${error}`);
+  }
+}
+
+function startPinging(url, interval) {
+  pingWebsite(url); // Ping immediately
+  setInterval(() => pingWebsite(url), interval);
+}
+
+// Start pinging https://vioquiz.me every 10 minutes (600000 milliseconds)
+startPinging('https://vioquiz.me', 600000);
+
+
 app.listen(PORT, () => {
   console.log(`Server is Running in port ${PORT}`);
   connectMongoDB();
