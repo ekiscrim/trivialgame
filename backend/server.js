@@ -19,6 +19,10 @@ import connectMongoDB from "./db/connectMongoDB.js";
 import { v2 as cloudinary } from "cloudinary";
 import bodyParser from "body-parser"; // TODO eliminar en el futuro
 import multer from "multer";
+import MongoDBStore from "connect-mongodb-session";
+
+const MongoDBStoreSession = MongoDBStore(session);
+
 
 //crons
 import './tasks/update.room.status.cron.js';
@@ -46,11 +50,19 @@ app.use(express.urlencoded({ extended: false, limit: '50mb' })); //to parse form
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }); // 50MB límite
 
+
+const store = new MongoDBStoreSession({
+  uri: process.env.MONGO_URI,
+  collection: "sessions",
+});
+
+
 // Inicializar sesión
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  store: store,
   cookie: {
     secure: process.env.NODE_ENV === "production", // Solo enviar cookies a través de HTTPS en producción
     httpOnly: true, // La cookie solo es accesible a través del protocolo HTTP(S)
