@@ -123,8 +123,8 @@ function startPinging(url, interval) {
   setInterval(() => pingWebsite(url), interval);
 }
 
-// Start pinging https://vioquiz.me every 10 minutes (600000 milliseconds)
-startPinging('https://vioquiz.me', 600000);
+// Start pinging https://vioquiz.me every 30 minutes (1800000  milliseconds)
+startPinging('https://vioquiz.me', 1800000);
 
 
 app.listen(PORT, () => {
