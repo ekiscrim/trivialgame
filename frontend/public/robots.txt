@@ -1,8 +1,14 @@
 User-agent: *
-Disallow: /admin
 
 Allow: /login
 Allow: /register
 Allow: /
+Allow: /about-us
+Allow: /contact-us
+Allow: /help-center
+Allow: /faq
+Allow: /privacy-policy
+Allow: /terms-of-service
+Allow: /cookies-policy
 
 Sitemap: https://vioquiz.me/sitemap.xml
