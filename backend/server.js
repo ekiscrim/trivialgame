@@ -123,7 +123,7 @@ function startPinging(url, interval) {
   setInterval(() => pingWebsite(url), interval);
 }
 
-startPinging('https://vioquiz.me', 1800000);
+startPinging('https://vioquiz.me', 840000);
 
 
 app.listen(PORT, () => {
