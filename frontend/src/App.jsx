@@ -128,7 +128,8 @@ function App() {
         <ScrollToTop style={{ marginBottom: "40px", paddingLeft: "6px", right: "10px" }} smooth />
         <Toaster />
         {authUserQuery && (!isQuestionPage || device !== 'Mobile') && <Navbar device={device} />}
-        <Footer />
+        {(!isQuestionPage) && <Footer />}
+        
       </ConsentProvider>
       {isPrivacyPolicyModalOpen && (
         <Modal isOpen={isPrivacyPolicyModalOpen} onRequestClose={handlePrivacyPolicyModalClose}>
