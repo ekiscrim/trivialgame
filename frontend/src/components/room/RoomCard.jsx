@@ -187,6 +187,11 @@ const RoomCard = ({ room, userId }) => {
           </div>
           <div className="flex items-center mb-2 text-white">
             <UserIcon className="w-5 h-5 mr-1 text-purple-950" /> <span className="mr-2">Creada por:</span> <strong>{creatorData.creatorUsername}</strong>
+            <div className="avatar ml-2">
+            <div className="w-6 h-6 rounded-full">
+              <img src={creatorData ? creatorData.profileImg || '/avatar-placeholder.png' : <LoadingSpinner />} alt="Avatar de Usuario" />
+            </div>
+          </div>
           </div>
           <div className="flex items-center mb-2 text-white">
             <HiQuestionMarkCircle className="w-5 h-5 mr-1 text-purple-950" /> <span className="mr-2">Preguntas:</span> <strong>{room.questions.length}</strong>
