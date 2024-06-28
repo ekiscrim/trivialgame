@@ -7,6 +7,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import Modal from 'react-modal';
 import { HiOutlinePencilAlt } from "react-icons/hi";
 
+import { generateAdjectives, generateNouns } from "../../utils/roomNames";
+
 const CreateRoom = () => {
   const navigate = useNavigate();
   const [roomName, setRoomName] = useState('');
@@ -33,8 +35,59 @@ const CreateRoom = () => {
     },
   });
 
+  const adjetivos = generateAdjectives();
+  const sustantivos = generateNouns();
+
+  const generarNombreSala = () => {
+    const genero = Math.random() < 0.5 ? 'male' : 'female'; // Aleatoriamente selecciona 'male' o 'female'
+    const adjetivo = adjetivos[genero][Math.floor(Math.random() * adjetivos[genero].length)];
+    const sustantivo = sustantivos[Math.floor(Math.random() * sustantivos.length)];
+    
+    // Asegurarse de que el adjetivo concuerde gramaticalmente con el sustantivo
+    const adjetivoConcordante = ajustarGenero(adjetivo, sustantivo, genero);
+
+    return `${adjetivoConcordante} ${sustantivo}`;
+  };
+
+  const ajustarGenero = (adjetivo, sustantivo, genero) => {
+    if (genero === 'male') {
+      // Si es masculino, el adjetivo debe terminar en 'o'
+      if (adjetivo.endsWith('a') && !esExcepcionMasculina(sustantivo)) {
+        return adjetivo.slice(0, -1) + 'o'; // Cambiar 'a' por 'o'
+      }
+    } else if (genero === 'female') {
+      // Si es femenino, el adjetivo debe terminar en 'a'
+      if (adjetivo.endsWith('o') && !esExcepcionFemenina(sustantivo)) {
+        return adjetivo.slice(0, -1) + 'a'; // Cambiar 'o' por 'a'
+      }
+    }
+    return adjetivo; // Si no requiere cambio, devuelve el adjetivo original
+  };
+
+  const esExcepcionFemenina = (sustantivo) => {
+    
+    const excepcionesFemeninas = [
+      "cuestión", "asunto", "misterio", "problema",
+      "competencia", "prueba", "experiencia", "circunstancia"
+    ];
+    return excepcionesFemeninas.includes(sustantivo);
+  };
+
+  const esExcepcionMasculina = (sustantivo) => {
+    
+    const excepcionesMasculinas = [
+      "concurso", "juego", "reto", "desafío",
+      "proyecto", "evento", "estudio", "análisis"
+    ];
+    return excepcionesMasculinas.includes(sustantivo);
+  };
+
   const handleSuperRoomChange = (e) => {
     setIsSuperRoom(e.target.checked);
+  };
+
+  const handleGenerateRoomName = () => {
+    setRoomName(generarNombreSala());
   };
 
   const handleSubmit = async (event) => {
@@ -47,7 +100,7 @@ const CreateRoom = () => {
     if (roomName.length === 0) {
       toast.error('El nombre de la sala es obligatorio');
       return;
-    }    
+    }
     const endpoint = isSuperRoom ? '/api/rooms/createSuper' : '/api/rooms/createNormal'; // Determina el endpoint según si es una Super Sala
     const formData = {
       roomName,
@@ -123,15 +176,18 @@ const CreateRoom = () => {
           <form onSubmit={handleSubmit} className="md:grid-cols-1 gap-4 mt-4">
             <div className="form-control">
               <label htmlFor="roomName">Nombre de la sala</label>
-              <input
-                name="roomName"
-                maxLength={25}
-                type="text"
-                placeholder="Nombre de la sala"
-                className="input input-bordered w-full"
-                value={roomName}
-                onChange={(e) => setRoomName(e.target.value)}
-              />
+              <div className="flex">
+                <input
+                  name="roomName"
+                  maxLength={25}
+                  type="text"
+                  placeholder="Nombre de la sala"
+                  className="input input-bordered w-full"
+                  value={roomName}
+                  onChange={(e) => setRoomName(e.target.value)}
+                />
+                <button type="button" className="btn btn-secondary ml-2" onClick={handleGenerateRoomName}>Generar</button>
+              </div>
             </div>
             <div className="form-control">
               <label htmlFor="questionCount">Número de preguntas</label>
