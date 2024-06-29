@@ -298,9 +298,11 @@ body {
 }
 
 .card-link.participated .card {
-  border: 10px solid #2ecc71; /* Borde verde sólido de 9px */
-  border-radius: 0; /* Aumenta el radio del borde para asegurar la redondez */
+  border: 15px solid #2ecc71; /* Borde verde sólido de 9px */
+  border-radius: 10px; /* Aumenta el radio del borde para asegurar la redondez */
   border-left: #2ecc71;
+  border-top: #2ecc71;
+  border-bottom: #2ecc71;
 }
 
 .card-link.participated .card .card-body .btn {
