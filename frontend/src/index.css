@@ -296,3 +296,9 @@ body {
   align-items: center;
   text-align: center;
 }
+
+.card-link.participated .card .card-body .btn {
+  background-color: #2ecc71;
+  color: white;
+
+}

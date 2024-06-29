@@ -1,12 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import LoadingSpinner from "../common/LoadingSpinner";
 import SkeletonCard from "../common/SkeletonCard";
 import useCountdown from '../../hooks/useCountdown';
-import { HiClock, HiEye, HiOutlineTag, HiOutlineUser, HiOutlineUsers, HiQuestionMarkCircle } from "react-icons/hi";
-import { HiArrowRightStartOnRectangle, HiMiniTableCells, HiMiniUserGroup } from "react-icons/hi2";
-import { UserIcon } from "@heroicons/react/solid";
+import { HiClock, HiEye, HiQuestionMarkCircle } from "react-icons/hi";
+import { HiArrowRightStartOnRectangle } from "react-icons/hi2";
 import { HiLockClosed } from "react-icons/hi2";
 
 const fetchUserScore = async (roomId, userId) => {
@@ -90,7 +88,7 @@ const SuperRoomCard = ({ room, userId }) => {
   };
 
   return (
-    <Link to={`rooms/${room._id}`} className="card-link">
+    <Link to={`rooms/${room._id}`} className={`card-link ${userScore?.hasScore ? 'participated' : ''}`}>
       {userScore?.hasScore && (
         <>
           <div className="badge badge-success bg-green-400 w-14 h-14 sticky top-0 float-right -mt-6 mr-2  z-50 ">

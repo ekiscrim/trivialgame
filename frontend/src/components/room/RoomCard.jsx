@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner";
 import SkeletonCard from "../common/SkeletonCard";
 import useCountdown from '../../hooks/useCountdown';
-import { HiClock, HiEye, HiOutlineQuestionMarkCircle, HiOutlineTag, HiOutlineUser, HiOutlineUsers } from "react-icons/hi";
-import { HiArrowRightStartOnRectangle, HiMiniTableCells, HiMiniUserGroup } from "react-icons/hi2";
+import { HiClock, HiEye} from "react-icons/hi";
+import { HiArrowRightStartOnRectangle, HiMiniUserGroup } from "react-icons/hi2";
 import { UserIcon } from "@heroicons/react/solid";
 import EmojiGrid from "../categories/EmojiGrid"
 import { HiLockClosed } from "react-icons/hi2";
@@ -135,7 +135,7 @@ const RoomCard = ({ room, userId }) => {
   };
 
   return (
-    <Link to={`rooms/${room._id}`} className="card-link">
+    <Link to={`rooms/${room._id}`} className={`card-link ${userScore?.hasScore ? 'participated' : ''}`}>
       {userScore?.hasScore && (
                   <>
                     <div className="badge badge-success bg-green-400 w-14 h-14 sticky top-0 float-right -mt-6 mr-2  z-50 ">
@@ -152,7 +152,7 @@ const RoomCard = ({ room, userId }) => {
                   </>
                 )}
        {/* to-pink-500 */}  
-      <div className="card w-96 bg-gradient-to-t from-indigo-500 via-purple-500 to-transparent shadow-xl mb-5" style={{ maxWidth: "100%", }}>
+      <div className={`card w-96 bg-gradient-to-t from-indigo-500 via-purple-500 to-transparent shadow-xl mb-5`} style={{ maxWidth: "100%", }}>
         <figure className={`items-center relative flex`} style={{ background: backgroundColor}}>
           <img
             className="w-full object-cover"
