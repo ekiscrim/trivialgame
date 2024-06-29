@@ -68,7 +68,7 @@ function App() {
   }
 
   return (
-    <div className={`grid place-items-center min-h-screen ${device === 'Mobile' ? 'pb-16' : 'pt-20'}`}>
+    <div className={`grid min-h-screen ${device === 'Mobile' ? 'pb-16' : ' place-items-center pt-20'}`}>
       <ConsentProvider
         options={{
           services: [

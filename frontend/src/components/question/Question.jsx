@@ -25,6 +25,7 @@ const Question = ({ roomId, userId }) => {
   const [isCategoryLoading, setIsCategoryLoading] = useState(false);
   const [roomType, setRoomType] = useState('normal');
   const [timeBonus, setTimeBonus] = useState(0); // Nuevo estado para la animación del tiempo sobrante
+  const [isQuestionCentered, setIsQuestionCentered] = useState(true); // Nuevo estado para centrar la pregunta
 
   const fetchCategoryName = async (questionId) => {
     try {
@@ -205,6 +206,7 @@ const Question = ({ roomId, userId }) => {
         setIsTimeUp(false);
         setShowOptions(false);
         setTimeLeft(TIME_FOR_QUESTION);
+        setIsQuestionCentered(false); // Ajustar el estado cuando se muestran las opciones
       }, 1000);
     }
 
@@ -259,7 +261,7 @@ const Question = ({ roomId, userId }) => {
     }
   }, [currentQuestionIndex, questions.length, finalScoreExists, roomId]);
 
-  if (isLoadingQuestion) return <SkeletonCard />;
+  if (isLoadingQuestion) return <LoadingSpinner />;
   if (!shuffleComplete && currentQuestionIndex === 0) return <LoadingSpinner />;
   if (currentQuestionIndex >= questions.length && questions.length > 0) {
     window.location.href = `/rooms/${roomId}`;
@@ -274,15 +276,17 @@ const Question = ({ roomId, userId }) => {
   if (isCategoryLoading) return <LoadingSpinner />;
   
   return (
-    <div>
-      <div className="flex justify-center bg-purple-700 text-cyan-300 text-4xl font-extrabold p-2 w-full relative"> 
-        <div className="flex-grow flex justify-center">{currentQuestionIndex}/{questions.length}</div>
+    <div className="question-container">
+      <div className={`flex justify-center ${roomType === 'super' ? 'bg-red-700 text-white' : 'bg-purple-700 text-cyan-300'}  text-4xl font-extrabold p-2 w-full relative`}> 
+        <div className="flex-grow flex justify-start ml-2">{currentQuestionIndex + 1}/{questions.length}
+          <span className="">{roomType === 'super' ? '💣' : ''}</span>
+        </div>
         <h2 className="top-0 right-0 mt-2 mr-2 text-sm font-light overflow-hidden max-w-[200px]">
-          <span className="block overflow-hidden overflow-ellipsis whitespace-nowrap max-w-[250px]">{currentCategory}</span>
+          <span className="block overflow-hidden overflow-ellipsis font-bold whitespace-nowrap max-w-[250px]">{currentCategory}</span>
         </h2>
       </div>
 
-      <div className="flex justify-center items-start bg-gray-100 sm:min-w-full sm:min-h-full lg:min-h-min">
+      <div className={`flex justify-center items-start bg-gray-100 sm:min-w-full sm:min-h-full lg:min-h-min ${isQuestionCentered ? 'question-centered' : ''}`}>
         <div className="max-w-4xl w-full shadow-md p-8">
           <div className="w-56 flex justify-between ml-9">
             {currentQuestion.image && (

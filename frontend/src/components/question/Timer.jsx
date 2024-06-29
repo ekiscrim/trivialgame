@@ -38,7 +38,7 @@ const Timer = ({ time_for_answer, initialTime, onTimeUp, setTimeLeft }) => {
   return (
     <div>
       <p className="text-center mt-3">
-        <span>{timeLeft}</span> {/* Mostramos el tiempo como entero */}
+        <span className='font-bold text-2xl'>{timeLeft}</span> {/* Mostramos el tiempo como entero */}
       </p>
       <div className="bg-gray-200 h-5 mt-2 rounded-md">
         <div className="h-full bg-blue-500" style={progressBarStyle}></div>
