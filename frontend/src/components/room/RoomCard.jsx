@@ -6,6 +6,7 @@ import SkeletonCard from "../common/SkeletonCard";
 import useCountdown from '../../hooks/useCountdown';
 import { HiClock, HiEye} from "react-icons/hi";
 import { HiArrowRightStartOnRectangle, HiMiniUserGroup } from "react-icons/hi2";
+import { HiCheckCircle } from "react-icons/hi2";
 import { UserIcon } from "@heroicons/react/solid";
 import EmojiGrid from "../categories/EmojiGrid"
 import { HiLockClosed } from "react-icons/hi2";
@@ -138,16 +139,9 @@ const RoomCard = ({ room, userId }) => {
     <Link to={`rooms/${room._id}`} className={`card-link ${userScore?.hasScore ? 'participated' : ''}`}>
       {userScore?.hasScore && (
                   <>
-                    <div className="badge badge-success bg-green-400 w-14 h-14 sticky top-0 float-right -mt-6 mr-2  z-50 ">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        className="w-40 h-40 text-white"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="5" d="M5 13l4 4L19 7" />
-                      </svg>
+                    <div className="badge badge-success bg-green-400 w-16 h-16 sticky top-0 float-right -mt-6 mr-2  z-50 ">
+                    
+                      <span className={`bg-green-400 text-white font-bold text-xl`}><HiCheckCircle />{userScore.score.score} </span>
                     </div>
                   </>
                 )}
