@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Timer from './Timer';
 import LoadingSpinner from '../common/LoadingSpinner';
-import SkeletonCard from '../common/SkeletonCard';
 import CountdownTimer from '../question/CountdownTimer';
 
 const Question = ({ roomId, userId }) => {
@@ -202,7 +201,12 @@ const Question = ({ roomId, userId }) => {
       setTimeout(() => {
         setSelectedOption(null);
         setAnswerStatus(null);
-        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+        setCurrentQuestionIndex((prevIndex) => {
+          if (prevIndex + 1 >= questions.length) {
+            return prevIndex;
+          }
+          return prevIndex + 1;
+        });
         setIsTimeUp(false);
         setShowOptions(false);
         setTimeLeft(TIME_FOR_QUESTION);
