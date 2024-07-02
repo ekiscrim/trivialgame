@@ -229,6 +229,21 @@ export const getParticipantProgress = async (req, res) => {
   }
 };
 
+export const getParticipants = async (req, res) => {
+  const { roomId } = req.params;
+  try {
+    const room = await Room.findById(roomId).populate({
+      path: 'users',
+      select: 'username profileImg'
+    });
+    if (!room) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+    res.json(room.users);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching participants" });
+  }
+};
 export const getParticipantProgressAll = async (req, res) => {
   const { roomId, userId } = req.params;
   try {

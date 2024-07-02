@@ -309,3 +309,53 @@ body {
   background-color: #2ecc71;
   color: white;
 }
+
+
+/* RoomCard.css */
+
+.participants-container {
+  display: flex;
+  align-items: center;
+}
+
+.participant {
+  position: relative;
+  margin-left: -5px; /* Ajusta este valor para controlar la superposición */
+}
+
+.extra-participants {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #6b7280; /* Color de fondo para el contador */
+  color: white;
+  font-size: 12px;
+
+  margin-left: 2px; /* Ajusta este valor para controlar la superposición */
+}
+
+/* Tooltip */
+.participant:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%; /* Posiciona el tooltip arriba del avatar */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 12px;
+  margin-bottom: 6px; /* Espacio entre el avatar y el tooltip */
+  z-index: 10; /* Para asegurarse que el tooltip esté encima */
+  opacity: 0; /* Inicialmente oculto */
+  transition: opacity 0.2s; /* Transición suave */
+}
+
+.participant:hover::after {
+  opacity: 1; /* Mostrar tooltip al pasar el ratón */
+}
