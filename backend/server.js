@@ -118,12 +118,13 @@ async function pingWebsite(url) {
   }
 }
 
+/*
 function startPinging(url, interval) {
   pingWebsite(url); // Ping immediately
   setInterval(() => pingWebsite(url), interval);
-}
+}*/
 
-startPinging('https://vioquiz.me', 840000);
+//startPinging('https://vioquiz.me', 840000);
 
 
 app.listen(PORT, () => {
