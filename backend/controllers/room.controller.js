@@ -45,7 +45,7 @@ export const getRoomsCountCreated = async (req, res) => {
     try {
         // Encontrar el primer usuario asociado a las salas creadas por el usuario
         const userRooms = await Room.find({
-            users: userId,
+            'users.0': userId, // Asegurarse de que el primer usuario sea el creador
             createdAt: { $gte: startOfDay, $lte: endOfDay }
         });
 
@@ -54,7 +54,7 @@ export const getRoomsCountCreated = async (req, res) => {
 
         // Contar solo las salas creadas por el primer usuario
         userRooms.forEach(room => {
-            if (room.users[0].toString() === userId && room.status !== 'finished') {
+            if (room.status !== 'finished') {
                 if (room.roomType === 'normal') {
                     normalRoomsCount++;
                 } else if (room.roomType === 'super') {
@@ -68,6 +68,7 @@ export const getRoomsCountCreated = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 
 
@@ -100,7 +101,7 @@ const createRoom = async (req, res, roomType) => {
 
         // Contar salas normales creadas por el usuario en el día actual
         const normalRoomsCount = await Room.countDocuments({
-            users: creatorId,
+            'users.0': creatorId, // Asegurarse de que el primer usuario sea el creador
             roomType: 'normal',
             createdAt: { $gte: startOfDay, $lte: endOfDay },
             status: { $ne: 'finished' } // Excluir salas en estado 'finished'
@@ -108,7 +109,7 @@ const createRoom = async (req, res, roomType) => {
 
         // Contar súper salas creadas por el usuario en el día actual
         const superRoomsCount = await Room.countDocuments({
-            users: creatorId,
+            'users.0': creatorId, // Asegurarse de que el primer usuario sea el creador
             roomType: 'super',
             createdAt: { $gte: startOfDay, $lte: endOfDay }
         });
@@ -156,6 +157,7 @@ const createRoom = async (req, res, roomType) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 export const createNormalRoom = async (req, res) => {
     await createRoom(req, res, 'normal');
