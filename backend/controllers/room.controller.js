@@ -98,7 +98,7 @@ const createRoom = async (req, res, roomType) => {
             users: creatorId,
             roomType: 'normal',
             createdAt: { $gte: startOfDay, $lte: endOfDay },
-            status: { $ne: 'finished' } // Solo contar salas que no están en estado 'finished'
+            status: 'waiting' // Contar salas que tienen el estado 'waiting'
         });
         // Contar súper salas creadas por el usuario en el día actual
         const superRoomsCount = await Room.countDocuments({
