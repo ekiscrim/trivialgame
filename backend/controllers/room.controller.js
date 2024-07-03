@@ -35,6 +35,34 @@ export const listRooms = async (req, res) => {
     }
 };
 
+export const getRoomsCountCreated =  async (req, res, roomType) => {
+
+    const { userId } = req.params;
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(startOfDay);
+    endOfDay.setHours(23, 59, 59, 999);
+  
+    try {
+      const normalRoomsCount = await Room.countDocuments({
+        users: userId,
+        roomType: 'normal',
+        createdAt: { $gte: startOfDay, $lte: endOfDay }
+      });
+  
+      const superRoomsCount = await Room.countDocuments({
+        users: userId,
+        roomType: 'super',
+        createdAt: { $gte: startOfDay, $lte: endOfDay }
+      });
+  
+      res.json({ normal: normalRoomsCount, super: superRoomsCount });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+
+};
+
 
 // Función para mezclar aleatoriamente un array utilizando el algoritmo de mezcla de Fisher-Yates.
 const shuffleArray = (array) => {
@@ -46,29 +74,66 @@ const shuffleArray = (array) => {
     return shuffled;
   };
 
-  const createRoom = async (req, res, roomType) => {
+// Helper function to get the start of the day
+const getStartOfDay = () => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return now;
+};
+
+const createRoom = async (req, res, roomType) => {
     try {
         const { roomName, questionCount, categories, creatorId } = req.body;
-        
+        const startOfDay = getStartOfDay();
+        const endOfDay = new Date(startOfDay);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const user = await User.findById(creatorId);
+        if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+        if (user.role !== 'admin') {
+            // Contar salas normales creadas por el usuario en el día actual
+            const normalRoomsCount = await Room.countDocuments({
+                users: creatorId,
+                roomType: 'normal',
+                createdAt: { $gte: startOfDay, $lte: endOfDay }
+            });
+
+            // Contar súper salas creadas por el usuario en el día actual
+            const superRoomsCount = await Room.countDocuments({
+                users: creatorId,
+                roomType: 'super',
+                createdAt: { $gte: startOfDay, $lte: endOfDay }
+            });
+
+            if (roomType === 'normal' && normalRoomsCount >= 3) {
+                return res.status(400).json({ error: "Límite diario de creación de salas normales alcanzado (3)." });
+            }
+
+            if (roomType === 'super' && superRoomsCount >= 1) {
+                return res.status(400).json({ error: "Límite diario de creación de salas bomba alcanzado (1)." });
+            }
+        }
+
         // Realizar consulta para obtener preguntas basadas en las categorías seleccionadas
         const questions = await Question.find({ category: { $in: categories } });
         // Seleccionar un número aleatorio de preguntas según questionCount
         const selectedQuestions = shuffleArray(questions).slice(0, questionCount);
 
         let duration = 86400000; // Valor predeterminado de duración (24 horas en milisegundos)
-        if (roomType === 'super')  {
+        if (roomType === 'super') {
             duration = 21600000; // Duración de 6 horas para salas super
         }
-        const newRoom = new Room({ 
-            roomName, 
+        const newRoom = new Room({
+            roomName,
             questionCount,
-            categories, 
+            categories,
             questions: selectedQuestions.map(question => question._id), // Asociar IDs de preguntas
             users: [creatorId], // Incluir al creador de la sala como usuario con puntaje inicial 0
             roomType: roomType, // Indicar el tipo de sala
             duration
         });
-        
+
         await newRoom.save();
         res.status(201).json({
             _id: newRoom.id,

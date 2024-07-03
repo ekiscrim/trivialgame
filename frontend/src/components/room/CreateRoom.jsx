@@ -35,37 +35,46 @@ const CreateRoom = () => {
     },
   });
 
+  const { data: roomCounts, refetch: refetchRoomCounts } = useQuery({
+    queryKey: ['roomCounts', authUserData?._id],
+    queryFn: async () => {
+      try {
+        const res = await fetch(`/api/rooms/counts/${authUserData?._id}`);
+        const data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error || 'Algo fue mal');
+        return data;
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    },
+    enabled: !!authUserData,
+  });
+
   const adjetivos = generateAdjectives();
   const sustantivos = generateNouns();
 
   const generarNombreSala = () => {
-    const genero = Math.random() < 0.5 ? 'male' : 'female'; // Aleatoriamente selecciona 'male' o 'female'
+    const genero = Math.random() < 0.5 ? 'male' : 'female';
     const adjetivo = adjetivos[genero][Math.floor(Math.random() * adjetivos[genero].length)];
     const sustantivo = sustantivos[Math.floor(Math.random() * sustantivos.length)];
-    
-    // Asegurarse de que el adjetivo concuerde gramaticalmente con el sustantivo
     const adjetivoConcordante = ajustarGenero(adjetivo, sustantivo, genero);
-
     return `${adjetivoConcordante} ${sustantivo}`;
   };
 
   const ajustarGenero = (adjetivo, sustantivo, genero) => {
     if (genero === 'male') {
-      // Si es masculino, el adjetivo debe terminar en 'o'
       if (adjetivo.endsWith('a') && !esExcepcionMasculina(sustantivo)) {
-        return adjetivo.slice(0, -1) + 'o'; // Cambiar 'a' por 'o'
+        return adjetivo.slice(0, -1) + 'o';
       }
     } else if (genero === 'female') {
-      // Si es femenino, el adjetivo debe terminar en 'a'
       if (adjetivo.endsWith('o') && !esExcepcionFemenina(sustantivo)) {
-        return adjetivo.slice(0, -1) + 'a'; // Cambiar 'o' por 'a'
+        return adjetivo.slice(0, -1) + 'a';
       }
     }
-    return adjetivo; // Si no requiere cambio, devuelve el adjetivo original
+    return adjetivo;
   };
 
   const esExcepcionFemenina = (sustantivo) => {
-    
     const excepcionesFemeninas = [
       "cuestión", "asunto", "misterio", "problema",
       "competencia", "prueba", "experiencia", "circunstancia"
@@ -74,7 +83,6 @@ const CreateRoom = () => {
   };
 
   const esExcepcionMasculina = (sustantivo) => {
-    
     const excepcionesMasculinas = [
       "concurso", "juego", "reto", "desafío",
       "proyecto", "evento", "estudio", "análisis"
@@ -101,7 +109,7 @@ const CreateRoom = () => {
       toast.error('El nombre de la sala es obligatorio');
       return;
     }
-    const endpoint = isSuperRoom ? '/api/rooms/createSuper' : '/api/rooms/createNormal'; // Determina el endpoint según si es una Super Sala
+    const endpoint = isSuperRoom ? '/api/rooms/createSuper' : '/api/rooms/createNormal';
     const formData = {
       roomName,
       questionCount,
@@ -110,7 +118,7 @@ const CreateRoom = () => {
       users: authUserData._id,
       startTime: Date.now(),
       duration: 86400000,
-      roomType: isSuperRoom ? 'super' : 'normal' // Indica si es una Super Sala o no
+      roomType: isSuperRoom ? 'super' : 'normal'
     };
 
     try {
@@ -126,8 +134,9 @@ const CreateRoom = () => {
       const roomId = data._id;
       setCreatedRoomId(roomId);
       toast.success('Sala creada correctamente');
+      refetchRoomCounts(); // Refetch room counts after creating a new room
     } catch (error) {
-      toast.error('Error al crear la sala');
+      toast.error(error.message);
     }
   };
 
@@ -139,7 +148,7 @@ const CreateRoom = () => {
 
   useEffect(() => {
     if (listCategoriesQuery && listCategoriesQuery.length > 0) {
-      setCategories([listCategoriesQuery[0]]); // Establece la primera categoría como predeterminada
+      setCategories([listCategoriesQuery[0]]);
     }
   }, [listCategoriesQuery]);
 
@@ -169,12 +178,25 @@ const CreateRoom = () => {
         contentLabel="Crear Sala"
         className="modal-content animate-scale-in"
         overlayClassName="modal-overlay"
+        style={{
+          overlay: {
+            zIndex: 50, // Añadir zIndex para asegurar que el modal esté por encima del navbar
+          },
+        }}
       >
         <div className="pt-1 relative">
           <button className='btn btn-sm btn-circle absolute top-0 right-0 ' onClick={toggleModal}>✕</button>
           <h2 className="text-xl font-semibold mb-4">Crear Sala</h2>
+  
+          {roomCounts && !isAdmin && (
+            <div className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md">
+              <p className="text-md text-gray-600">Salas creadas hoy: <span className="font-bold">{roomCounts.normal}/3</span></p>
+              <p className="text-md text-gray-600">Salas bomba creadas hoy: <span className="font-bold">{roomCounts.super}/1</span></p>
+            </div>
+          )}
+  
           <form onSubmit={handleSubmit} className="md:grid-cols-1 gap-4 mt-4">
-            <div className="form-control">
+            <div className="form-control mb-2">
               <label htmlFor="roomName">Nombre de la sala</label>
               <div className="flex">
                 <input
@@ -201,21 +223,19 @@ const CreateRoom = () => {
                 <option value="10">10</option>
                 <option value="15">15</option>
               </select>
-            </div>
-
-            {isAdmin && (
-              <div className="form-control">
-                <label htmlFor="isSuperRoom">Super Sala</label>
+            </div>        
+            <div className="form-control mt-2 mb-2">
+              <label htmlFor="isSuperRoom" className="flex items-center">
                 <input
                   name="isSuperRoom"
                   type="checkbox"
+                  className="mr-2 checkbox checkbox-secondary mt-2"
                   checked={isSuperRoom}
                   onChange={handleSuperRoomChange}
                 />
-              </div>
-            )}
-
-
+                <span className="mr-2 mt-2">Sala Bomba</span>
+              </label>
+            </div>
             <div className="form-control">
               <MultiSelectDropdown
                 formFieldName="categories"
@@ -224,7 +244,7 @@ const CreateRoom = () => {
                 onChange={(selectedCategories) => setCategories(selectedCategories)}
               />
             </div>
-            <div className="form-control md:col-span-2">
+            <div className="form-control">
               <input type="submit" value="CREAR" className="btn btn-primary w-full" />
             </div>
           </form>
@@ -232,6 +252,10 @@ const CreateRoom = () => {
       </Modal>
     </div>
   );
+  
+  
+  
+  
 };
 
 export default CreateRoom;
