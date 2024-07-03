@@ -3,9 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import SkeletonCard from "../common/SkeletonCard";
 import useCountdown from '../../hooks/useCountdown';
-import { HiCheckCircle, HiClock, HiEye, HiQuestionMarkCircle } from "react-icons/hi";
+import { HiCheckCircle, HiClock, HiEye, HiQuestionMarkCircle, HiUserGroup } from "react-icons/hi";
 import { HiArrowRightStartOnRectangle } from "react-icons/hi2";
 import { HiLockClosed } from "react-icons/hi2";
+import { UserIcon } from "@heroicons/react/solid";
 
 const fetchUserScore = async (roomId, userId) => {
   const res = await fetch(`/api/scores/${roomId}/${userId}`);
@@ -25,6 +26,16 @@ const fetchRoomCreator = async (roomId) => {
   if (!response.ok) throw new Error('Failed to fetch room creator');
   return response.json();
 };
+
+const fetchParticipants = async (roomId) => {
+  const res = await fetch(`/api/participant/${roomId}/getParticipants`);
+  if (!res.ok) throw new Error('Failed to fetch participants');
+  return res.json();
+};
+
+
+
+
 
 const updateRoomStatus = async (roomId, status) => {
   try {
@@ -60,6 +71,11 @@ const SuperRoomCard = ({ room, userId }) => {
     queryKey: ["roomCreator", room._id],
     queryFn: () => fetchRoomCreator(room._id),
   });
+  const { data: participants, isLoading: isParticipantsLoading, error: participantsError } = useQuery({
+    queryKey: ["participants", room._id],
+    queryFn: () => fetchParticipants(room._id),
+  });
+
 
   const timeLeft = useCountdown(new Date(room.startTime).getTime() + room.duration);
 
@@ -75,7 +91,7 @@ const SuperRoomCard = ({ room, userId }) => {
     return () => clearInterval(interval);
   }, [timeLeft, room._id]);
 
-  if (isScoreLoading || isCategoriesLoading || isCreatorLoading) return <SkeletonCard />;
+  if (isScoreLoading || isCategoriesLoading || isCreatorLoading || isParticipantsLoading) return <SkeletonCard />;
   if (scoreError) return <p>Error al cargar los datos de puntuación.</p>;
   if (categoriesError) return <p>Error al cargar las categorías.</p>;
   if (creatorError) return <p>Error al cargar el creador de la sala.</p>;
@@ -130,9 +146,46 @@ const SuperRoomCard = ({ room, userId }) => {
               )}
             </div>
           </div>
-                    <div className="flex items-center mb-2 text-white">
+          <div className="flex items-center mb-2 text-white">
+            <UserIcon className="w-5 h-5 mr-1 text-purple-950" />
+            <span className="mr-2">Creada por:</span>
+            <strong>{creatorData.creatorUsername}</strong>
+            <div className="avatar ml-2">
+              <div className="w-6 h-6 rounded-full">
+                <img src={creatorData ? creatorData.profileImg || '/avatar-placeholder.png' : <LoadingSpinner />} alt="Avatar de Usuario" />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center mb-2 text-white">
             <HiQuestionMarkCircle className="w-5 h-5 mr-1 text-red-950" /> <span className="mr-2">Preguntas:</span> <strong>{room.questions.length}</strong>
           </div>
+          <div className="flex items-center mb-2 text-white">
+            <HiUserGroup className="w-5 h-5 mr-1 text-purple-950" />
+            <span className="mr-2">Participantes:</span>
+            <div className="participants-container">
+              {participants.slice(0, 5).map((participant, index) => (
+                <div
+                  key={participant._id}
+                  className="participant"
+                  style={{ zIndex: participants.length - index }}
+                  title={participant.username} // Aquí se añade el título
+                >
+                  <img
+                    src={participant.profileImg}
+                    alt={participant.username}
+                    className="w-6 h-6 rounded-full"
+                  />
+                </div>
+              ))}
+              {participants.length > 5 && (
+                <div title={`+${participants.length - 5}`} className="participant extra-participants">
+                  +{participants.length - 5}
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="mb-2">
             {categories.map((category, index) => (
               <div key={index} className="bg-gradient-to-r from-red-700 to-red-900 rounded-full px-3 py-1 text-sm text-white mb-2">{category}</div>

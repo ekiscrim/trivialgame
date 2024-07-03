@@ -44,12 +44,13 @@ export const getRoomsCountCreated =  async (req, res, roomType) => {
     endOfDay.setHours(23, 59, 59, 999);
   
     try {
+
       const normalRoomsCount = await Room.countDocuments({
-        users: userId,
-        roomType: 'normal',
-        createdAt: { $gte: startOfDay, $lte: endOfDay }
+            users: userId,
+            roomType: 'normal',
+            createdAt: { $gte: startOfDay, $lte: endOfDay },
+            status: { $ne: 'finished' } // Solo contar salas que no están en estado 'finished'
       });
-  
       const superRoomsCount = await Room.countDocuments({
         users: userId,
         roomType: 'super',
@@ -96,9 +97,9 @@ const createRoom = async (req, res, roomType) => {
         const normalRoomsCount = await Room.countDocuments({
             users: creatorId,
             roomType: 'normal',
-            createdAt: { $gte: startOfDay, $lte: endOfDay }
+            createdAt: { $gte: startOfDay, $lte: endOfDay },
+            status: { $ne: 'finished' } // Solo contar salas que no están en estado 'finished'
         });
-
         // Contar súper salas creadas por el usuario en el día actual
         const superRoomsCount = await Room.countDocuments({
             users: creatorId,
