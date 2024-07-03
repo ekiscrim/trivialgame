@@ -35,34 +35,40 @@ export const listRooms = async (req, res) => {
     }
 };
 
-export const getRoomsCountCreated =  async (req, res, roomType) => {
-
+export const getRoomsCountCreated = async (req, res) => {
     const { userId } = req.params;
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(startOfDay);
     endOfDay.setHours(23, 59, 59, 999);
-  
+
     try {
-
-      const normalRoomsCount = await Room.countDocuments({
+        // Encontrar el primer usuario asociado a las salas creadas por el usuario
+        const userRooms = await Room.find({
             users: userId,
-            roomType: 'normal',
-            createdAt: { $gte: startOfDay, $lte: endOfDay },
-            status: { $ne: 'finished' } // Solo contar salas que no están en estado 'finished'
-      });
-      const superRoomsCount = await Room.countDocuments({
-        users: userId,
-        roomType: 'super',
-        createdAt: { $gte: startOfDay, $lte: endOfDay }
-      });
-  
-      res.json({ normal: normalRoomsCount, super: superRoomsCount });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
+            createdAt: { $gte: startOfDay, $lte: endOfDay }
+        });
 
+        let normalRoomsCount = 0;
+        let superRoomsCount = 0;
+
+        // Contar solo las salas creadas por el primer usuario
+        userRooms.forEach(room => {
+            if (room.users[0].toString() === userId && room.status !== 'finished') {
+                if (room.roomType === 'normal') {
+                    normalRoomsCount++;
+                } else if (room.roomType === 'super') {
+                    superRoomsCount++;
+                }
+            }
+        });
+
+        res.json({ normal: normalRoomsCount, super: superRoomsCount });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
+
 
 
 // Función para mezclar aleatoriamente un array utilizando el algoritmo de mezcla de Fisher-Yates.
@@ -92,14 +98,14 @@ const createRoom = async (req, res, roomType) => {
         const user = await User.findById(creatorId);
         if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
-        
         // Contar salas normales creadas por el usuario en el día actual
         const normalRoomsCount = await Room.countDocuments({
             users: creatorId,
             roomType: 'normal',
             createdAt: { $gte: startOfDay, $lte: endOfDay },
-            status: 'waiting' // Contar salas que tienen el estado 'waiting'
+            status: { $ne: 'finished' } // Excluir salas en estado 'finished'
         });
+
         // Contar súper salas creadas por el usuario en el día actual
         const superRoomsCount = await Room.countDocuments({
             users: creatorId,
@@ -114,7 +120,6 @@ const createRoom = async (req, res, roomType) => {
         if (roomType === 'super' && superRoomsCount >= 1) {
             return res.status(400).json({ error: "Límite diario de creación de salas bomba alcanzado (1)." });
         }
-    
 
         // Realizar consulta para obtener preguntas basadas en las categorías seleccionadas
         const questions = await Question.find({ category: { $in: categories } });
@@ -125,13 +130,15 @@ const createRoom = async (req, res, roomType) => {
         if (roomType === 'super') {
             duration = 21600000; // Duración de 6 horas para salas super
         }
+
+        // Crear la nueva sala con el creador como único usuario
         const newRoom = new Room({
             roomName,
             questionCount,
             categories,
-            questions: selectedQuestions.map(question => question._id), // Asociar IDs de preguntas
-            users: [creatorId], // Incluir al creador de la sala como usuario con puntaje inicial 0
-            roomType: roomType, // Indicar el tipo de sala
+            questions: selectedQuestions.map(question => question._id),
+            users: [creatorId], // Agregar solo al creador como usuario inicial
+            roomType,
             duration
         });
 
