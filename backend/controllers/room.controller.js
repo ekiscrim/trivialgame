@@ -91,29 +91,29 @@ const createRoom = async (req, res, roomType) => {
         const user = await User.findById(creatorId);
         if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
-        if (user.role !== 'admin') {
-            // Contar salas normales creadas por el usuario en el día actual
-            const normalRoomsCount = await Room.countDocuments({
-                users: creatorId,
-                roomType: 'normal',
-                createdAt: { $gte: startOfDay, $lte: endOfDay }
-            });
+        
+        // Contar salas normales creadas por el usuario en el día actual
+        const normalRoomsCount = await Room.countDocuments({
+            users: creatorId,
+            roomType: 'normal',
+            createdAt: { $gte: startOfDay, $lte: endOfDay }
+        });
 
-            // Contar súper salas creadas por el usuario en el día actual
-            const superRoomsCount = await Room.countDocuments({
-                users: creatorId,
-                roomType: 'super',
-                createdAt: { $gte: startOfDay, $lte: endOfDay }
-            });
+        // Contar súper salas creadas por el usuario en el día actual
+        const superRoomsCount = await Room.countDocuments({
+            users: creatorId,
+            roomType: 'super',
+            createdAt: { $gte: startOfDay, $lte: endOfDay }
+        });
 
-            if (roomType === 'normal' && normalRoomsCount >= 3) {
-                return res.status(400).json({ error: "Límite diario de creación de salas normales alcanzado (3)." });
-            }
-
-            if (roomType === 'super' && superRoomsCount >= 1) {
-                return res.status(400).json({ error: "Límite diario de creación de salas bomba alcanzado (1)." });
-            }
+        if (roomType === 'normal' && normalRoomsCount >= 3) {
+            return res.status(400).json({ error: "Límite diario de creación de salas normales alcanzado (3)." });
         }
+
+        if (roomType === 'super' && superRoomsCount >= 1) {
+            return res.status(400).json({ error: "Límite diario de creación de salas bomba alcanzado (1)." });
+        }
+    
 
         // Realizar consulta para obtener preguntas basadas en las categorías seleccionadas
         const questions = await Question.find({ category: { $in: categories } });

@@ -188,7 +188,7 @@ const CreateRoom = () => {
           <button className='btn btn-sm btn-circle absolute top-0 right-0 ' onClick={toggleModal}>✕</button>
           <h2 className="text-xl font-semibold mb-4">Crear Sala</h2>
   
-          {roomCounts && !isAdmin && (
+          {roomCounts && (
             <div className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md">
               <p className="text-md text-gray-600">Salas creadas hoy: <span className="font-bold">{roomCounts.normal}/3</span></p>
               <p className="text-md text-gray-600">Salas bomba creadas hoy: <span className="font-bold">{roomCounts.super}/1</span></p>
