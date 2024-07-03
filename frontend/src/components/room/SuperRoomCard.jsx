@@ -7,6 +7,7 @@ import { HiCheckCircle, HiClock, HiEye, HiQuestionMarkCircle, HiUserGroup } from
 import { HiArrowRightStartOnRectangle } from "react-icons/hi2";
 import { HiLockClosed } from "react-icons/hi2";
 import { UserIcon } from "@heroicons/react/solid";
+import LoadingSpinner from "../common/LoadingSpinner";
 
 const fetchUserScore = async (roomId, userId) => {
   const res = await fetch(`/api/scores/${roomId}/${userId}`);
@@ -33,10 +34,6 @@ const fetchParticipants = async (roomId) => {
   return res.json();
 };
 
-
-
-
-
 const updateRoomStatus = async (roomId, status) => {
   try {
     const res = await fetch(`/api/rooms/${roomId}/status`, {
@@ -55,7 +52,7 @@ const updateRoomStatus = async (roomId, status) => {
   }
 };
 
-const SuperRoomCard = ({ room, userId }) => {
+const SuperRoomCard = ({ room, userId, simplifyDesign }) => {
   const { data: userScore, isLoading: isScoreLoading, error: scoreError } = useQuery({
     queryKey: ["userScore", room._id, userId],
     queryFn: () => fetchUserScore(room._id, userId),
@@ -71,11 +68,11 @@ const SuperRoomCard = ({ room, userId }) => {
     queryKey: ["roomCreator", room._id],
     queryFn: () => fetchRoomCreator(room._id),
   });
+
   const { data: participants, isLoading: isParticipantsLoading, error: participantsError } = useQuery({
     queryKey: ["participants", room._id],
     queryFn: () => fetchParticipants(room._id),
   });
-
 
   const timeLeft = useCountdown(new Date(room.startTime).getTime() + room.duration);
 
@@ -106,33 +103,34 @@ const SuperRoomCard = ({ room, userId }) => {
   return (
     <Link to={`rooms/${room._id}`} className={`card-link ${userScore?.hasScore ? 'participated' : ''}`}>
       {userScore?.hasScore && (
-                  <>
-                    <div className="badge badge-success bg-green-400 w-16 h-16 sticky top-0 float-right -mt-6 mr-2  z-50 ">
-                    
-                      <span className={`bg-green-400 text-white font-bold text-xl`}><HiCheckCircle />{userScore.score.score} </span>
-                    </div>
-                  </>
-                )}
-      <div className="card w-96 bg-gradient-to-t from-red-600 via-red-500 to-transparent shadow-xl " style={{ maxWidth: "100%", }}>
-        <figure className="items-center relative flex bg-gradient-to-r from-red-400 to-red-600">
-          <img
-            className="w-full object-cover"
-            src="/question.png"
-            alt="Questions"
-          />
-          <div className="absolute inset-0 flex justify-start items-end">
-            <div className="bg-black bg-opacity-50 px-2 py-1 rounded-t text-white">
-              <h1 className="text-lg uppercase font-black">{room.roomName}</h1>
+        <div className="badge badge-success bg-green-400 w-16 h-16 sticky top-0 float-right -mt-6 mr-2 z-50">
+          <span className={`bg-green-400 text-white font-bold text-xl`}>
+            <HiCheckCircle />{userScore.score.score}
+          </span>
+        </div>
+      )}
+      <div className={`card w-96 bg-gradient-to-t from-red-600 via-red-500 to-transparent shadow-xl mb-5`} style={{ maxWidth: "100%" }}>
+      {simplifyDesign ? (
+          <div className="p-4 -mb-9">
+            <h1 className="text-lg uppercase font-black text-white">{room.roomName} 💣</h1>
+          </div>
+        ) : (
+          <figure className="items-center relative flex bg-gradient-to-r from-red-400 to-red-600">
+            <img className="w-full object-cover" src="/question.png" alt="Questions" />
+            <div className="absolute inset-0 flex justify-start items-end">
+              <div className="bg-black bg-opacity-50 px-2 py-1 rounded text-white">
+                <h1 className="text-lg uppercase font-black">{room.roomName}</h1>
+              </div>
             </div>
-          </div>
-          <div className="absolute inset-0 bg-white bg-opacity-20 flex justify-center items-center text-6xl">
-            💣
-          </div>
-        </figure>
+            <div className="absolute inset-0 bg-white bg-opacity-20 flex justify-center items-center text-6xl">
+              💣
+            </div>
+          </figure>
+        )}
         <div className="card-body flex flex-col justify-between">
-          <div className="items-center text-center ">
+          <div className="items-center text-center">
             <div className="flex items-center mb-2 text-white">
-            {timeLeft > 0 ? (
+              {timeLeft > 0 ? (
                 <>
                   <HiClock className="w-5 h-5 mr-1 text-red-950" />
                   <span className="mr-2">Se cierra en:</span>
@@ -156,9 +154,10 @@ const SuperRoomCard = ({ room, userId }) => {
               </div>
             </div>
           </div>
-
           <div className="flex items-center mb-2 text-white">
-            <HiQuestionMarkCircle className="w-5 h-5 mr-1 text-red-950" /> <span className="mr-2">Preguntas:</span> <strong>{room.questions.length}</strong>
+            <HiQuestionMarkCircle className="w-5 h-5 mr-1 text-red-950" />
+            <span className="mr-2">Preguntas:</span>
+            <strong>{room.questions.length}</strong>
           </div>
           <div className="flex items-center mb-2 text-white">
             <HiUserGroup className="w-5 h-5 mr-1 text-purple-950" />
@@ -185,12 +184,13 @@ const SuperRoomCard = ({ room, userId }) => {
               )}
             </div>
           </div>
-
-          <div className="mb-2">
-            {categories.map((category, index) => (
-              <div key={index} className="bg-gradient-to-r from-red-700 to-red-900 rounded-full px-3 py-1 text-sm text-white mb-2">{category}</div>
-            ))}
-          </div>
+          {!simplifyDesign && (
+            <div className="mb-2">
+              {categories.map((category, index) => (
+                <div key={index} className="bg-gradient-to-r from-red-700 to-red-900 rounded-full px-3 py-1 text-sm text-white mb-2">{category}</div>
+              ))}
+            </div>
+          )}
           <div className="card-actions">
             {userScore?.hasScore ? (
               <button className="btn btn-primary min-w-full"><HiEye /> Ver resultados</button>

@@ -88,7 +88,7 @@ const getBackgroundColor = (categories) => {
   return ''; // Default case
 };
 
-const RoomCard = ({ room, userId }) => {
+const RoomCard = ({ room, userId, simplifyDesign }) => {
   const { data: userScore, isLoading: isScoreLoading, error: scoreError } = useQuery({
     queryKey: ["userScore", room._id, userId],
     queryFn: () => fetchUserScore(room._id, userId),
@@ -98,6 +98,7 @@ const RoomCard = ({ room, userId }) => {
   const { data: categories, isLoading: isCategoriesLoading, error: categoriesError } = useQuery({
     queryKey: ["categories", room._id],
     queryFn: () => fetchCategories(room._id),
+    enabled: !simplifyDesign, // Disable query if design is simplified
   });
 
   const { data: creatorData, isLoading: isCreatorLoading, error: creatorError } = useQuery({
@@ -126,11 +127,11 @@ const RoomCard = ({ room, userId }) => {
 
   if (isScoreLoading || isCategoriesLoading || isCreatorLoading || isParticipantsLoading) return <SkeletonCard />;
   if (scoreError) return <p>Error al cargar los datos de puntuación.</p>;
-  if (categoriesError) return <p>Error al cargar las categorías.</p>;
+  if (categoriesError && !simplifyDesign) return <p>Error al cargar las categorías.</p>;
   if (creatorError) return <p>Error al cargar el creador de la sala.</p>;
   if (participantsError) return <p>Error al cargar los participantes.</p>;
 
-  const backgroundColor = getBackgroundColor(categories);
+  const backgroundColor = simplifyDesign ? '' : getBackgroundColor(categories);
 
   const formatTimeLeft = (time) => {
     const hours = Math.floor(time / 3600000);
@@ -143,21 +144,29 @@ const RoomCard = ({ room, userId }) => {
     <Link to={`rooms/${room._id}`} className={`card-link ${userScore?.hasScore ? 'participated' : ''}`}>
       {userScore?.hasScore && (
         <div className="badge badge-success bg-green-400 w-16 h-16 sticky top-0 float-right -mt-6 mr-2 z-50">
-          <span className={`bg-green-400 text-white font-bold text-xl`}><HiCheckCircle />{userScore.score.score}</span>
+          <span className={`bg-green-400 text-white font-bold text-xl`}>
+            <HiCheckCircle />{userScore.score.score}
+          </span>
         </div>
       )}
       <div className={`card w-96 bg-gradient-to-t from-indigo-500 via-purple-500 to-transparent shadow-xl mb-5`} style={{ maxWidth: "100%" }}>
-        <figure className={`items-center relative flex`} style={{ background: backgroundColor }}>
-          <img className="w-full object-cover" src="/question.png" alt="Questions" />
-          <div className="absolute inset-0 flex justify-start items-end">
-            <div className="bg-black bg-opacity-50 px-2 py-1 rounded text-white">
-              <h1 className="text-lg uppercase font-black">{room.roomName}</h1>
+        {simplifyDesign ? (
+          <div className="p-4 -mb-9">
+            <h1 className="text-lg uppercase font-black text-white">{room.roomName}</h1>
+          </div>
+        ) : (
+          <figure className={`items-center relative flex`} style={{ background: backgroundColor }}>
+            <img className="w-full object-cover" src="/question.png" alt="Questions" />
+            <div className="absolute inset-0 flex justify-start items-end">
+              <div className="bg-black bg-opacity-50 px-2 py-1 rounded text-white">
+                <h1 className="text-lg uppercase font-black">{room.roomName}</h1>
+              </div>
             </div>
-          </div>
-          <div className="absolute inset-0 bg-white bg-opacity-20 flex">
-            <EmojiGrid categories={categories} />
-          </div>
-        </figure>
+            <div className="absolute inset-0 bg-white bg-opacity-20 flex">
+              <EmojiGrid categories={categories} />
+            </div>
+          </figure>
+        )}
         <div className="card-body flex flex-col justify-between h-full">
           <div className="items-center text-center">
             <div className="flex items-center mb-2 text-white">
@@ -191,40 +200,48 @@ const RoomCard = ({ room, userId }) => {
             <strong>{room.questions.length}</strong>
           </div>
           <div className="flex items-center mb-2 text-white">
-  <HiUserGroup className="w-5 h-5 mr-1 text-purple-950" />
-  <span className="mr-2">Participantes:</span>
-  <div className="participants-container">
-    {participants.slice(0, 5).map((participant, index) => (
-      <div
-        key={participant._id}
-        className="participant"
-        style={{ zIndex: participants.length - index }}
-        title={participant.username} // Aquí se añade el título
-      >
-        <img
-          src={participant.profileImg}
-          alt={participant.username}
-          className="w-6 h-6 rounded-full"
-        />
-      </div>
-    ))}
-    {participants.length > 5 && (
-      <div title={`+${participants.length - 5}`} className="participant extra-participants">
-        +{participants.length - 5}
-      </div>
-    )}
-  </div>
-</div>
-          <div className="mb-2">
-            {categories.map((category, index) => (
-              <div key={index} className="bg-gradient-to-r from-violet-950 to-purple-900 rounded-full px-3 py-1 text-sm text-white mb-2">{category}</div>
-            ))}
+            <HiUserGroup className="w-5 h-5 mr-1 text-purple-950" />
+            <span className="mr-2">Participantes:</span>
+            <div className="participants-container">
+              {participants.slice(0, 5).map((participant, index) => (
+                <div
+                  key={participant._id}
+                  className="participant"
+                  style={{ zIndex: participants.length - index }}
+                  title={participant.username}
+                >
+                  <img
+                    src={participant.profileImg}
+                    alt={participant.username}
+                    className="w-6 h-6 rounded-full"
+                  />
+                </div>
+              ))}
+              {participants.length > 5 && (
+                <div title={`+${participants.length - 5}`} className="participant extra-participants">
+                  +{participants.length - 5}
+                </div>
+              )}
+            </div>
           </div>
+          {!simplifyDesign && (
+            <div className="mb-2">
+              {categories.map((category, index) => (
+                <div key={index} className="bg-gradient-to-r from-violet-950 to-purple-900 rounded-full px-3 py-1 text-sm text-white mb-2">
+                  {category}
+                </div>
+              ))}
+            </div>
+          )}
           <div className="card-actions">
             {userScore?.hasScore ? (
-              <button className="btn btn-primary min-w-full"><HiEye /> Ver resultados</button>
+              <button className="btn btn-primary min-w-full">
+                <HiEye /> Ver resultados
+              </button>
             ) : (
-              <button className="btn btn-primary w-full"><HiArrowRightOnRectangle /> Unirse a la sala</button>
+              <button className="btn btn-primary w-full">
+                <HiArrowRightOnRectangle /> Unirse a la sala
+              </button>
             )}
           </div>
         </div>

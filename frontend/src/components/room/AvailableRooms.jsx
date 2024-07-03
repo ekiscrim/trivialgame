@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { HiOutlineLightBulb } from 'react-icons/hi2';
 import LoadingSpinner from "../common/LoadingSpinner";
 import CreateRoom from "./CreateRoom";
 import RoomCard from "./RoomCard";
 import Logo from "../common/Logo";
 import SuperRoomCard from "./SuperRoomCard";
+import { HiOutlineViewList } from "react-icons/hi";
 
 const AvailableRooms = () => {
   const [loading, setLoading] = useState(false);
@@ -15,6 +16,12 @@ const AvailableRooms = () => {
   const [allRooms, setAllRooms] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [status, setStatus] = useState('waiting');
+  const [simplifyDesign, setSimplifyDesign] = useState(false);
+
+  const saveDesignPreference = (simplifyDesign) => {
+    localStorage.setItem('simplifyDesign', JSON.stringify(simplifyDesign));
+  };
+
 
   const { data: user, isLoading: isUserLoading, error: userError } = useQuery({
     queryKey: ["authUser"],
@@ -56,6 +63,14 @@ const AvailableRooms = () => {
     }
   }, [listRoomsQuery]);
 
+  useEffect(() => {
+    const savedPreference = localStorage.getItem('simplifyDesign');
+    if (savedPreference !== null) {
+      setSimplifyDesign(JSON.parse(savedPreference));
+    }
+  }, []);
+
+
   const loadMore = () => {
     setPage(prevPage => prevPage + 1);
   };
@@ -68,6 +83,12 @@ const AvailableRooms = () => {
     setStatus(event.target.value);
     setPage(1);
     setAllRooms([]);
+  };
+
+  const toggleSimplifyDesign = () => {
+    const newSimplifyDesign = !simplifyDesign;
+    setSimplifyDesign(newSimplifyDesign);
+    saveDesignPreference(newSimplifyDesign);
   };
 
   return (
@@ -94,6 +115,21 @@ const AvailableRooms = () => {
                   <option value="finished">Salas cerradas</option>
                 </select>
               </div>
+              <div className="ml-4">
+                <button onClick={toggleSimplifyDesign} className="btn btn-secondary">
+                {simplifyDesign ? (
+                  <>
+                    <HiOutlineViewList className="w-6 h-6" />
+                    <span className="sr-only">Mostrar diseño completo</span>
+                  </>
+                ) : (
+                  <>
+                    <HiOutlineLightBulb className="w-6 h-6" />
+                    <span className="sr-only">Simplificar diseño</span>
+                  </>
+                )}
+                </button>
+              </div>
             </div>
           </div>
           {roomsError || (!allRooms || allRooms.length === 0) ? (
@@ -111,23 +147,23 @@ const AvailableRooms = () => {
                 {allRooms.some(room => room.roomType === 'super') && (
                   <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">SALAS BOMBA</h1>
                 )}
-                <div className="flex flex-wrap justify-center gap-6  animate-scale-in">
+                <div className="flex flex-wrap justify-center gap-6 animate-scale-in">
                   {allRooms.filter(room => room.roomType === 'super').map((room, index) => (
                     <div key={index} className="w-80 relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
-                      <SuperRoomCard room={room} userId={userId} />
+                      <SuperRoomCard room={room} userId={userId} simplifyDesign={simplifyDesign} />
                     </div>
                   ))}
                 </div>
               </div>
-
+  
               <div className="flex flex-col items-center justify-center mt-10">
                 <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">
                   {status === 'waiting' ? 'Salas abiertas' : 'Salas cerradas'}
                 </h1>
-                <div className="flex flex-wrap justify-center gap-6  animate-scale-in">
+                <div className="flex flex-wrap justify-center gap-6 animate-scale-in">
                   {allRooms.filter(room => room.roomType === 'normal').map((room, index) => (
                     <div key={index} className="w-80 relative overflow-hidden rounded-lg transition-transform duration-300 transform hover:scale-105">
-                      <RoomCard room={room} userId={userId} />
+                      <RoomCard room={room} userId={userId} simplifyDesign={simplifyDesign} />
                     </div>
                   ))}
                 </div>
