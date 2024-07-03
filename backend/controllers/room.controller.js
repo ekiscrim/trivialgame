@@ -109,11 +109,11 @@ const createRoom = async (req, res, roomType) => {
 
         // Contar súper salas creadas por el usuario en el día actual
         const superRoomsCount = await Room.countDocuments({
-            'users.0': creatorId, // Asegurarse de que el primer usuario sea el creador
+            'users.0': creatorId,
             roomType: 'super',
-            createdAt: { $gte: startOfDay, $lte: endOfDay }
+            createdAt: { $gte: startOfDay, $lte: endOfDay },
+            status: { $ne: 'finished' }
         });
-
         if (roomType === 'normal' && normalRoomsCount >= 3) {
             return res.status(400).json({ error: "Límite diario de creación de salas normales alcanzado (3)." });
         }
