@@ -122,6 +122,8 @@ const createRoom = async (req, res, roomType) => {
             return res.status(400).json({ error: "Límite diario de creación de salas bomba alcanzado (1)." });
         }
 
+        if (questionCount < 5 || questionCount > 15 ) return res.status(400).json({ error: "El número de preguntas no es válido" }); 
+
         // Realizar consulta para obtener preguntas basadas en las categorías seleccionadas
         const questions = await Question.find({ category: { $in: categories } });
         // Seleccionar un número aleatorio de preguntas según questionCount

@@ -98,6 +98,19 @@ const CreateRoom = () => {
     setRoomName(generarNombreSala());
   };
 
+  const incrementQuestionCount = () => {
+    if (questionCount < 15) {
+      setQuestionCount(questionCount + 1);
+    }
+  };
+
+  const decrementQuestionCount = () => {
+    if (questionCount > 5) {
+      setQuestionCount(questionCount - 1);
+    }
+  };
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -212,18 +225,37 @@ const CreateRoom = () => {
               </div>
             </div>
             <div className="form-control">
-              <label htmlFor="questionCount">Número de preguntas</label>
-              <select
-                name="questionCount"
-                className="select select-bordered w-full"
-                value={questionCount}
-                onChange={(e) => setQuestionCount(e.target.value)}
-              >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-              </select>
-            </div>        
+      <label htmlFor="questionCount" className="block text-sm font-medium text-gray-700">
+        Número de preguntas
+      </label>
+      <div className="mt-1 flex rounded-md shadow-sm">
+        <button
+          type="button"
+          className="inline-flex items-center px-4 py-2 border  bg-primary  text-sm font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-l-md"
+          onClick={decrementQuestionCount}
+        >
+          -
+        </button>
+        <input
+          type="number"
+          id="questionCount"
+          name="questionCount"
+          className="flex-1 block w-full items-center text-center px-4 py-2 border   rounded-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          style={{ fontSize: '1.5rem' }} // Tamaño de fuente más grande
+          value={questionCount}
+          onChange={(e) => setQuestionCount(parseInt(e.target.value))}
+          min={5}
+          max={15}
+        />
+        <button
+          type="button"
+          className="inline-flex items-center px-4 py-2 border  bg-primary text-sm font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-r-md"
+          onClick={incrementQuestionCount}
+        >
+          +
+        </button>
+      </div>
+    </div>
             <div className="form-control mt-2 mb-2">
               <label htmlFor="isSuperRoom" className="flex items-center">
                 <input
