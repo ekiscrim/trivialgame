@@ -261,11 +261,11 @@ const CreateRoom = () => {
                 <input
                   name="isSuperRoom"
                   type="checkbox"
-                  className="mr-2 checkbox checkbox-secondary mt-2"
+                  className="mr-2 checkbox checkbox-secondary w-8 h-8 mt-2"
                   checked={isSuperRoom}
                   onChange={handleSuperRoomChange}
                 />
-                <span className="mr-2 mt-2">Sala Bomba</span>
+                <span className="mr-2 mt-2">Crear como Sala Bomba 💣</span>
               </label>
             </div>
             <div className="form-control">
