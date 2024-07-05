@@ -22,10 +22,22 @@ const ShareComponent = ({ score, roomName, roomUrl, progress }) => {
     .map((step, index) => (index % 5 === 4 ? (step.isCorrect ? "🟩\n" : "🟥\n") : (step.isCorrect ? "🟩" : "🟥")))
     .join("")}`;
 
+    const formattedMessage = `¡He obtenido ${score} puntos en la sala ${roomName}! ¿Puedes superarlo?`;
+    const formattedEmojis = filteredProgress
+      .map((step, index) => (index % 5 === 4 ? (step.isCorrect ? "🟩\n" : "🟥\n") : (step.isCorrect ? "🟩" : "🟥")))
+      .join("");
+
+
   return (
-    <div className="w-full flex justify-center items-center mt-10">
+    <div className="w-full flex justify-center items-center mt-4 mb-2">
       <div className="flex flex-col items-center">
-        <div className="flex flex-col items-center mb-4">
+    <div className="flex flex-col items-center text-white text-center">
+      <span>{formattedMessage}</span>
+      <span>{formattedEmojis.split('\n').map((line, index) => (
+        <div key={index}>{line}</div>
+      ))}</span>
+    </div>
+        <div className="flex flex-col items-center mb-4 mt-4">
           <WhatsappShareButton
             url={roomUrl}
             title={shareText}
@@ -33,7 +45,7 @@ const ShareComponent = ({ score, roomName, roomUrl, progress }) => {
           >
             <>
               <WhatsappIcon size={32} round={true} />
-              <span className="text-green-100 ml-2">Compartir en WhatsApp</span>
+              <span className="text-white font-semibold ml-2">Compartir en WhatsApp</span>
             </>
           </WhatsappShareButton>
         </div>
@@ -46,7 +58,7 @@ const ShareComponent = ({ score, roomName, roomUrl, progress }) => {
           >
             <>
               <XIcon size={32} round={true} />
-              <span className="text-green-100 ml-2">Compartir en X</span>
+              <span className="text-white font-semibold ml-2">Compartir en X</span>
             </>
           </TwitterShareButton>
         </div>

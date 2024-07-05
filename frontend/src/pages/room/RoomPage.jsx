@@ -199,17 +199,24 @@ const RoomPage = () => {
                 {isPending ? "Cargando..." : <HiArrowRightStartOnRectangle />} Comenzar Partida
               </button>
             ) : (
-              <div role="alert" className="alert alert-success text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span>Ya has participado!</span>
-                <ShareComponent score={userScoreData.score.score} roomName={roomData.room.roomName} roomUrl={urlDeLaSala} progress={progress} />
-              </div>
+              <>
+                <div role="alert" className="alert alert-success text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>Ya has participado!</span>
+                  </div>
+              </>
             )}
           </>
         )}
       </div>
 
       <ScoresTable currentUser={userId._id} onUpdateProgress={handleUpdateProgress} />
+      {!canStartGame() && (
+          <div className="card lg:card sm:w-1/4 lg:w-1/5 lg:p-4 mx-auto text-center bg-purple-500 shadow-xl my-6  top-0 left-0 right-0 pb-4">
+            <h2 className="text-xl font-semibold text-white pt-4">Comparte tus resultados 🎉 </h2>
+          <ShareComponent score={userScoreData.score.score} roomName={roomData.room.roomName} roomUrl={urlDeLaSala} progress={progress} />
+          </div>
+      )}
       {roomData && (
         <div className="card lg:card sm:w-1/4 lg:w-1/5 lg:p-4 mx-auto text-center bg-base-100 shadow-xl my-6 sticky top-0 left-0 right-0">
           <div className="card-body">

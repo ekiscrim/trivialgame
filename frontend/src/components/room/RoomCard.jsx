@@ -184,10 +184,12 @@ const RoomCard = ({ room, userId, simplifyDesign }) => {
               )}
             </div>
           </div>
-          <div className="flex items-center mb-2 text-white">
+          <div className="flex items-center  text-white mb-2">
             <UserIcon className="w-5 h-5 mr-1 text-purple-950" />
             <span className="mr-2">Creada por:</span>
-            <strong>{creatorData.creatorUsername}</strong>
+            <div className="max-w-[95px] truncate">
+              <strong>{creatorData.creatorUsername}</strong>
+            </div>
             <div className="avatar ml-2">
               <div className="w-6 h-6 rounded-full">
                 <img src={creatorData ? creatorData.profileImg || '/avatar-placeholder.png' : <LoadingSpinner />} alt="Avatar de Usuario" />
