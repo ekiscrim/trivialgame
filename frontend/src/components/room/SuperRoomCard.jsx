@@ -8,6 +8,7 @@ import { HiArrowRightStartOnRectangle } from "react-icons/hi2";
 import { HiLockClosed } from "react-icons/hi2";
 import { UserIcon } from "@heroicons/react/solid";
 import LoadingSpinner from "../common/LoadingSpinner";
+import EmojiGrid from "../categories/EmojiGrid";
 
 const fetchUserScore = async (roomId, userId) => {
   const res = await fetch(`/api/scores/${roomId}/${userId}`);
@@ -113,6 +114,7 @@ const SuperRoomCard = ({ room, userId, simplifyDesign }) => {
       {simplifyDesign ? (
           <div className="p-4 -mb-9">
             <h1 className="text-lg uppercase font-black text-white">{room.roomName} 💣</h1>
+            <EmojiGrid simplifyDesign={simplifyDesign} categories={categories} />
           </div>
         ) : (
           <figure className="items-center relative flex bg-gradient-to-r from-red-400 to-red-600">
@@ -145,7 +147,7 @@ const SuperRoomCard = ({ room, userId, simplifyDesign }) => {
             </div>
           </div>
           <div className="flex items-center mb-2 text-white">
-            <UserIcon className="w-5 h-5 mr-1 text-purple-950" />
+            <UserIcon className="w-5 h-5 mr-1 text-red-950" />
             <span className="mr-2">Creada por:</span>
             <strong>{creatorData.creatorUsername}</strong>
             <div className="avatar ml-2">
@@ -160,7 +162,7 @@ const SuperRoomCard = ({ room, userId, simplifyDesign }) => {
             <strong>{room.questions.length}</strong>
           </div>
           <div className="flex items-center mb-2 text-white">
-            <HiUserGroup className="w-5 h-5 mr-1 text-purple-950" />
+            <HiUserGroup className="w-5 h-5 mr-1 text-red-950" />
             <span className="mr-2">Participantes:</span>
             <div className="participants-container">
               {participants.slice(0, 5).map((participant, index) => (

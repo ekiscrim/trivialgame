@@ -98,7 +98,6 @@ const RoomCard = ({ room, userId, simplifyDesign }) => {
   const { data: categories, isLoading: isCategoriesLoading, error: categoriesError } = useQuery({
     queryKey: ["categories", room._id],
     queryFn: () => fetchCategories(room._id),
-    enabled: !simplifyDesign, // Disable query if design is simplified
   });
 
   const { data: creatorData, isLoading: isCreatorLoading, error: creatorError } = useQuery({
@@ -125,7 +124,7 @@ const RoomCard = ({ room, userId, simplifyDesign }) => {
     return () => clearInterval(interval);
   }, [timeLeft, room._id]);
 
-  if (isScoreLoading || isCategoriesLoading || isCreatorLoading || isParticipantsLoading) return <SkeletonCard />;
+  if (isScoreLoading || isCategoriesLoading || isCreatorLoading || isParticipantsLoading || isCategoriesLoading) return <SkeletonCard />;
   if (scoreError) return <p>Error al cargar los datos de puntuación.</p>;
   if (categoriesError && !simplifyDesign) return <p>Error al cargar las categorías.</p>;
   if (creatorError) return <p>Error al cargar el creador de la sala.</p>;
@@ -153,6 +152,7 @@ const RoomCard = ({ room, userId, simplifyDesign }) => {
         {simplifyDesign ? (
           <div className="p-4 -mb-9">
             <h1 className="text-lg uppercase font-black text-white">{room.roomName}</h1>
+            <EmojiGrid simplifyDesign={simplifyDesign} categories={categories} />
           </div>
         ) : (
           <figure className={`items-center relative flex`} style={{ background: backgroundColor }}>
@@ -163,7 +163,7 @@ const RoomCard = ({ room, userId, simplifyDesign }) => {
               </div>
             </div>
             <div className="absolute inset-0 bg-white bg-opacity-20 flex">
-              <EmojiGrid categories={categories} />
+              <EmojiGrid simplifyDesign={simplifyDesign} categories={categories} />
             </div>
           </figure>
         )}

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
-const EmojiGrid = ({ categories }) => {
+const EmojiGrid = ({ simplifyDesign, categories }) => {
   const figureRef = useRef(null);
-  const emojiSize = "text-3xl"; // Tamaño de los emojis (ajusta según sea necesario)
+  const emojiSize = simplifyDesign ? "text-1xl" :"text-4xl"; // Tamaño de los emojis (ajusta según sea necesario)
+  const toolTip = simplifyDesign ? "participant" : "";
   const margin = "3"; // Margen entre emojis
   let row = 3; // Inicializamos el contador de fila
   let column = 3; // Inicializamos el contador de columna
@@ -21,8 +22,8 @@ const EmojiGrid = ({ categories }) => {
 
       // Crear el elemento span para el emoji y establecer sus clases de Tailwind
       const emojiSpan = document.createElement("div");
-      emojiSpan.className = `${emojiSize} ${margin} row-${row} col-${column}"`;
-
+      emojiSpan.className = `${toolTip} ${emojiSize} ${margin} row-${row} col-${column}"`;
+      emojiSpan.title = category; // Añadir el nombre de la categoría como título
       // Establecer el emoji como contenido del span
       emojiSpan.innerText = emoji;
 
@@ -39,14 +40,22 @@ const EmojiGrid = ({ categories }) => {
       }
     });
 
-  }, [categories]);
+  }, [categories, emojiSize, margin]);
 
   return (
+    simplifyDesign ? (
       <div className="relative">
-        <div ref={figureRef} className="ml-3 mt-10 grid grid-cols-3 gap-2 drop-shadow-[0_5px_5px_rgba(100,100,100,1)]">
-            {/* Aquí se agregarán los emojis */}
+        <div ref={figureRef} className=" ml-5 mt-2 grid grid-cols-6 drop-shadow-[0_3px_5px_rgba(0,0,0,1)]">
+          {/* Aquí se agregarán los emojis */}
         </div>
       </div>
+    ) : (
+      <div className="relative">
+        <div ref={figureRef} className="ml-3 mt-5 grid grid-cols-3 gap-2 drop-shadow-[0_5px_5px_rgba(100,100,100,1)]">
+          {/* Aquí se agregarán los emojis */}
+        </div>
+      </div>
+    )
   );
 };
 
