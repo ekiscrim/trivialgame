@@ -158,20 +158,20 @@ const ProfilePage = () => {
 
     return (
         <>
-            <div className='flex flex-col w-full lg:w-1/2 min-h-screen'>
+            <div className='flex flex-col w-full lg:w-1/2 min-h-screen '>
                 {(isLoading || isRefetching) && <LoadingSpinner />}
                 {!isLoading && !isRefetching && !user && <p className='text-center text-lg mt-4'>User not found</p>}
     
                 <div className='w-full text-primary'>
                     <div className='flex px-4 py-2 items-center'>
-                        <Link onClick={() => history.goBack()}>
-                            <FaArrowLeft className='w-7 h-7' />
+                        <Link onClick={() => history.go(-1)}>
+                            <FaArrowLeft className='w-7 h-7 text-white' />
                         </Link>
                         {isMyProfile && (
                             <div className="relative ml-auto ">
                                 <div className="relative">
                                     <BiDotsVerticalRounded
-                                        className='w-8 h-8 text-primary cursor-pointer hover:text-violet-200 transition-all'
+                                        className='w-8 h-8 text-white cursor-pointer hover:text-gray-200 transition-all'
                                         onClick={(e) => {
                                             e.preventDefault();
                                             setIsOptionsOpen(!isOptionsOpen);
@@ -180,7 +180,7 @@ const ProfilePage = () => {
                                     {isOptionsOpen && (
                                         <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg z-10">
                                             <div
-                                                className="cursor-pointer rounded-lg  flex items-center px-4 py-2 hover:bg-gray-100"
+                                                className="cursor-pointer rounded-lg flex items-center px-4 py-2 hover:bg-gray-100"
                                                 onClick={() => {
                                                     
                                                     setIsOptionsOpen(false);
@@ -190,7 +190,7 @@ const ProfilePage = () => {
                                                 Desactivar Cuenta
                                             </div>
                                             <div
-                                                className="cursor-pointer rounded-lg  flex items-center px-4 py-2 hover:bg-gray-100"
+                                                className="cursor-pointer rounded-lg flex items-center px-4 py-2 hover:bg-gray-100"
                                                 onClick={() => {
                                                     logoutMutate();
                                                     setIsOptionsOpen(false);
@@ -204,9 +204,9 @@ const ProfilePage = () => {
                             </div>
                         )}
                     </div>
-                    <div className='relative'>
-                        <div className='avatar left-4'>
-                            <div className='w-32 rounded-full relative group/avatar'>
+                    <div className='relative flex flex-col items-center px-4  pb-4'>
+                        <div className='avatar '>
+                        <div className='w-32 h-32 rounded-full relative group/avatar'>
                                 <img src={profileImg || user?.profileImg || "/avatar-placeholder.png"} alt="User avatar" />
                                 {isMyProfile && (
                                     <div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
@@ -236,10 +236,10 @@ const ProfilePage = () => {
                             />
                         )}
                     </div>
-                    <div className='flex flex-col gap-4 px-4'>
+                    <div className='flex flex-col items-center px-4  pb-4'>
                         <div className='flex flex-col'>
                             <div className='flex flex-col'>
-                                <p className='font-bold text-lg'>{user?.username}</p>
+                                <p className='font-bold text-2xl '>{user?.username}</p>
                             </div>
                             <span className='text-sm text-primary'>@{user?.username}</span>
                         </div>
@@ -252,7 +252,7 @@ const ProfilePage = () => {
                     </div>
                 </div>
                 <div className='flex flex-wrap'>
-                    <div className='w-full items-center'>
+                    <div className='w-full items-center py-4 px-4'>
                         {user?._id ? <Statistics userId={user?._id} /> : <LoadingSpinner />}
                     </div>
                 </div>
