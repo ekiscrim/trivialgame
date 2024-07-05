@@ -191,7 +191,7 @@ const CreateRoom = () => {
           {roomCounts && (
             <div className="mb-4 p-4 bg-gray-100 rounded-lg shadow-md">
               <p className="text-md text-gray-600">Salas creadas hoy: <span className="font-bold">{roomCounts.normal}/3</span></p>
-              <p className="text-md text-gray-600">Salas bomba creadas hoy: <span className="font-bold">{roomCounts.super}/1</span></p>
+              <p className="text-md text-gray-600">Salas bomba activadas: <span className="font-bold">{roomCounts.super}/1</span></p>
             </div>
           )}
   
