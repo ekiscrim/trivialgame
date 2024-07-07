@@ -23,7 +23,6 @@ const UserRecentScores = ({ userId }) => {
     queryKey: ['userScores', userId],
     queryFn: fetchUserScores,
     enabled: !!userId, // Solo habilitamos la consulta si userId está definido
-    retry: false, // Deshabilitamos el reintento automático en caso de error
   });
 
   // Manejo del error cuando el usuario no ha participado en ninguna sala
