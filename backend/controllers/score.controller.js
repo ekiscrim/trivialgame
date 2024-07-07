@@ -52,7 +52,9 @@ export const getUserLastScores = async (req, res) => {
       .limit(10)
       .populate('roomId');
 
-    const scoresWithPositions = await Promise.all(scores.map(async (score) => {
+    const scoresWithPositions = [];
+
+    for (let score of scores) {
       // Obtener la sala asociada al puntaje
       const room = await Room.findById(score.roomId);
       if (!room) {
@@ -67,12 +69,12 @@ export const getUserLastScores = async (req, res) => {
       const userScoreIndex = allScoresForRoom.findIndex(s => s.user.toString() === userId);
       const userPosition = userScoreIndex + 1; // Sumar 1 porque los índices comienzan en 0
 
-      return {
+      scoresWithPositions.push({
         score,
         room,
         userPosition
-      };
-    }));
+      });
+    }
 
     res.json(scoresWithPositions);
   } catch (error) {
