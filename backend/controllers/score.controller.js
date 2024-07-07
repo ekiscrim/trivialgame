@@ -59,7 +59,6 @@ export const getUserLastScores = async (req, res) => {
       // Obtener la sala asociada al puntaje
       const room = await Room.findById(score.roomId);
       if (!room) {
-        console.error(`Room with ID ${score.roomId} not found.`);
         continue; // Saltar este puntaje si la sala no se encuentra
       }
 
