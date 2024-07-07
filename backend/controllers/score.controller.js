@@ -47,6 +47,7 @@ export const getUserLastScores = async (req, res) => {
   try {
     const { userId } = req.params;
 
+    // Buscar los últimos puntajes del usuario, hasta un máximo de 10
     const scores = await Score.find({ user: userId })
       .sort({ createdAt: -1 })
       .limit(10)
@@ -58,7 +59,8 @@ export const getUserLastScores = async (req, res) => {
       // Obtener la sala asociada al puntaje
       const room = await Room.findById(score.roomId);
       if (!room) {
-        throw new Error(`Room with ID ${score.roomId} not found.`);
+        console.error(`Room with ID ${score.roomId} not found.`);
+        continue; // Saltar este puntaje si la sala no se encuentra
       }
 
       // Obtener todos los puntajes para esta sala ordenados por score descendentemente
@@ -76,10 +78,15 @@ export const getUserLastScores = async (req, res) => {
       });
     }
 
+    // Si no hay puntajes disponibles, devolver un mensaje adecuado
+    if (scores.length === 0) {
+      return res.json([]); // Devolver un arreglo vacío si no hay puntajes
+    }
+
     res.json(scoresWithPositions);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error fetching user scores' });
   }
 };
 

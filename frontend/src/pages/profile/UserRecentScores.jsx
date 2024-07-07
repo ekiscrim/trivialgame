@@ -24,6 +24,10 @@ const UserRecentScores = ({ userId }) => {
   if (isLoading) return <LoadingSpinner />;
   if (error) return <p>Error: {error.message}</p>;
 
+  if (!scores || scores.length === 0) {
+    return <p>No hay resultados disponibles.</p>; // Mensaje cuando no hay resultados
+  }
+
   return (
     <div className="overflow-x-auto max-w-full bg-white rounded-lg px-1 py-2 mb-10 xl:w-[920px]">
       <h2 className='text-2xl font-extrabold lg:font-semibold text-center text-purple-500 mb-4 uppercase'>RESULTADOS RECIENTES</h2>
