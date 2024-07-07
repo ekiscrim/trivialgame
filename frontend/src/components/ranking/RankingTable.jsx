@@ -20,7 +20,7 @@ const RankingTable = ({ rankings, filter, currentUser }) => {
           <Link key={user?.userId?._id || 'Unknown'} to={`/profile/${user?.userId?.username || 'Unknown'}`}>
             <div className="bg-white text-black p-4 rounded-lg shadow-md hover:bg-purple-300">
               <img className="w-20 h-20 rounded-full mx-auto" src={user?.userId?.profileImg || '/avatar-placeholder.png'} alt="Profile" />
-              <h3 className="text-xl font-semibold mt-2">{user?.userId?.username || 'Unknown'}</h3>
+              <h3 className="text-xl font-semibold mt-2 xl:max-w-full truncate">{user?.userId?.username || 'Unknown'}</h3>
               <p className="text-2xl font-bold">{getScore(user)}</p>
               {index === 0 && <p className="text-yellow-500 text-4xl">🥇</p>}
               {index === 1 && <p className="text-gray-500 text-4xl">🥈</p>}

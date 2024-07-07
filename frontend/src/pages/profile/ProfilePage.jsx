@@ -11,6 +11,7 @@ import UserProfileAvatar from "./UserProfileAvatar";
 import UserProfileDetails from "./UserProfileDetails";
 import ImageModal from "./ImageModal";
 import DeactivateModal from "./DeactivateModal";
+import UserRecentScores from "./UserRecentScores";
 
 const ProfilePage = () => {
   const [profileImg, setProfileImg] = useState(null);
@@ -158,7 +159,7 @@ const ProfilePage = () => {
   return (
     <>
       <div className='flex flex-col w-full lg:w-1/2 min-h-screen'>
-        {(isLoading || isRefetching || isUpdatingProfile) && <LoadingSpinner />}
+        {(isLoading || isRefetching) && <LoadingSpinner />}
         {!isLoading && !isRefetching && !user && <p className='text-center text-lg mt-4'>User not found</p>}
 
         <UserProfileHeader
@@ -195,26 +196,11 @@ const ProfilePage = () => {
         <div className='flex flex-wrap'>
           <div className='w-full items-center py-4 px-4'>
             {user?._id ? <Statistics userId={user?._id} /> : <LoadingSpinner />}
+            
           </div>
         </div>
       </div>
-
-      {isImageModalOpen && (
-        <ImageModal
-          editorRef={editorRef}
-          selectedImage={selectedImage}
-          handleProfileUpdate={handleProfileUpdate}
-          setIsImageModalOpen={setIsImageModalOpen}
-          setSelectedImage={setSelectedImage}
-        />
-      )}
-
-      {isDeactivateModalOpen && (
-        <DeactivateModal
-          handleDeactivate={handleDeactivate}
-          setIsDeactivateModalOpen={setIsDeactivateModalOpen}
-        />
-      )}
+        {user?._id ? <UserRecentScores userId={user._id} /> : <LoadingSpinner />}
     </>
   );
 };

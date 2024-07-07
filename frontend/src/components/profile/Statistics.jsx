@@ -59,7 +59,7 @@ const Statistics = ({ userId }) => {
     </div>
   </div>
 </div>
-<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
+<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
   {Object.entries(statsByCategory)
     .filter(([category, stats]) => stats.total > 0) // Filtrar categorías con un total mayor que cero
     .map(([category, stats]) => (

@@ -1,3 +1,4 @@
+import Room from "../models/room.model.js";
 import Score from "../models/score.model.js"
 
 
@@ -41,6 +42,45 @@ export const getUserScoreInRoom = async (req, res) => {
     res.status(500).json({ error: 'Error checking user score', });
   }
 };
+
+export const getUserLastScores = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const scores = await Score.find({ user: userId })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate('roomId');
+
+    const scoresWithPositions = await Promise.all(scores.map(async (score) => {
+      // Obtener la sala asociada al puntaje
+      const room = await Room.findById(score.roomId);
+      if (!room) {
+        throw new Error(`Room with ID ${score.roomId} not found.`);
+      }
+
+      // Obtener todos los puntajes para esta sala ordenados por score descendentemente
+      const allScoresForRoom = await Score.find({ roomId: score.roomId })
+        .sort({ score: -1 });
+
+      // Encontrar la posición del usuario dentro de los puntajes ordenados
+      const userScoreIndex = allScoresForRoom.findIndex(s => s.user.toString() === userId);
+      const userPosition = userScoreIndex + 1; // Sumar 1 porque los índices comienzan en 0
+
+      return {
+        score,
+        room,
+        userPosition
+      };
+    }));
+
+    res.json(scoresWithPositions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 
 export const finalScoreAlreadyExists = async (userId, roomId) => {
