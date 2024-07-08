@@ -131,7 +131,7 @@ const ProfilePage = () => {
   const isMyProfile = authUser?._id === user?._id;
   const handleImgChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = () => {
         setProfileImg(reader.result);
@@ -139,6 +139,8 @@ const ProfilePage = () => {
       setSelectedImage(URL.createObjectURL(file));
       reader.readAsDataURL(file);
       setIsImageModalOpen(true);
+    }else {
+      toast.error("Por favor, selecciona un archivo de imagen válido.");
     }
   };
 
