@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 const RoomPage = () => {
   const [progress, setProgress] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   const { id } = useParams();
   const { data: userId } = useQuery({ queryKey: ["authUser"] });
@@ -21,18 +22,16 @@ const RoomPage = () => {
   useEffect(() => {
     const handleBackNavigation = (event) => {
       event.preventDefault();
-      window.history.forward(); // Avanzar una página para mantener al usuario en la página actual
+      window.history.forward();
     };
 
-    window.history.pushState(null, null, window.location.pathname); // Agregar una nueva entrada al historial
+    window.history.pushState(null, null, window.location.pathname);
     window.addEventListener('popstate', handleBackNavigation);
 
     return () => {
       window.removeEventListener('popstate', handleBackNavigation);
     };
   }, []);
-
-
 
   const fetchRoomCreator = async (roomId) => {
     const response = await fetch(`/api/rooms/${roomId}/creator`);
@@ -67,10 +66,10 @@ const RoomPage = () => {
     queryFn: () => fetchCategories(id),
   });
 
-  const { data: userScoreData, isLoading: isLoadingScore } = useQuery({
+  const { data: userScoreData, isLoading: isLoadingScore, error: userScoreError } = useQuery({
     queryKey: ["userScoreData", id, userId],
     queryFn: async () => {
-      if (!id || !userId._id) throw new Error('Room ID or User ID is undefined');
+      if (!id || !userId?._id) throw new Error('Room ID or User ID is undefined');
       const res = await fetch(`/api/scores/${id}/${userId._id}`);
       if (!res.ok) throw new Error('Error fetching user score data');
       return res.json();
@@ -78,13 +77,19 @@ const RoomPage = () => {
     enabled: !!userId,
   });
 
+  useEffect(() => {
+    if (error || creatorError || categoriesError || userScoreError) {
+      setHasError(true);
+    }
+  }, [error, creatorError, categoriesError, userScoreError]);
+
   const canStartGame = () => {
     if (!roomData || !roomData.users || !roomData.room) return false;
-    const userInRoom = roomData.users.find(user => user._id === userId._id);
+    const userInRoom = roomData.users.find(user => user._id === userId?._id);
     const currentTime = Date.now();
     const timeElapsed = currentTime - new Date(roomData.room.startTime).getTime();
     const timeRemaining = roomData.room.duration - timeElapsed;
-    return (!userInRoom || !userScoreData.hasScore) && (roomData.room.status === 'waiting' && timeRemaining > 0);
+    return (!userInRoom || !userScoreData?.hasScore) && (roomData.room.status === 'waiting' && timeRemaining > 0);
   };
 
   const { mutate, isError, isPending } = useMutation({
@@ -126,7 +131,7 @@ const RoomPage = () => {
   useEffect(() => {
     const fetchProgress = async () => {
       try {
-        if (!roomData || !roomData.room) {
+        if (!roomData || !roomData.room || !userId?._id) {
           return;
         }
         const response = await fetch(`/api/participant/${roomData.room._id}/${userId._id}`);
@@ -149,7 +154,15 @@ const RoomPage = () => {
     setProgress(newProgressData);
   };
 
-  if (!roomData || !roomData.room || !roomData.users || !userScoreData || isLoadingScore || loading) {
+  if (isLoading || isCreatorLoading || isCategoriesLoading || isLoadingScore || loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (hasError) {
+    return <p className="text-lg text-red-500">Ha ocurrido un error. Por favor, inténtalo de nuevo más tarde.</p>;
+  }
+
+  if (!roomData || !roomData.room || !roomData.users || !userScoreData) {
     return <LoadingSpinner />;
   }
 
@@ -201,9 +214,11 @@ const RoomPage = () => {
             ) : (
               <>
                 <div role="alert" className="alert alert-success text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>Ya has participado!</span>
-                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Ya has participado!</span>
+                </div>
               </>
             )}
           </>
@@ -211,11 +226,11 @@ const RoomPage = () => {
       </div>
 
       <ScoresTable currentUser={userId._id} onUpdateProgress={handleUpdateProgress} />
-      {!canStartGame() && (
-          <div className="card lg:card sm:w-1/4 lg:w-1/5 lg:p-4 mx-auto text-center bg-purple-500 shadow-xl my-6  top-0 left-0 right-0 pb-4">
-            <h2 className="text-xl font-semibold text-white pt-4">Comparte tus resultados 🎉 </h2>
+      {!canStartGame() && userScoreData?.score && (
+        <div className="card lg:card sm:w-1/4 lg:w-1/5 lg:p-4 mx-auto text-center bg-purple-500 shadow-xl my-6 top-0 left-0 right-0 pb-4">
+          <h2 className="text-xl font-semibold text-white pt-4">Comparte tus resultados 🎉 </h2>
           <ShareComponent score={userScoreData.score.score} roomName={roomData.room.roomName} roomUrl={urlDeLaSala} progress={progress} />
-          </div>
+        </div>
       )}
       {roomData && (
         <div className="card lg:card sm:w-1/4 lg:w-1/5 lg:p-4 mx-auto text-center bg-base-100 shadow-xl my-6 sticky top-0 left-0 right-0">
