@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const reservedUsernames = ['admin', 'root', 'all', 'system'];
+const reservedUsernames = ['admin', 'root', 'all', 'system', 'Unknown'];
 
 export const register = async (req, res) => {
     try {

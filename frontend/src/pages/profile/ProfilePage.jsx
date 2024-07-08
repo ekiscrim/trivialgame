@@ -32,6 +32,9 @@ const ProfilePage = () => {
         const res = await fetch(`/api/users/profile/${username}`);
         const data = await res.json();
         if (!res.ok) {
+          if (res.status === 404) {
+            return window.location.href = "/";
+          }
           throw new Error(data.error || "Algo fue mal");
         }
         return data;
