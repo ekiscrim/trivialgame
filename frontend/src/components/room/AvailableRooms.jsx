@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { HiOutlineLightBulb } from 'react-icons/hi2';
+import { HiMiniQueueList, HiOutlineLightBulb } from 'react-icons/hi2';
 import LoadingSpinner from "../common/LoadingSpinner";
 import CreateRoom from "./CreateRoom";
 import RoomCard from "./RoomCard";
@@ -119,12 +119,12 @@ const AvailableRooms = () => {
                 <button onClick={toggleSimplifyDesign} className="btn btn-secondary">
                 {simplifyDesign ? (
                   <>
-                    <HiOutlineViewList className="w-6 h-6" />
+                    <HiMiniQueueList className="w-6 h-6" />
                     <span className="sr-only">Mostrar diseño completo</span>
                   </>
                 ) : (
                   <>
-                    <HiOutlineLightBulb className="w-6 h-6" />
+                    <HiOutlineViewList className="w-6 h-6" />
                     <span className="sr-only">Simplificar diseño</span>
                   </>
                 )}
