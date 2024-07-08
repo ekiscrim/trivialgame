@@ -2,7 +2,7 @@ import { MdEdit } from "react-icons/md";
 
 const UserProfileAvatar = ({ profileImg, user, isMyProfile, profileImgRef, handleImgChange }) => (
   <div className='relative flex flex-col items-center px-4 pb-4'>
-    <div className='avatar '>
+    <div className='avatar'>
       <div className='w-32 h-32 rounded-full relative group/avatar'>
         <img src={profileImg || user?.profileImg || "/avatar-placeholder.png"} alt="User avatar" />
         {isMyProfile && (
