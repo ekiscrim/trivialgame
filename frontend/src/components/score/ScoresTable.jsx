@@ -111,7 +111,7 @@ const ScoresTable = ({ currentUser }) => {
         </div>
         
         {scores.length > 3 && (
-          <div className="w-full max-w-lg">
+          <div className="w-full max-w-lg overflow-x-auto">
             <table className="table-auto w-full mb-9">
               <thead>
                 <tr>
