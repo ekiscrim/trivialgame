@@ -25,6 +25,7 @@ const Question = ({ roomId, userId }) => {
   const [roomType, setRoomType] = useState('normal');
   const [timeBonus, setTimeBonus] = useState(0); // Nuevo estado para la animación del tiempo sobrante
   const [isQuestionCentered, setIsQuestionCentered] = useState(true); // Nuevo estado para centrar la pregunta
+  const [isProcessing, setIsProcessing] = useState(false); // Estado para evitar múltiples clics
 
   const fetchCategoryName = async (questionId) => {
     try {
@@ -137,7 +138,7 @@ const Question = ({ roomId, userId }) => {
     if (selectedOption) return;
     setIsTimeUp(true);
     setAnswerStatus('incorrect');
-    await handleAnswer(currentQuestion._id, 'no-time');
+    await handleAnswer(null, currentQuestion._id, 'no-time');
 
     setTimeout(() => {
       setSelectedOption(null);
@@ -146,8 +147,11 @@ const Question = ({ roomId, userId }) => {
     }, 1000);
   };
 
-  const handleAnswer = async (questionId, option) => {
-    if (selectedOption || isTimeUp) return;
+  const handleAnswer = async (e, questionId, option) => {
+    if (e) e.preventDefault();
+    if (selectedOption || isTimeUp || isProcessing) return;
+
+    setIsProcessing(true);
 
     const res = await fetch('/api/validate/answer', {
       method: 'POST',
@@ -158,6 +162,7 @@ const Question = ({ roomId, userId }) => {
     });
 
     if (!res.ok) {
+      setIsProcessing(false);
       throw new Error('Failed to validate answer');
     }
 
@@ -211,6 +216,7 @@ const Question = ({ roomId, userId }) => {
         setShowOptions(false);
         setTimeLeft(TIME_FOR_QUESTION);
         setIsQuestionCentered(false); // Ajustar el estado cuando se muestran las opciones
+        setIsProcessing(false); // Restablecer la bandera de procesamiento
       }, 1000);
     }
 
@@ -306,7 +312,7 @@ const Question = ({ roomId, userId }) => {
               {shuffledOptions.map((option) => (
                 <button
                   key={option}
-                  onClick={() => handleAnswer(currentQuestion._id, option)}
+                  onClick={(e) => handleAnswer(e, currentQuestion._id, option)}
                   className={`p-4 text-xl font-semibold rounded-md transition-colors ${
                     selectedOption === option
                       ? answerStatus === 'correct'
@@ -316,7 +322,7 @@ const Question = ({ roomId, userId }) => {
                         ? 'bg-gray-300 hover:bg-gray-400 text-gray-800 cursor-not-allowed'
                         : 'bg-blue-500 hover:bg-blue-600 text-white'
                   }`}
-                  disabled={!!selectedOption || isTimeUp}
+                  disabled={!!selectedOption || isTimeUp || isProcessing}
                 >
                   {option}
                 </button>
