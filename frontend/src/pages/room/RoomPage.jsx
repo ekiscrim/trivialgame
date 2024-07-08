@@ -174,6 +174,11 @@ const RoomPage = () => {
         </h1>
         <div className="flex items-center justify-center -mt-5">
           <span className={`font-self my-4 ${roomData.room.roomType === 'super' ? 'text-white' : 'text-cyan-300'}`}>
+            Preguntas: {roomData.room.questionCount} 
+          </span>
+        </div>       
+        <div className="flex items-center justify-center -mt-5">
+          <span className={`font-self my-4 ${roomData.room.roomType === 'super' ? 'text-white' : 'text-cyan-300'}`}>
             Creada por: {creatorData ? (
               <Link to={`/profile/${creatorData.creatorUsername}`} className={`${roomData.room.roomType === 'super' ? 'text-white hover:text-gray-300' : 'text-cyan-300 hover:text-cyan-400'}`}>
                 {creatorData.creatorUsername}
@@ -188,6 +193,12 @@ const RoomPage = () => {
             </div>
           </div>
         </div>
+        <div className="flex items-center justify-center -mt-5">
+          <span className={`font-self my-4 ${roomData.room.roomType === 'super' ? 'text-white' : 'text-cyan-300'}`}>
+            Fecha: {new Date(roomData.room.createdAt).toLocaleString()}
+          </span>
+        </div> 
+
         <div className="flex flex-wrap justify-center gap-2 px-4">
           {categories && categories.map((category, index) => (
             <div key={index} className={`${roomData.room.roomType === 'super' ? 'bg-gradient-to-r from-red-500 to-yellow-500' : 'bg-gradient-to-r from-purple-500 to-blue-500'} rounded-full px-3 py-1 text-sm text-white`}>

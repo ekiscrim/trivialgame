@@ -244,6 +244,22 @@ export const getParticipants = async (req, res) => {
     res.status(500).json({ error: "Error fetching participants" });
   }
 };
+
+
+export const getUsersWithSameOption = async (req, res) => {
+  const { roomId, questionId, option } = req.params;
+
+  try {
+    const participants = await Participant.find({ roomId, questionId, selectedOption: option }).populate('userId', 'username profileImg');
+
+    const users = participants.map(participant => participant.userId);
+
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const getParticipantProgressAll = async (req, res) => {
   const { roomId, userId } = req.params;
   try {

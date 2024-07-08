@@ -359,3 +359,8 @@ body {
 .participant:hover::after {
   opacity: 1; /* Mostrar tooltip al pasar el ratón */
 }
+
+.avatars {
+  display: flex;
+  gap: 10px;
+}

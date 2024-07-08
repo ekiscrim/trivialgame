@@ -26,6 +26,7 @@ const Question = ({ roomId, userId }) => {
   const [timeBonus, setTimeBonus] = useState(0); // Nuevo estado para la animación del tiempo sobrante
   const [isQuestionCentered, setIsQuestionCentered] = useState(true); // Nuevo estado para centrar la pregunta
   const [isProcessing, setIsProcessing] = useState(false); // Estado para evitar múltiples clics
+  const [avatars, setAvatars] = useState([]);
 
   const fetchCategoryName = async (questionId) => {
     try {
@@ -39,6 +40,20 @@ const Question = ({ roomId, userId }) => {
       console.error(error);
     }
   };
+
+  const fetchUsersWithSameOption = async (roomId, questionId, option) => {
+    try {
+      const res = await fetch(`/api/participant/${roomId}/questions/${questionId}/options/${option}/users`);
+      if (!res.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      const data = await res.json();
+      setAvatars(data);
+    } catch (error) {
+      console.error('Error fetching users with same option:', error);
+    }
+  };
+
 
   const submitScore = async (scoreParam) => {
     try {
@@ -172,7 +187,7 @@ const Question = ({ roomId, userId }) => {
     setShowCountdown(true);
 
     let scoreToSend = 0;
-
+    await fetchUsersWithSameOption(roomId, questionId, option);
     if (data.isCorrect) {
       let basePoints = 10;
       if (roomType === 'super') {
@@ -217,6 +232,7 @@ const Question = ({ roomId, userId }) => {
         setTimeLeft(TIME_FOR_QUESTION);
         setIsQuestionCentered(false); // Ajustar el estado cuando se muestran las opciones
         setIsProcessing(false); // Restablecer la bandera de procesamiento
+        setAvatars([]); // Limpiar avatares al pasar a la siguiente pregunta
       }, 1000);
     }
 
@@ -325,6 +341,30 @@ const Question = ({ roomId, userId }) => {
                   disabled={!!selectedOption || isTimeUp || isProcessing}
                 >
                   {option}
+
+                  {selectedOption === option && avatars.length > 0 && (
+                    <div className="participants-container">
+                       {avatars.slice(0, 5).map((participant, index) => (
+                <div
+                  key={participant._id}
+                  className="participant"
+                  style={{ zIndex: avatars.length - index }}
+                  title={participant.username}
+                >
+                  <img
+                    src={participant.profileImg}
+                    alt={participant.username}
+                    className="w-6 h-6 rounded-full"
+                  />
+                </div>
+              ))}
+              {avatars.length > 5 && (
+                <div title={`+${avatars.length - 5}`} className="participant extra-participants">
+                  +{avatars.length - 5}
+                </div>
+              )}
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
