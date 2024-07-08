@@ -35,7 +35,7 @@ const RankingTable = ({ rankings, filter, currentUser }) => {
             <tr className="bg-gray-200">
               <th className="px-6 py-3">Rank</th>
               <th className="px-6 py-3">Usuario</th>
-              <th className="px-6 py-3">Puntuación</th>
+              <th className="px-6 py-3">Puntos</th>
             </tr>
           </thead>
           <tbody>
