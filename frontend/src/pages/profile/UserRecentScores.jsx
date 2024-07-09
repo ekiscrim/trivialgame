@@ -44,7 +44,7 @@ const UserRecentScores = ({ userId }) => {
         <tbody className="text-sm divide-y divide-gray-100">
           {scores.map((score, index) => (
             <tr
-              key={score.room._id || index}
+              key={score.room._id+index}
               className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-purple-300 cursor-pointer transition-colors duration-200`}
               onClick={() => window.location.href=`/rooms/${score.room._id}`}
             >
