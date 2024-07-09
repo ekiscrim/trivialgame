@@ -54,7 +54,7 @@ export const updateUser = async (req, res) => {
       }
   
       // Verificar si se proporcionó un nuevo nombre de usuario
-      if (username) {
+      if (username && username !== user.username) {
         const usernameExist = await User.findOne({ username: username });
         if (usernameExist) {
           return res.status(409).json({ error: "El nombre de usuario ya existe" });
