@@ -92,7 +92,8 @@ const ScoresTable = ({ currentUser }) => {
                   </div>
                 </Link>
                 <div className={`mt-2 text-2xl font-bold ${textColor}`} style={{ fontSize: scoreEntry.user.username === longestUsername ? fontSize : '' }}>
-                {scoreEntry.user.username}
+                {scoreEntry.user.username.length > 12 ? `${scoreEntry.user.username.substring(0, 12)}...` : scoreEntry.user.username}
+
     </div>
                 <div className={`${scoreSize} font-bold ${textColor}`}>{scoreEntry.score}</div>
                 {isFirst && <div className={`${emojiSize}`}>🥇</div>}
