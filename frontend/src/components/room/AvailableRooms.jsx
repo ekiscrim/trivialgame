@@ -1,12 +1,20 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { HiMiniQueueList, HiOutlineLightBulb } from 'react-icons/hi2';
+import { useQuery, useQueries } from "@tanstack/react-query";
+import { HiCheckCircle, HiMiniQueueList } from 'react-icons/hi2';
+import { HiOutlineViewList } from 'react-icons/hi';
+import { HiSortDescending } from 'react-icons/hi';
 import LoadingSpinner from "../common/LoadingSpinner";
 import CreateRoom from "./CreateRoom";
 import RoomCard from "./RoomCard";
 import Logo from "../common/Logo";
 import SuperRoomCard from "./SuperRoomCard";
-import { HiOutlineViewList } from "react-icons/hi";
+import toast from 'react-hot-toast';
+
+const fetchUserScore = async (roomId, userId) => {
+  const res = await fetch(`/api/scores/${roomId}/${userId}`);
+  if (!res.ok) throw new Error(`Failed to fetch score for room ${roomId}`);
+  return res.json();
+};
 
 const AvailableRooms = () => {
   const [loading, setLoading] = useState(false);
@@ -21,7 +29,6 @@ const AvailableRooms = () => {
   const saveDesignPreference = (simplifyDesign) => {
     localStorage.setItem('simplifyDesign', JSON.stringify(simplifyDesign));
   };
-
 
   const { data: user, isLoading: isUserLoading, error: userError } = useQuery({
     queryKey: ["authUser"],
@@ -53,8 +60,16 @@ const AvailableRooms = () => {
 
   const { isLoading: isRoomsLoading, error: roomsError, data: listRoomsQuery } = useQuery({
     queryKey: ["listRooms", page, pageSize, status],
-    queryFn: () => fetchRooms(page, status),
+    queryFn: () => fetchRooms(page),
     keepPreviousData: true,
+  });
+
+  const userScoreQueries = useQueries({
+    queries: (allRooms ?? []).map((room) => ({
+      queryKey: ["userScore", room._id, userId],
+      queryFn: () => fetchUserScore(room._id, userId),
+      enabled: !!userId,
+    })),
   });
 
   useEffect(() => {
@@ -69,7 +84,6 @@ const AvailableRooms = () => {
       setSimplifyDesign(JSON.parse(savedPreference));
     }
   }, []);
-
 
   const loadMore = () => {
     setPage(prevPage => prevPage + 1);
@@ -89,6 +103,31 @@ const AvailableRooms = () => {
     const newSimplifyDesign = !simplifyDesign;
     setSimplifyDesign(newSimplifyDesign);
     saveDesignPreference(newSimplifyDesign);
+  };
+
+  const sortRoomsWithoutScore = () => {
+    const roomsWithScores = (allRooms ?? []).map((room, index) => {
+      const userScoreQuery = userScoreQueries[index];
+      return {
+        ...room,
+        userScore: userScoreQuery?.data,
+        scoreLoading: userScoreQuery?.isLoading,
+      };
+    });
+  
+    const roomsWithoutScore = roomsWithScores
+      .filter(room => !room.userScore || !room.userScore.hasScore)
+      .sort((room1, room2) => {
+        return new Date(room1.createdAt) - new Date(room2.createdAt);
+      });
+  
+    const roomsWithScore = roomsWithScores.filter(room => room.userScore && room.userScore.hasScore);
+  
+    if (roomsWithoutScore.length === 0) {
+      toast.success('Todas las salas están hechas');
+    }
+  
+    setAllRooms([...roomsWithoutScore, ...roomsWithScore]);
   };
 
   return (
@@ -117,17 +156,17 @@ const AvailableRooms = () => {
               </div>
               <div className="ml-4">
                 <button onClick={toggleSimplifyDesign} className="btn btn-secondary">
-                {simplifyDesign ? (
-                  <>
-                    <HiMiniQueueList className="w-6 h-6" />
-                    <span className="sr-only">Mostrar diseño completo</span>
-                  </>
-                ) : (
-                  <>
-                    <HiOutlineViewList className="w-6 h-6" />
-                    <span className="sr-only">Simplificar diseño</span>
-                  </>
-                )}
+                  {simplifyDesign ? (
+                    <>
+                      <HiMiniQueueList className="w-6 h-6" />
+                      <span className="sr-only">Mostrar diseño completo</span>
+                    </>
+                  ) : (
+                    <>
+                      <HiOutlineViewList className="w-6 h-6" />
+                      <span className="sr-only">Simplificar diseño</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -143,6 +182,12 @@ const AvailableRooms = () => {
             </div>
           ) : (
             <>
+                <div className="flex flex-col items-center justify-center">
+                <button onClick={sortRoomsWithoutScore} className="btn btn-secondary">
+                  <HiCheckCircle /><HiSortDescending className=" w-6 h-6" /> Salas pendientes
+                  </button>
+                </div>
+
               <div className="flex flex-col items-center justify-center mt-10">
                 <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">
                   {status === 'waiting' ? 'Salas abiertas' : 'Salas cerradas'}
@@ -162,14 +207,9 @@ const AvailableRooms = () => {
               </div>
               {hasMore && (
                 <div className="flex justify-center mt-10 mb-40">
-                  <button onClick={handleLoadMoreClick} className="btn btn-primary">
-                    Cargar más
+                  <button onClick={handleLoadMoreClick} className="btn btn-primary" disabled={isLoadingMore}>
+                    {isLoadingMore ? 'Cargando más...' : 'Cargar más'}
                   </button>
-                </div>
-              )}
-              {isLoadingMore && (
-                <div className="flex justify-center mt-4">
-                  <LoadingSpinner />
                 </div>
               )}
             </>
