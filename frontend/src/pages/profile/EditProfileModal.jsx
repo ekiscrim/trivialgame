@@ -74,7 +74,7 @@ const EditProfileModal = ({ authUser }) => {
                 placeholder="Nombre de usuario"
                 className="flex-1 input border border-gray-700 rounded p-2 input-md"
                 defaultValue={authUser.username}
-                {...register("username", { required: true })}
+                {...register("username", { required: false })}
               />
               {errors.username && <span className="text-red-500">Este campo es requerido</span>}
             </div>
