@@ -385,7 +385,9 @@ export const resetPassword = async (req, res) => {
     const user = await User.findById(decoded.id);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    user.password = password;
+    // Hashing the new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
     await user.save();
 
     res.json({ message: 'Password reset successfully' });
