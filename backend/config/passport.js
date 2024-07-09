@@ -7,11 +7,18 @@ import User from "../models/user.model.js";
 dotenv.config();
 
 // Función para limpiar el nombre de usuario
-const cleanUsername = (displayName) => {
-  // Remover caracteres especiales y espacios, y convertir todo a minúsculas
-  return displayName.replace(/[^\w]/g, '').toLowerCase();
-};
+const cleanUsername = async (displayName) => {
+  let baseUsername = displayName.replace(/[^\w]/g, '').toLowerCase();
+  let username = baseUsername;
+  let counter = 1;
 
+  while (await User.findOne({ username })) {
+    username = `${baseUsername}${counter}`;
+    counter++;
+  }
+
+  return username;
+};
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
