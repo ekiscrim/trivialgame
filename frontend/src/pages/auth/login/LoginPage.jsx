@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { FaGoogle, FaUser } from "react-icons/fa";
 import Logo from "../../../components/common/Logo";
+import ForgotPasswordModal from "../../../components/auth/ForgotPasswordModal";
 import { MdPassword } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -10,6 +11,7 @@ import toast from "react-hot-toast";
 const LoginPage = () => {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
   const queryClient = useQueryClient();
+  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
 
   const { mutate: loginMutation, isError, error } = useMutation({
     mutationFn: async ({ username, password }) => {
@@ -123,7 +125,20 @@ const LoginPage = () => {
             <button className='btn rounded-full btn-primary text-white btn-outline w-full'>Crear cuenta</button>
           </Link>
         </div>
+        <div className='flex flex-col gap-2 mt-4'>
+          <p className='text-primary text-lg'>{"¿Olvidaste"} tu contraseña?</p>
+          <button 
+            className='btn rounded-full btn-primary text-white btn-outline w-full mb-20'
+            onClick={() => setIsForgotPasswordModalOpen(true)}
+          >
+            Restablecer contraseña
+          </button>
+        </div>
       </div>
+      <ForgotPasswordModal
+        isOpen={isForgotPasswordModalOpen}
+        onClose={() => setIsForgotPasswordModalOpen(false)}
+      />
     </div>
   );
 };

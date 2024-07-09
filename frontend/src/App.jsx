@@ -29,6 +29,7 @@ import ContactUs from './pages/footer/ContactUs';
 import FAQ from './pages/footer/FAQ';
 import TermsOfService from './pages/footer/TermsOfService';
 import CookiesPolicy from './pages/footer/CookiesPolicy';
+import ResetPasswordPage from './pages/resetpassword/ResetPasswordPage';
 
 Modal.setAppElement('#root');
 
@@ -123,6 +124,7 @@ function App() {
           <Route path='/privacy-policy' element={<PrivacyPolicy />} />
           <Route path='/terms-of-service' element={<TermsOfService />} />
           <Route path='/cookies-policy' element={<CookiesPolicy />} />
+          <Route path='/reset-password' element={<ResetPasswordPage />} />
           <Route path='/admin' element={<ProtectedRoute element={AdminPage} authUser={authUserQuery} adminOnly />} />
         </Routes>
         <ScrollToTop style={{ marginBottom: "40px", paddingLeft: "6px", right: "10px" }} smooth />

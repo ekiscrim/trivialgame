@@ -345,3 +345,61 @@ export const googleAuthCallback = [
       res.redirect('/');  // Redirige a la página principal
   }
 ];
+
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email: email.email });
+    if (!user) return res.status(404).json({ error: 'No user found with this email' });
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    const url = `${process.env.BASE_URL}/reset-password?token=${token}`;
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_SENDER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    await transporter.sendMail({
+      to: email.email,
+      subject: 'Reestablecer Contraseña',
+      html: `Haz click <a href="${url}">aquí</a> para crear tu nueva contraseña`,
+    });
+
+    res.json({ message: 'Email sent' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    user.password = password;
+    await user.save();
+
+    res.json({ message: 'Password reset successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+export const verifyToken = (req, res) => {
+  const { token } = req.body;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.json({ valid: true });
+  } catch (error) {
+    res.status(401).json({ valid: false, error: 'Invalid token' });
+  }
+};
