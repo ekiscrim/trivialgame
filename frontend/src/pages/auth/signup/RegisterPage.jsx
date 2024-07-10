@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { FaGoogle } from 'react-icons/fa';
+import Logo2 from "../../../components/common/Logo2";
 
 const reservedUsernames = ['admin', 'root', 'all', 'system'];
 
@@ -80,12 +81,11 @@ const RegisterPage = () => {
   return (
     <div className='max-w-screen-xl mx-auto flex h-screen px-10'>
       <div className='flex-1 hidden lg:flex items-center justify-center'>
-        <Logo className=' lg:w-2/3 fill-white' />
+        <Logo2 className=' lg:w-2/3 ' />
       </div>
-      <div className='flex-1 flex flex-col justify-center items-center'>
+      <div className='flex-1 flex flex-col justify-center items-center -mt-20'>
         <form className='lg:w-2/3  mx-auto md:mx-20 flex gap-4 flex-col' onSubmit={handleSubmit(onSubmit)}>
-          <Logo className='w-24 lg:hidden fill-white' />
-          <h1 className="text-purple-500 text-4xl font-bold">VioQUIZ</h1>
+          <Logo2 className='w-24 lg:hidden ' />
           <h1 className='text-3xl italic text-primary'>Regístrate para participar.</h1>
 
           <div className='flex gap-4 flex-wrap'>

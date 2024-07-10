@@ -2,178 +2,41 @@ const Logo = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     xmlnsXlink="http://www.w3.org/1999/xlink"
-    viewBox="0 0 500 500"
+    viewBox="0 0 476.9 372.5"
     width={props.width}
     height={props.height}
     {...props}
   >
-    <defs>
-      <linearGradient id="a">
-        <stop
-          offset={0.066}
-          style={{
-            stopColor: "#db49d6",
-          }}
-        />
-        <stop
-          offset={0.962}
-          style={{
-            stopColor: "#781375",
-          }}
-        />
-      </linearGradient>
-      <linearGradient
-        xlinkHref="#a"
-        id="b"
-        x1={136.708}
-        x2={136.708}
-        y1={19.906}
-        y2={254.683}
-        gradientTransform="translate(-11 -5)"
-        gradientUnits="userSpaceOnUse"
-      />
-      <linearGradient
-        xlinkHref="#a"
-        id="c"
-        x1={136.708}
-        x2={136.708}
-        y1={19.906}
-        y2={254.683}
-        gradientTransform="translate(236.17 -6.186)"
-        gradientUnits="userSpaceOnUse"
-      />
-      <linearGradient
-        xlinkHref="#a"
-        id="d"
-        x1={136.708}
-        x2={136.708}
-        y1={19.906}
-        y2={254.683}
-        gradientTransform="translate(-10.245 237.413)"
-        gradientUnits="userSpaceOnUse"
-      />
-      <linearGradient
-        xlinkHref="#a"
-        id="e"
-        x1={136.708}
-        x2={136.708}
-        y1={19.906}
-        y2={254.683}
-        gradientTransform="translate(236.144 236.584)"
-        gradientUnits="userSpaceOnUse"
-      />
-    </defs>
-    <rect
-
-      style={{
-        fillRule: "nonzero",
-        fill: "url(#b)",
-        strokeMiterlimit: 10.26,
-        strokeLinecap: "round",
-        stroke: "url(#gradient-1)",
-        strokeLinejoin: "round",
-        paintOrder: "stroke",
-        strokeOpacity: 0,
-        strokeWidth: 0,
-      }}
-    />
-    {/*<rect
-      width={234.777}
-      height={234.777}
-      x={255.49}
-      y={13.72}
-      rx={17}
-      ry={17}
-      style={{
-        fillRule: "nonzero",
-        strokeMiterlimit: 10.26,
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-        paintOrder: "stroke",
-        strokeOpacity: 0,
-        strokeWidth: 0,
-        fill: "url(#c)",
-        stroke: "url(#gradient-2)",
-      }}
-    /> */}
-    <rect
-
-      style={{
-        fillRule: "nonzero",
-        strokeMiterlimit: 10.26,
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-        paintOrder: "stroke",
-        strokeOpacity: 0,
-        strokeWidth: 0,
-        fill: "url(#d)",
-        stroke: "url(#gradient-3)",
-      }}
-    />
-    <rect
-
-      style={{
-        fillRule: "nonzero",
-        strokeMiterlimit: 10.26,
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-        paintOrder: "stroke",
-        strokeOpacity: 0,
-        strokeWidth: 0,
-        fill: "url(#e)",
-        stroke: "url(#gradient-4)",
-      }}
-    />
-    <path
-      
-      d="M782.167 262h12.666l.08 35.96a10.68 10.68 0 0 1 2.128 2.128l35.959.079v12.666l-35.96.08a10.68 10.68 0 0 1-2.128 2.128L794.833 351h-12.666l-.08-35.96a10.68 10.68 0 0 1-2.128-2.128L744 312.833v-12.666l35.96-.08a10.68 10.68 0 0 1 2.128-2.128Zm6.333 44.5h0"
-      style={{
-        paintOrder: "fill",
-        fill: "transparent",
-        stroke: "#fff",
-        strokeWidth: "15.5357px",
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-      }}
-      transform="matrix(1.3861 1.24804 -1.1639 1.29265 -612.164 -1244.16)"
-    />
-    <path
-      
-      d="M782.167 262h12.666l.08 35.96a10.68 10.68 0 0 1 2.128 2.128l35.959.079v12.666l-35.96.08a10.68 10.68 0 0 1-2.128 2.128L794.833 351h-12.666l-.08-35.96a10.68 10.68 0 0 1-2.128-2.128L744 312.833v-12.666l35.96-.08a10.68 10.68 0 0 1 2.128-2.128Zm6.333 44.5h0"
-      style={{
-        paintOrder: "fill",
-        fill: "transparent",
-        stroke: "#fff",
-        strokeWidth: "15.5357px",
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-      }}
-      transform="matrix(1.3861 1.24804 -1.1639 1.29265 -605.624 -1008.729)"
-    />
-    <path
-      
-      d="M782.167 262h12.666l.08 35.96a10.68 10.68 0 0 1 2.128 2.128l35.959.079v12.666l-35.96.08a10.68 10.68 0 0 1-2.128 2.128L794.833 351h-12.666l-.08-35.96a10.68 10.68 0 0 1-2.128-2.128L744 312.833v-12.666l35.96-.08a10.68 10.68 0 0 1 2.128-2.128Zm6.333 44.5h0"
-      style={{
-        paintOrder: "fill",
-        fill: "transparent",
-        stroke: "#fff",
-        strokeWidth: "15.5357px",
-        strokeLinecap: "round",
-        strokeLinejoin: "round",
-      }}
-      transform="matrix(1.3861 1.24804 -1.1639 1.29265 -359.219 -1007.208)"
-    />
-    <path
-      d="m293.438 128.492 58.275 68.871L457.666 84.788l-18.543-14.569-83.437 88.737-52.977-46.355-9.271 15.891Z"
-      style={{
-        fill: "transparent",
-        stroke: "#fff",
-        strokeLinejoin: "round",
-        paintOrder: "fill",
-        strokeWidth: 31,
-        strokeDashoffset: "-3px",
-      }}
-    />
+    <style type="text/css">
+      {`
+        .st0{fill:#8F509A;}
+        .st1{fill:none;stroke:#8F509A;stroke-miterlimit:10;}
+        .st2{stroke:#8F509A;stroke-width:5;stroke-miterlimit:10;}
+        .st3{fill:none;stroke:#8F509A;stroke-width:22;stroke-miterlimit:2;}
+        .st4{fill:#FFFFFF;}
+        .st5{fill:#EFC822;}
+        .st6{stroke:#8F509A;stroke-width:6.386;stroke-miterlimit:10;}
+        .st7{fill:#604193;}
+        .st8{fill:#25204A;}
+        .st9{fill:#FFFFFF;}
+      `}
+    </style>
+    <g>
+      <g>
+        <path className="st9" d="M465.4,97.5L465.4,97.5c-5.8-26.9-22.4-50.6-46.6-66.7c-24.2-16.1-52.4-22.1-79.5-17
+          c-17.9,3.4-34.3,11.4-48,23.2l2.6-16.2L158.8,56.6l-7.6,57.2L105,52.7L7.2,130.7l168.2,216.5l72.4-57.8l31.8,72.5l113.3-49.7
+          l-38.5-87.7c2.9,0.3,5.9,0.4,8.9,0.4c6.3,0,12.7-0.6,18.8-1.8c27.6-5.2,51.6-21.3,67.7-45.6C465.7,153.3,471.3,124.9,465.4,97.5z
+          M228.8,163.8l-9.6,60.6v0l-6.1,38.7l-30.7,24.5L65.8,137.7l31.6-25.2l82,108.4L196.7,90l45.6-12L228.8,163.8z M301.1,306.5
+          l-38.5-87.6l-8.8-20.1l12.9-5.7l13.6-6l9.7-4.2l9.2,21l38.1,86.7L301.1,306.5z M414.6,154.3c-9.7,14.7-24.1,24.5-40.4,27.5
+          c-3.6,0.7-7.3,1-11,1c-10.4,0-20.8-2.6-30.6-7.8c-2.3-1.2-4.6-2.5-6.8-4c-14.6-9.7-24.1-23-28.1-37.5c-1.4-5-2.1-10.2-2.1-15.5
+          c0-12,3.6-24.2,11.1-35.4c9.7-14.7,24.1-24.5,40.4-27.5c16.2-3.1,33.5,0.8,48.5,10.7c15,10,25.2,24.4,28.7,40.5
+          C427.8,122.6,424.4,139.6,414.6,154.3z"/>
+      </g>
+      <path className="st9" d="M384.9,134.6c-5.1,7.7-12.2,13-19.9,14.9c-7.6,1.9-15.5,0.5-22.3-4.1c-6.9-4.5-11.2-11.1-12.4-19
+        c-1.2-7.9,1-16.5,6-24.2c5.1-7.7,12.2-13,19.9-14.9c2.3-0.6,4.5-0.8,6.7-0.8c5.4,0,10.7,1.6,15.6,4.9
+        C392.6,100.8,395.3,119,384.9,134.6z"/>
+    </g>
   </svg>
-)
-export default Logo
+);
+
+export default Logo;

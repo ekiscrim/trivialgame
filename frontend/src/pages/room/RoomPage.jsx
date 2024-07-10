@@ -19,20 +19,6 @@ const RoomPage = () => {
   const navigate = useNavigate();
   const urlDeLaSala = String(window.location);
 
-  useEffect(() => {
-    const handleBackNavigation = (event) => {
-      event.preventDefault();
-      window.history.forward();
-    };
-
-    window.history.pushState(null, null, window.location.pathname);
-    window.addEventListener('popstate', handleBackNavigation);
-
-    return () => {
-      window.removeEventListener('popstate', handleBackNavigation);
-    };
-  }, []);
-
   const fetchRoomCreator = async (roomId) => {
     const response = await fetch(`/api/rooms/${roomId}/creator`);
     if (!response.ok) throw new Error('Failed to fetch room creator');

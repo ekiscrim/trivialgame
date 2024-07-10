@@ -139,23 +139,27 @@ const AvailableRooms = () => {
       ) : (
         <div>
           <div className="flex flex-col items-center justify-center">
-            <div className="flex items-center justify-center -ml-2">
-              <Logo className='w-12 sm:hidden fill-white' />
+            <div className="flex items-center justify-center -ml-2 mt-2">
+              <Logo className='w-12 sm:hidden fill-white mr-2' />
               <div className="flex flex-col items-center justify-center text-center">
                 <span className={`text-white text-3xl font-bold sm:hidden`}>VioQUIZ</span>
                 <span className={`text-white text-xs font-bold text-end italic sm:hidden`}>Desafía tu mente, <br />conquista lo trivial.</span>
               </div>
             </div>
             <div className="mt-4 flex items-center justify-center">
-              <CreateRoom />
               <div className="ml-4">
                 <select onChange={handleStatusChange} value={status} className="select select-bordered">
                   <option value="waiting">Salas abiertas</option>
                   <option value="finished">Salas cerradas</option>
                 </select>
               </div>
+              <div className="flex flex-col items-center justify-center ml-4">
+                <button onClick={sortRoomsWithoutScore} className="btn btn-primary">
+                  <HiSortDescending className=" w-6 h-6" />
+                  </button>
+                </div>
               <div className="ml-4">
-                <button onClick={toggleSimplifyDesign} className="btn btn-secondary">
+                <button onClick={toggleSimplifyDesign} className="btn btn-primary">
                   {simplifyDesign ? (
                     <>
                       <HiMiniQueueList className="w-6 h-6" />
@@ -182,11 +186,7 @@ const AvailableRooms = () => {
             </div>
           ) : (
             <>
-                <div className="flex flex-col items-center justify-center">
-                <button onClick={sortRoomsWithoutScore} className="btn btn-secondary">
-                  <HiCheckCircle /><HiSortDescending className=" w-6 h-6" /> Salas pendientes
-                  </button>
-                </div>
+
 
               <div className="flex flex-col items-center justify-center mt-10">
                 <h1 className="text-3xl font-bold text-center mb-8 uppercase text-cyan-300 shadow-violet-800 shadow-lg">

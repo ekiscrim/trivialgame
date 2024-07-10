@@ -7,6 +7,7 @@ import ForgotPasswordModal from "../../../components/auth/ForgotPasswordModal";
 import { MdPassword } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import Logo2 from "../../../components/common/Logo2";
 
 const LoginPage = () => {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
@@ -71,12 +72,11 @@ const LoginPage = () => {
   return (
     <div className='max-w-screen-xl mx-auto flex h-screen'>
       <div className='flex-1 hidden lg:flex items-center  justify-center'>
-        <Logo className=' lg:w-2/3 fill-white' />
+        <Logo2 className='lg:w-2/3' />
       </div>
       <div className='flex-1 flex flex-col justify-center items-center'>
-        <form className='flex gap-4 flex-col' onSubmit={handleSubmit(onSubmit)}>
-          <Logo className='w-24 lg:hidden fill-white' />
-          <h1 className="text-purple-500 text-4xl font-extrabold">VioQUIZ</h1>
+        <form className='flex gap-2 flex-col' onSubmit={handleSubmit(onSubmit)}>
+          <Logo2 className='w-24 lg:hidden mt-10' />
           <h1 className='text-3xl italic text-primary'>{"Desafía"} tu mente</h1>
           <h1 className='text-2xl italic text-primary -mt-4 ml-7'>{"Conquista"} lo trivial.</h1>
           <label className='input input-bordered rounded flex items-center gap-2'>

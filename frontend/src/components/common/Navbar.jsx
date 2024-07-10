@@ -8,6 +8,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import Logo from "../common/Logo";
 import LoadingSpinner from "./LoadingSpinner";
+import { HiOutlinePencilAlt, HiPencilAlt } from "react-icons/hi";
+import CreateRoom from "../room/CreateRoom";
 
 const Navbar = ({ authUser, device }) => {
   const queryClient = useQueryClient();
@@ -70,14 +72,15 @@ const Navbar = ({ authUser, device }) => {
       className={`w-full p-3 bottom-0 z-40 ${device === "Mobile" ? "fixed bg-purple-700 bg-opacity-60 backdrop-blur-md" : "fixed bg-purple-700 top-0 max-h-16"}`}
     >
       <div className="max-w-6xl mx-auto flex justify-between items-center">
-        <div className={`flex items-center gap-4 ${device === "Mobile" ? "sm:gap-2" : ""}`}>
+        <div className={`flex items-center ${device === "Mobile" ? "" : ""}`}>
           <Link to="/" className="flex items-center">
-            <Logo width={40} height={40} />
+            
             <span className={`text-white text-3xl font-bold hidden ${device === "Mobile" ? "" : "sm:flex"} ml-2`}>
-              VioQUIZ
+              
             </span>
           </Link>
-          <ul className={`flex items-center gap-4 ${device === "Mobile" ? "gap-8" : ""}`}>
+          <ul className={`flex items-center ${device === "Mobile" ? (authUserData && authUserData.role === "admin" ? "gap-6" : "gap-7") : "gap-4"}`}>
+
             <li>
               <div>
                 <Link
@@ -85,10 +88,10 @@ const Navbar = ({ authUser, device }) => {
                   className={`${device === "Mobile" ? "sm:flex sm:flex-col sm:text-center sm:items-center gap-2" : "sm:flex sm:flex-col sm:text-center sm:items-center gap-2"} text-white hover:text-violet-200 transition-all`}
                 >
                   <div className="flex items-center justify-center">
-                    <MdHomeFilled className={`${device === "Mobile" ? "w-8 h-8" : "w-7 h-7"}`} />
-                    <span className="hidden md:block ml-2">Inicio</span>
+                    <Logo className={`${device === "Mobile" ? "w-12 h-12" : "w-10 h-10"}`} />
+                    <span className="hidden md:block ml-2"></span>
                   </div>
-                  <span className="block md:hidden text-xs ml-1">Inicio</span>
+                  <span className="block md:hidden text-xs ml-1"></span>
                 </Link>
               </div>
             </li>
@@ -122,6 +125,11 @@ const Navbar = ({ authUser, device }) => {
                 </Link>
               </div>
             </li>
+
+            <li>
+                  <CreateRoom device />
+            </li>
+
             <li>
               <div>
                 {authUserData && authUserData.role === "admin" && (
