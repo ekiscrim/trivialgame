@@ -89,7 +89,7 @@ const RoomPage = () => {
       return res.json();
     },
     onSuccess: () => {
-      toast.success("Te has unido a la sala");
+      toast.success("Te has unido a la sala");   
     }
   });
 

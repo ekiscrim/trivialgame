@@ -167,9 +167,13 @@ const CreateRoom = ({ device }) => {
 
   useEffect(() => {
     if (createdRoomId) {
-      navigate(`/rooms/${createdRoomId}`);
+      const timeoutId = setTimeout(() => {
+        navigate(`/rooms/${createdRoomId}`);
+      }, 500); // 500 ms de retraso
+  
+      return () => clearTimeout(timeoutId); // Limpiar el timeout si el componente se desmonta
     }
-  }, [createdRoomId, navigate]);
+  }, [createdRoomId]);
 
   useEffect(() => {
     if (listCategoriesQuery && listCategoriesQuery.length > 0) {
