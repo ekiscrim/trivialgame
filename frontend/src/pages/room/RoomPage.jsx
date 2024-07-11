@@ -78,7 +78,7 @@ const RoomPage = () => {
     return (!userInRoom || !userScoreData?.hasScore) && (roomData.room.status === 'waiting' && timeRemaining > 0);
   };
 
-  const { mutate, isError, isPending } = useMutation({
+  const { mutateAsync, isError, isPending } = useMutation({
     mutationFn: async ({ userId, roomId }) => {
       const res = await fetch(`/api/rooms/${roomId}/joinRoom`, {
         method: "POST",
@@ -93,18 +93,21 @@ const RoomPage = () => {
     }
   });
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (roomData && roomData.room && roomData.room.categories) {
       if (userScoreData && userScoreData.length > 0) {
         alert("Ya has participado en esta sala");
         return;
       }
-      mutate({ userId: userId._id, roomId: roomData.room._id });
-      const shuffledCategories = shuffleArray(roomData.room.categories);
-      navigate(`/room/${id}/questions/${shuffledCategories.join(',')}`);
+      try {
+        await mutateAsync({ userId: userId._id, roomId: roomData.room._id });
+        const shuffledCategories = shuffleArray(roomData.room.categories);
+        navigate(`/room/${id}/questions/${shuffledCategories.join(',')}`);
+      } catch (error) {
+        console.error("Error joining room:", error);
+      }
     }
   };
-
   const shuffleArray = (array) => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {

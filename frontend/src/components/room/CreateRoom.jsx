@@ -193,7 +193,6 @@ const CreateRoom = ({ device }) => {
 
   return (
     <div className="">
-      <Toaster />
       <div className="relative">
         <button
           onClick={toggleModal}
