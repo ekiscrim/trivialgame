@@ -143,7 +143,7 @@ const AvailableRooms = () => {
           return room1.closeTime - room2.closeTime;
         });
   
-      const roomsWithScore = roomsWithScores.filter(room => room.userScore || room.userScore.hasScore);
+      const roomsWithScore = roomsWithScores.filter(room => room.userScore);
   
       if (roomsWithoutScore.length === 0) {
         toast.success('Todas las salas están hechas');
