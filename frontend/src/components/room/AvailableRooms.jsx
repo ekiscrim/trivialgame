@@ -124,7 +124,7 @@ const AvailableRooms = () => {
 
 
   const sortRoomsWithoutScore = async () => {
-    setLoading(true); // Opcional: Mostrar un spinner de carga
+    //setLoading(true); // Opcional: Mostrar un spinner de carga
     try {
       const allLoadedRooms = await loadAllPages(); // Cargar todas las páginas
       const roomsWithScores = (allLoadedRooms ?? []).map((room, index) => {
@@ -138,8 +138,8 @@ const AvailableRooms = () => {
   
       // Filtramos las salas que no tienen score
       const roomsWithoutScore = roomsWithScores
-        .filter(room => room.userScore === undefined) // Verificar si userScore es undefined
-        .sort((room1, room2) => new Date(room1.createdAt) - new Date(room2.createdAt));
+        .filter(room => room.userScore === undefined || room.userScore.hasScore === false) // Verificar si userScore es undefined
+        //.sort((room1, room2) => new Date(room1.createdAt) - new Date(room2.createdAt));
   
       // Filtramos las salas que tienen score (incluyendo score 0)
       const roomsWithScore = roomsWithScores
@@ -153,7 +153,7 @@ const AvailableRooms = () => {
     } catch (error) {
       toast.error('Error al cargar todas las salas');
     } finally {
-      setLoading(false); // Ocultar el spinner de carga
+      //setLoading(false); // Ocultar el spinner de carga
     }
   };
 
