@@ -124,7 +124,7 @@ const AvailableRooms = () => {
 
 
   const sortRoomsWithoutScore = async () => {
-    setLoading(true); // Mostrar un spinner de carga mientras se ejecuta la función
+    //setLoading(true); // Mostrar un spinner de carga mientras se ejecuta la función
     try {
       const allLoadedRooms = await loadAllPages(); // Cargar todas las páginas de salas
   
@@ -138,13 +138,13 @@ const AvailableRooms = () => {
         };
       });
   
-      // Filtrar las salas sin score y ordenarlas por closeTime
+      // Filtrar las salas sin score (donde userScore es undefined, null, o el score es 0)
       const roomsWithoutScore = roomsWithScores
-        .filter(room => !room.userScore || !room.userScore.hasScore)
+        .filter(room => !room.userScore || !room.userScore.hasScore || room.userScore.score === 0)
         .sort((room1, room2) => room1.closeTime - room2.closeTime);
   
-      // Filtrar las salas con score
-      const roomsWithScore = roomsWithScores.filter(room => room.userScore && room.userScore.hasScore);
+      // Filtrar las salas con score (donde el score es mayor que 0)
+      const roomsWithScore = roomsWithScores.filter(room => room.userScore && room.userScore.hasScore && room.userScore.score > 0);
   
       if (roomsWithoutScore.length === 0) {
         toast.success('Todas las salas están hechas');
@@ -155,9 +155,17 @@ const AvailableRooms = () => {
     } catch (error) {
       toast.error('Error al cargar todas las salas');
     } finally {
-      setLoading(false); // Ocultar el spinner de carga
+      //setLoading(false); // Ocultar el spinner de carga
     }
   };
+  
+  // En el JSX:
+  <div className="flex flex-col items-center justify-center ml-4">
+    <button onClick={sortRoomsWithoutScore} className="btn btn-primary">
+      <HiSortDescending className=" w-6 h-6" />
+    </button>
+  </div>
+  
 
   return (
     <>
