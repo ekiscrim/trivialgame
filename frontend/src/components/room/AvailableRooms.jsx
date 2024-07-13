@@ -173,7 +173,6 @@ const AvailableRooms = () => {
       setLoading(false); // Ocultar el spinner de carga
     }
   };
-  
   // En el JSX:
   <div className="flex flex-col items-center justify-center ml-4">
     <button onClick={sortRoomsWithoutScore} className="btn btn-primary">
