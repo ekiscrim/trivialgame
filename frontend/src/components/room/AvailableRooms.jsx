@@ -124,10 +124,9 @@ const AvailableRooms = () => {
 
 
   const sortRoomsWithoutScore = async () => {
-    setLoading(true); // Mostrar un spinner de carga mientras se ejecuta la función
+    setLoading(true); // Opcional: Mostrar un spinner de carga
     try {
-      const allLoadedRooms = await loadAllPages(); // Cargar todas las páginas de salas
-  
+      const allLoadedRooms = await loadAllPages(); // Cargar todas las páginas
       const roomsWithScores = (allLoadedRooms ?? []).map((room, index) => {
         const userScoreQuery = userScoreQueries[index];
         return {
@@ -138,19 +137,18 @@ const AvailableRooms = () => {
         };
       });
   
-      // Filtrar las salas sin score y ordenarlas por closeTime
       const roomsWithoutScore = roomsWithScores
-        .filter(room => !room.userScore || room.userScore.score === null || room.userScore.score === undefined)
-        .sort((room1, room2) => room1.closeTime - room2.closeTime);
+        .filter(room => !room.userScore || !room.userScore.hasScore)
+        .sort((room1, room2) => {
+          return room1.closeTime - room2.closeTime;
+        });
   
-      // Filtrar las salas con score
-      const roomsWithScore = roomsWithScores.filter(room => room.userScore && room.userScore.score !== null && room.userScore.score !== undefined);
+      const roomsWithScore = roomsWithScores.filter(room => room.userScore && room.userScore.hasScore);
   
       if (roomsWithoutScore.length === 0) {
         toast.success('Todas las salas están hechas');
       }
   
-      // Combinar las salas sin score primero y luego las con score
       setAllRooms([...roomsWithoutScore, ...roomsWithScore]);
     } catch (error) {
       toast.error('Error al cargar todas las salas');
