@@ -138,14 +138,12 @@ const AvailableRooms = () => {
   
       // Filtramos las salas que no tienen score
       const roomsWithoutScore = roomsWithScores
-        .filter(room => !room.userScore || !room.userScore.hasScore);
+        .filter(room => !room.userScore || !room.userScore.hasScore)
+        .sort((room1, room2) => new Date(room1.createdAt) - new Date(room2.createdAt));
   
       // Filtramos las salas que tienen score (incluyendo score 0)
       const roomsWithScore = roomsWithScores
         .filter(room => room.userScore && room.userScore.hasScore);
-  
-      // Ordenamos las salas sin score por fecha de creación
-      roomsWithoutScore.sort((room1, room2) => new Date(room1.createdAt) - new Date(room2.createdAt));
   
       if (roomsWithoutScore.length === 0) {
         toast.success('Todas las salas están hechas');
