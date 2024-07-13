@@ -138,13 +138,14 @@ const AvailableRooms = () => {
   
       // Filtramos las salas que no tienen score
       const roomsWithoutScore = roomsWithScores
-        .filter(room => !room.userScore || !room.userScore.hasScore)
-        .sort((room1, room2) => new Date(room1.createdAt) - new Date(room2.createdAt));
+        .filter(room => !room.userScore || !room.userScore.hasScore);
   
       // Filtramos las salas que tienen score (incluyendo score 0)
       const roomsWithScore = roomsWithScores
-        .filter(room => room.userScore && room.userScore.hasScore)
-        .sort((room1, room2) => new Date(room1.createdAt) - new Date(room2.createdAt));
+        .filter(room => room.userScore && room.userScore.hasScore);
+  
+      // Ordenamos las salas sin score por fecha de creación
+      roomsWithoutScore.sort((room1, room2) => new Date(room1.createdAt) - new Date(room2.createdAt));
   
       if (roomsWithoutScore.length === 0) {
         toast.success('Todas las salas están hechas');
@@ -157,7 +158,7 @@ const AvailableRooms = () => {
       setLoading(false); // Ocultar el spinner de carga
     }
   };
-  // En el JSX:
+
   <div className="flex flex-col items-center justify-center ml-4">
     <button onClick={sortRoomsWithoutScore} className="btn btn-primary">
       <HiSortDescending className=" w-6 h-6" />
