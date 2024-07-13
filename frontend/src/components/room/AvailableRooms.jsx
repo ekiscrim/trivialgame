@@ -124,7 +124,7 @@ const AvailableRooms = () => {
 
 
   const sortRoomsWithoutScore = async () => {
-    //setLoading(true); // Mostrar un spinner de carga mientras se ejecuta la función
+    setLoading(true); // Mostrar un spinner de carga mientras se ejecuta la función
     try {
       const allLoadedRooms = await loadAllPages(); // Cargar todas las páginas de salas
   
@@ -138,13 +138,13 @@ const AvailableRooms = () => {
         };
       });
   
-      // Filtrar las salas sin score (donde userScore es undefined, null, o el score es 0)
+      // Filtrar las salas sin score y ordenarlas por closeTime
       const roomsWithoutScore = roomsWithScores
-        .filter(room => !room.userScore || !room.userScore.hasScore || room.userScore.score === 0)
+        .filter(room => !room.userScore || room.userScore.score === null || room.userScore.score === undefined)
         .sort((room1, room2) => room1.closeTime - room2.closeTime);
   
-      // Filtrar las salas con score (donde el score es mayor que 0)
-      const roomsWithScore = roomsWithScores.filter(room => room.userScore && room.userScore.hasScore && room.userScore.score > 0);
+      // Filtrar las salas con score
+      const roomsWithScore = roomsWithScores.filter(room => room.userScore && room.userScore.score !== null && room.userScore.score !== undefined);
   
       if (roomsWithoutScore.length === 0) {
         toast.success('Todas las salas están hechas');
@@ -155,7 +155,7 @@ const AvailableRooms = () => {
     } catch (error) {
       toast.error('Error al cargar todas las salas');
     } finally {
-      //setLoading(false); // Ocultar el spinner de carga
+      setLoading(false); // Ocultar el spinner de carga
     }
   };
   
