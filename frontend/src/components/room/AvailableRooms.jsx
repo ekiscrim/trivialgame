@@ -124,7 +124,7 @@ const AvailableRooms = () => {
 
 
   const sortRoomsWithoutScore = async () => {
-    //setLoading(true); // Opcional: Mostrar un spinner de carga
+    setLoading(true); // Opcional: Mostrar un spinner de carga
     try {
       const allLoadedRooms = await loadAllPages(); // Cargar todas las páginas
   
@@ -134,14 +134,13 @@ const AvailableRooms = () => {
           ...room,
           userScore: userScoreQuery?.data,
           scoreLoading: userScoreQuery?.isLoading,
+          closeTime: new Date(room.startTime).getTime() + room.duration, // Calcular closeTime
         };
       });
   
       const roomsWithoutScore = roomsWithScores
         .filter(room => !room.userScore || !room.userScore.hasScore)
-        .sort((room1, room2) => {
-          return new Date(room1.closeTime) - new Date(room2.closeTime);
-        });
+        .sort((room1, room2) => room1.closeTime - room2.closeTime); // Ordenar por closeTime
   
       const roomsWithScore = roomsWithScores.filter(room => room.userScore && room.userScore.hasScore);
   
@@ -153,7 +152,7 @@ const AvailableRooms = () => {
     } catch (error) {
       toast.error('Error al cargar todas las salas');
     } finally {
-      //setLoading(false); // Ocultar el spinner de carga
+      setLoading(false); // Ocultar el spinner de carga
     }
   };
 
