@@ -123,6 +123,24 @@ const AvailableRooms = () => {
   };
 
 
+  const loadAllPages = async (currentPage = 1, accumulatedRooms = []) => {
+    try {
+      const res = await fetch(`/api/rooms/list?page=${currentPage}&pageSize=${pageSize}&status=${status}`);
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error || "Algo fue mal");
+  
+      const newRooms = accumulatedRooms.concat(data.rooms);
+      if (data.hasMore) {
+        return loadAllPages(currentPage + 1, newRooms);
+      } else {
+        return newRooms;
+      }
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
+
+
   const sortRoomsWithoutScore = async () => {
     setLoading(true); // Opcional: Mostrar un spinner de carga
     try {
@@ -133,17 +151,16 @@ const AvailableRooms = () => {
           ...room,
           userScore: userScoreQuery?.data,
           scoreLoading: userScoreQuery?.isLoading,
-          closeTime: new Date(room.startTime).getTime() + room.duration, // Calcular closeTime
         };
       });
   
       const roomsWithoutScore = roomsWithScores
         .filter(room => !room.userScore || !room.userScore.hasScore)
         .sort((room1, room2) => {
-          return room1.closeTime - room2.closeTime;
+          return new Date(room1.createdAt) - new Date(room2.createdAt);
         });
   
-      const roomsWithScore = roomsWithScores.filter(room => room.userScore);
+      const roomsWithScore = roomsWithScores.filter(room => room.userScore && room.userScore.hasScore);
   
       if (roomsWithoutScore.length === 0) {
         toast.success('Todas las salas están hechas');
