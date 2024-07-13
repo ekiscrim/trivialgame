@@ -138,7 +138,7 @@ const AvailableRooms = () => {
   
       // Filtramos las salas que no tienen score
       const roomsWithoutScore = roomsWithScores
-        .filter(room => !room.userScore || !room.userScore.hasScore)
+        .filter(room => room.userScore === undefined) // Verificar si userScore es undefined
         .sort((room1, room2) => new Date(room1.createdAt) - new Date(room2.createdAt));
   
       // Filtramos las salas que tienen score (incluyendo score 0)
