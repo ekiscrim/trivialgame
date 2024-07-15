@@ -2,39 +2,74 @@ import Question from "../models/question.model.js";
 import Room from "../models/room.model.js";
 import User from "../models/user.model.js";
 import sendRoomResultsNotifications from "../lib/utils/sendResultsNotifications.js";
+import Score from "../models/score.model.js";
 
 export const listRooms = async (req, res) => {
-    const page = parseInt(req.query.page) || 1; // Obtener el número de página desde la consulta o establecerlo en 1 por defecto
-    const pageSize = parseInt(req.query.pageSize) || 10; // Obtener el tamaño de página desde la consulta o establecerlo en 10 por defecto
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 10;
     const status = req.query.status || 'waiting';
+    const userId = req.query.userId || null;
+  
     try {
-        const totalCount = await Room.countDocuments({ status }); // Obtener el número total de salas
-        const totalPages = Math.ceil(totalCount / pageSize); // Calcular el número total de páginas
-        const skip = (page - 1) * pageSize; // Calcular el índice de inicio para la consulta
-        
-        const rooms = await Room.find({ status })
-            .sort([["createdAt", -1]])
-            .skip(skip) // Saltar las salas anteriores en la página actual
-            .limit(pageSize); // Limitar el número de salas por página
-
-        if (!rooms || rooms.length === 0) return res.status(404).json({ error: "No hay Salas que listar. Crea una sala y diviértete" });
-        const hasMore = page < totalPages;
-        
-        res.status(200).json({
-            rooms: rooms,
-            totalPages,
-            currentPage: page,
-            pageSize,
-            totalCount,
-            hasMore
-        });
-
-        
+      let query = { status };
+  
+      if (status === 'created' && userId) {
+        query = { 'users.0': userId };
+      }
+  
+      let roomsQuery = Room.find(query).sort({ createdAt: -1 });
+  
+      if (status === 'pending' && userId) {
+        const roomsWithScores = await Score.find({ user: userId }).distinct('roomId');
+        roomsQuery = roomsQuery.where('_id').nin(roomsWithScores).where({ status: 'waiting' });
+      }
+  
+      const totalCount = await Room.countDocuments(query);
+      const totalPages = Math.ceil(totalCount / pageSize);
+      const skip = (page - 1) * pageSize;
+  
+      const rooms = await roomsQuery.skip(skip).limit(pageSize).exec();
+  
+      const hasMore = page < totalPages;
+  
+      res.status(200).json({
+        rooms: rooms || [],
+        totalPages,
+        currentPage: page,
+        pageSize,
+        totalCount,
+        hasMore
+      });
+  
     } catch (error) {
-        res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
-};
-
+  };
+  
+  const sortRoomsWithoutScore = async (rooms, userId) => {
+    try {
+      const roomsWithScores = await Score.find({ user: userId }).distinct('roomId');
+  
+      const roomsWithScoreSet = new Set(roomsWithScores);
+  
+      const roomsWithoutScore = rooms.filter(room =>
+        !roomsWithScoreSet.has(room._id.toString())
+      );
+  
+      const roomsWithScore = rooms.filter(room =>
+        roomsWithScoreSet.has(room._id.toString())
+      );
+  
+      if (roomsWithoutScore.length === 0) {
+        console.log('Todas las salas están completadas');
+      }
+  
+      return [...roomsWithoutScore, ...roomsWithScore];
+    } catch (error) {
+      console.error('Error al cargar las salas:', error.message);
+      throw new Error(error.message);
+    }
+  };
 export const getRoomsCountCreated = async (req, res) => {
     const { userId } = req.params;
     const startOfDay = new Date();
